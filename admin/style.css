@@ -1,0 +1,800 @@
+@charset "utf-8";
+@import url("http://fonts.googleapis.com/css?family=Open+Sans:regular,italic,bold");
+ul
+{
+	list-style-type: none;	
+}
+			
+a
+{
+	text-decoration: none;	
+	font-size: 14px;
+	color: #000;
+	font-family: 'Open Sans', arial, tahoma, sans-serif; 
+}
+			
+body
+{
+	font-size: 14px;
+	font-family: 'Open Sans', arial, tahoma, sans-serif; 
+
+}
+			
+*{padding:0; margin:0}
+			
+.top
+{
+	width: 100%; height: 50px; background: #EFFBF2; 
+}
+
+
+
+.top a:hover
+{
+	color:  #FACC2E;
+}
+
+.logo
+{
+	float: left; width: 18%; height: 100%;	padding-left: 3%; 
+}
+			
+.search-icon
+{
+	float: left; width: 40%; height: 78%; padding-top: 15px; position: relative	; 
+}
+			
+.search-text
+{
+	width: 95%; height: 30px;  border-radius: 3px; border: solid 2px #088A68; font-size: 16px; padding: 3px 6px;
+}
+			
+.search-submit
+{
+	width: 8%; height: 40px; border: none;  position: absolute; top: 25%;right: 3%; background:url(image/search1.PNG) no-repeat;	
+}
+	
+.search-submit:hover
+{
+	cursor: pointer;
+}
+	
+#cart-icon
+{
+	float: left; width: 12%; height: 100%;  background: url(image/cart1.png) no-repeat; line-height: 65px;	
+}
+			
+#cart-icon span
+{
+	padding-left: 50%;
+}
+			
+#login-icon
+{
+	float: right; width: 25%; height: 100%; background:url(image/user1.PNG) no-repeat; background-position: 5%; line-height: 50px; 
+	
+}
+			
+#login-icon span
+{
+	padding-left: 27%;	
+}
+
+			
+.clear
+{
+	clear: both;	
+}
+			
+	
+#category
+{
+	width: 100%; height: 40px; background: #088A68;   
+}
+
+.menu
+{
+	margin-left: 3%; z-index: 99;position: absolute; 
+}
+			
+/*chọn tất cả thẻ li có trong menu*/	
+.menu li
+{
+	line-height: 40px;
+	width: 160px;
+	
+	text-align: center;	
+	float: left;
+	position: relative;
+	
+}
+
+.menu a 
+{
+	display: block; white-space: nowrap; font-size: 12px;
+}
+
+.menu > li
+{
+	border-right: solid 1px white;	
+}
+
+.menu > li:hover
+{
+	background: #0B6138;
+}
+
+.menu > li a
+{
+	color: white;	font-weight: bold;
+}
+.menu li:hover > ul
+{
+	display: block; 
+	position: absolute; 			  
+}
+/*chọn tất cả thẻ ul có trong menu*/			
+.menu ul
+{
+	position: absolute;	
+	display: none;background: #EFFBF2; 
+	border: solid 1px 	#088A68; 
+}
+			
+/*chọn thẻ ul nằm trong thẻ (ul thuộc menu)*/
+.menu ul ul
+{
+	left: 160px; top: 0px;
+}
+
+.menu ul li a
+{
+	font-size: 13px;  
+}
+
+.menu ul li
+{
+	text-align: left; 
+	border-bottom: dashed 1px black;
+}
+
+			
+.menu ul li:hover
+{
+	background: #FACC2E;		
+}
+			
+.menu ul a
+{
+	color: #848484;
+}
+
+.logo2
+{
+	width: 100%;	height: 120px;	line-height: 90px; background: #EFFBF2; 
+	text-align: center; font-weight: bold; color: #088A68;   font-size: 60px;
+}
+			
+/*---------------------WRAPPER--------------------*/
+.wrapper
+{
+	width: 94%;  margin: 2% 3%; /*border: solid 1px red;*/
+}
+
+
+.list-item
+{
+	width: 100%;  margin-top: 20px; 
+	
+}
+
+.tb-lietke
+{
+	width: 100%;	
+	border-collapse: collapse; 
+}
+
+.tb-lietke tr
+{
+	 height: 30px;  border: solid 1px #ccc; 
+}
+
+.tb-lietke td
+{
+	border: none;	
+}
+
+.tb-lietke a
+{
+	color: #F90;	
+}
+
+.tb-lietke td, .tb-lietke th
+{
+	padding: 5px 5px;
+}
+
+.tb-lietke th
+{
+	background: #FFA729;  color: white;
+}
+
+.list-item-title
+{
+	width: 100%; height: 40px; border:solid 2px #FACC2E; border-radius: 3px; line-height: 40px; border-left: none; border-right: none;
+}
+
+.list-item-title div
+{
+	 height: 100%; float: left; font-weight: bold; color: #088A68; padding-left: 2%; 
+}
+
+.list-item-title a
+{
+	float: right; padding-right: 2%; color: #088A68; font-weight: bold;
+}
+
+.list-item-product
+{
+	width: 100%; height: 370px; border:solid 1px #CCC; border-top: none; position: relative; overflow: hidden;
+}
+
+.list-item-product ul
+{
+	width: 200%;
+}
+
+.list-item-product ul li
+{
+	width: 50%;   float: left; height: 370px;
+}
+
+.arrow-left, .arrow-right
+{
+	position: absolute; width: 2%; height: 10%; border: none; top: 45%; background: #CCC; padding: 1%;
+}
+
+.arrow-left:hover, .arrow-right:hover
+{
+	cursor: pointer;	
+}
+
+.arrow-right
+{
+	 right: 0%;	background: url(image/arrow-right.png) no-repeat;
+}
+
+.arrow-left
+{
+	 	background: url(image/arrow-left.png) no-repeat;
+}
+
+.product-home
+{
+	float: left; width: 17.5%; height: 350px; border-right: solid 1px #ccc;
+	text-align: center; padding: 1%;
+}
+
+.product-home:hover
+{
+	background: #EFFBF2;	
+}
+
+.product-home img
+{
+	width: 100%; height: 220px; margin-bottom: 3%;
+}
+
+.product-name-home, .product-name-detail
+{
+	color: #088A68;  font-size: 13px;margin-top: 4%;
+}
+
+.product-price-home, .product-price-detail
+{
+	color: #FE2E64	;	font-size: 15px; font-weight: bold; margin-right: 20px; 
+}
+
+
+/*--------------------PRODUCT DETAIL---------------------------*/
+.wrap-left-protail
+{
+	width: 75%;   float: left; 
+}	
+
+.wrap-right-protail
+{
+	width: 22%;  border: solid 1px blue; float: right;
+}
+
+.product-content
+{
+	width: 98%;	height: 500px; border: solid 1px red;
+}
+
+.product-image
+{
+	width: 51%;  float: left;
+}
+
+.img-sml
+{
+	width: 100%; height: 120px;    
+}
+
+.img-sml-index
+{
+	width: 23%; height: 100px; margin-bottom: 5px; float: left; border: solid 1px #ccc; margin-right: 5px;
+}
+
+.img-big
+{
+	width: 98%; height: 350px; 
+}
+
+.img-big img
+{
+	width: 100%; height: 100%;	
+}
+
+.img-sml img
+{
+	width: 100%; height: 100%;	
+}
+
+.product-normal
+{
+	width: 47%; float: right; height: 470px; border: solid 1px;
+}
+
+.product-normal p
+{
+	padding: 5px;	
+}
+
+.product-normal hr
+{
+	border: solid 1px #CCC;	margin-top: 10px;
+}
+
+.product-info
+{
+	width: 99%; border: solid 1px #ccc; margin-top: 5%;
+}
+
+.product-name-detail, .product-price-detail
+{
+	font-size: 25px;	
+}
+
+.text-highlight
+{
+	color: #FFBF00;	 font-weight: bold;
+}
+
+.cbb-pro
+{
+	width: 120px; height: 30px;	 border-radius: 2px; border: solid 1px #CCCCCC;
+	text-align: center;
+}
+
+.txt-soluong
+{
+	width: 60px; height: 30px;	 border-radius: 2px; border: solid 1px #CCCCCC;
+	text-align: center;
+}
+
+#btn-add-cart
+{
+	width: 220px; height: 50px; padding: 5px; border-radius: 3px; border: none;	
+	background: #F90; color: white; font-size: 18px; font-weight: bold; 
+}
+
+#btn-add-cart:hover
+{
+	cursor: pointer;	
+}
+
+.title-general
+{
+	font-weight: bold; color:  #088A68;   
+}
+
+/*CÁC KHUNG SẢN PHẨM BÊN PHẢI*/
+.list-pro
+{
+	width: 100%;  border: solid 1px red;	margin-bottom: 50px;
+}
+
+.pro-sml
+{
+	width: 100%; height: 150px; border-bottom: solid 1px #ccc; 
+}
+
+.pro-sml img
+{
+	float: left; width: 55%; height: 150px;	 
+}
+
+.pro-sml div
+{
+	float: right;	width: 40%; height: 150px;
+}
+
+.pro-sml div p
+{
+	padding-top: 3px;	
+}
+
+.pro-xemthem
+{
+	text-align: center;	 width: 100%; height: 40px; line-height: 40px;
+}
+
+.pro-xemthem a
+{
+	color: #063; font-weight: bold;
+}
+
+/*------------------- COMMENT ---------------------*/
+#comment
+{
+	margin-top: 5%;	
+}
+
+
+
+
+#comment fieldset
+{
+	width: 70%; height: 250px;	 border-radius: 3px; border: solid 1px #ccc;
+}
+
+
+
+#comment textarea
+{
+	width: 95%; height: 150px; border-radius: 3px; border: solid 1px #ccc; margin: 10px;
+}
+
+.com-submit
+{
+	width: 70px; height: 40px; padding: 5px; border-radius: 3px; border: none;	
+	background: #F90; color: white; font-size: 18px; font-weight: bold; margin-left: 85%;
+} 
+.com-submit:hover
+{
+	cursor: pointer;	
+}
+
+#com-list {margin-top: 20px; text-align: justify}
+
+#com-list li
+{
+	 width: 98%; 	margin-bottom: 10px; border-bottom: solid 1px #ccc; padding-bottom: 10px;
+}
+
+#com-list p
+{
+	padding: 5px
+}
+/*
+.com-info
+{
+	float: left; width: 25%; 
+}
+*/
+#com-list img
+{
+	width: 70px; height: 100px;	float: left; margin-right: 20px;
+}
+/*
+.com-content
+{
+	float: right; width: 73%;
+	// border-radius; 3px;
+	//border: solid 1px #ccc;
+	text-align: justify;
+}
+
+.com-content a
+{
+	color: #F60; font-weight: bold;	
+}
+*/
+
+#com-list li ul li
+{
+	margin-left: 75px; width: 92%; 
+}
+.com-info a
+{
+	color: #F60; font-weight: bold;	
+}
+.com-info
+{
+	width: 100%;	
+}
+
+/*-----------------CART--------------------*/
+.title
+{
+	font-size: 20px; font-weight: bold; color: #333;
+}	
+
+#cart-left
+{
+	width: 77%; float: left;	
+}
+
+#cart-right
+{
+	width: 21%; height: 300px; float: right;	
+}
+
+#cart
+{
+	width: 98%;  border-right: solid 1px #ccc;
+}
+
+#quatang
+{
+	width: 98%; height: 250px; 	margin-top: 5%;
+}
+
+.cart-pro li
+{
+	border-bottom: solid 1px #ccc;	margin-bottom: 3%;
+}
+
+.cart-pro div
+{
+	margin-right: 2%;	
+}
+
+.cart-item
+{
+	float: left; width: 43%;
+}
+
+.cart-item img
+{
+	width: 160px; height: 160px; float: left; 
+}
+
+.cart-item p, .quatang-item p
+{
+	color: #088A68;	
+}
+
+.cart-price
+{
+	float: left; width: 14%; 
+}
+
+.cart-price-final
+{
+	font-size: 18px; font-weight: bold;		
+}
+
+.cart-soluong
+{
+	float: left; width: 15%; border: solid 1px;	
+}
+
+.cart-thanhtien
+{
+	float: left; width: 18%;	 font-size: 18px;  font-weight: bold;	text-align: right;	
+}
+
+.cart-total
+{
+	text-align: right;  
+}
+
+#cart-right table hr
+{
+	border: solid 1px #ccc;
+}
+
+.btn-cart
+{
+	background: #F90; color: white; font-size: 16px; padding: 10px; font-weight: bold;	
+	border: none; border-radius: 3px; width: 100%; margin: 2px;
+}
+
+.btn-cart:hover
+{
+	cursor: pointer;	
+}
+
+.quatang-item
+{
+	float: left; width: 22%; height: 260px; margin-right: 3%;
+}
+
+.quatang-item img
+{
+	width: 160px; height: 160px;
+}
+
+.code
+{
+	display: none;	
+}
+
+#code-submit
+{
+	width: 80px; height: 40px; color: white; font-weight: bold;background:#F06; border: none; border-radius: 3px; padding: 5px;
+}
+
+/*----------------CHECK OUT------------------*/
+#ship-right
+{
+float: right;		width: 25%;	 margin-right: 20px; 
+}
+
+#ship-right .title, #ship-left .title
+{
+	text-align: center;	margin-bottom: 20px; 
+}
+
+#ship-info 
+{
+	width: 87%; height: 350px;  padding:  10px 20px; border: solid 1px #F90; border-radius: 3px;
+}
+
+#ship-info p
+{
+	margin: 5px 0px;	
+}
+
+.txt-info
+{
+	width: 95%; height: 25px; padding: 5px; border: solid 1px #ccc; border-radius: 3px;	
+}
+
+.txt-diachi
+{
+	width: 95%; height: 100px; padding: 5px; border: solid 1px #ccc; border-radius: 3px;	
+}
+
+#ship-left
+{
+	width: 68%; float: left; 
+}
+
+.checkout-title div
+{
+	text-align: left; font-weight: bold; font-size: 18px; color: #F06;
+}
+
+#ship-right table 
+{
+	width: 100%; border: solid 1px #F90; border-radius: 3px; padding: 10px 20px; margin: auto;
+}
+
+#ship-right table  td
+{
+	width: 50%;	text-align: right;
+}
+
+/*------------------PRODUCT---------------------*/
+#pro-left
+{
+	width: 16%; height: 500px; 	float: left;
+}
+
+#pro-left ul
+{
+	margin-left: 20px;	
+}
+
+#pro-left li
+{
+	line-height: 30px;
+}
+
+#pro-left li a
+{
+	display: block;	
+}
+
+#pro-left li a:hover
+{
+	color: #F90;
+}
+
+#pro-right
+{
+	width: 83%; float: right; 
+}
+
+.pro-orderby
+{
+	width: 99%;  background: #F2F2F2;	padding: 5px; 
+}
+
+.combobox
+{
+	width: 20%; height: 30px; background: white; border-radius: 3px;
+}
+
+.pro-orderby .product-home
+{
+	 width: 220px; margin-bottom: 20px; border: none;
+}
+
+/*------SINGIN - LOGIN--------*/
+
+.error
+{
+	//text-align: left;	
+	color: #FA2359;
+	font-weight: bold;
+	font-size: 18px;	
+}
+
+#login-page
+{
+	width: 40%;
+	float: left;
+	//border: solid 1px;	
+	font-size: 13px;
+	padding-top: 9px;
+}
+
+
+.sign-input
+{
+	width: 250px;
+	height: 20px;
+	border: solid 1px; border-radius: 3px;
+	font-size: 13px;
+	margin-top: 5px;	
+	margin-bottom: 10px;
+	padding: 10px;		
+}
+
+#signin-page
+{
+	width: 55%;
+	float: right;
+	font-size: 13px;	
+	margin-bottom: 20px;
+	padding: 10px
+}
+
+#signin-page select
+{
+	width: 250px;
+	height: 45px;
+	border: solid 1px; border-radius: 3px;
+	font-size: 21px;
+	margin-top: 10px;	
+	margin-bottom: 20px;
+	padding: 10px;	
+}
+
+
+.title-register
+{
+	font-size: 23px; font-weight: bold; color: black; height: 30px; border-bottom: solid 4px #FF7B52;	
+	margin-bottom: 30px;
+}
+
+.btn-login
+{
+	width: 200px; height: 20px; padding: 10px; background: #F90; border: none;  border-radius: 3px; color: white; font-weight: bold;
+}
+
+/*-------------NHÀ CUNG CẤP----------------*/
+
+
+
+
+/*-----------------------------------------------*/
+.bottom
+{
+	width: 100%; height: 70px; background: #088A68; 
+}
