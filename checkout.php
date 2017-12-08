@@ -7,6 +7,9 @@
     	<title>Thanh toán</title>
 
 <?php
+	session_start();
+	ob_start();
+	$url = "checkout.php";
 	include_once('module/header.php');
 ?>
 
@@ -129,5 +132,6 @@
 </form>
 
 <?php
+	ob_flush();
 	include_once('module/bottom.php');
 ?>

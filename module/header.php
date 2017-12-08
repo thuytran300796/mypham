@@ -58,16 +58,25 @@
 			
 				});
 				
-				
+				/*
 				$('.rep-a').click(function()
 				{
-					$('.rep-form').slideToggle();
+					mabl = $(this).attr('data-repa');
+					$('.rep-form'+mabl).slideToggle();
 				});
-				
+				*/
 				$('.a-code').click(function()
 				{
 					$('.code').slideToggle();	
 				});
+				
+				//chọn class .rep-a được bao bọc bởi #com-list
+				$('#com-list').delegate('.rep-a', 'click', function()
+				{
+					mabl = $(this).attr('data-repa');
+					$('.rep-form'+mabl).slideToggle();
+				});
+				
             });
 			
 			
@@ -103,7 +112,19 @@
                 
                 <div id = 'login-icon' >
                 
-                    <span><a href = 'login.php'> Đăng nhập </a> | <a href = 'login.php'> Đăng ký </a></span>
+                	<?php
+									
+										if(isset($_SESSION['user']))
+										{
+											echo "<span>Chào <a style = 'font-style: italic' href = 'account.php?id=".$_SESSION['user']."'> ".$_SESSION['name']." </a> | <a href = 'config/config.php?check=logout&url=".$url."'> Đăng xuất </a></span>";
+										}
+										else if(!isset($_SESSION['user']))
+										{
+											echo "<span><a href = 'login.php?url=".$url."'> Đăng nhập </a> | <a href = 'login.php?url=".$url."'> Đăng ký </a></span>";
+										}
+									?>
+                
+                    
                     
                 </div>
 

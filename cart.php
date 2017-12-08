@@ -7,42 +7,132 @@
     	<title>Giỏ hàng</title>
 
 <?php
+	session_start();
+	ob_start();
+	$url = "cart.php";
 	include_once('module/header.php');
+	include_once('config/config.php');
+	
+	//echo "số lượng: ".$_POST['soluong'];
+	//echo "<br/>id: ".$_POST['id'];
+	
+	if(!isset($_SESSION['cart']))
+		$_SESSION['cart'] = NULL;
+	
+	if(isset($_POST['ctsp']))
+	{
+		$ctsp = $_POST['ctsp'];
+		if(!isset($_SESSION['cart'][$ctsp]))
+		{
+			$_SESSION['cart'][$ctsp]['soluong'] = $_POST['soluong'];
+			$_SESSION['cart'][$ctsp]['hinhanh'] = $_POST['hinhanh'];
+			$_SESSION['cart'][$ctsp]['makm'] = $_POST['makm'];
+			$_SESSION['cart'][$ctsp]['giaban'] = $_POST['giaban'];
+			$_SESSION['cart'][$ctsp]['id'] = $_POST['id'];
+			$_SESSION['cart'][$ctsp]['tensp'] = $_POST['tensp'];
+			mysql_query("set names 'utf8'");
+			$mausac = mysql_query("select mausac from chitietsanpham where mactsp = '$ctsp'");
+			$re_mausac = mysql_fetch_assoc($mausac);
+			$_SESSION['cart'][$ctsp]['mausac'] = $re_mausac['mausac'];
+		}
+		else
+		{
+			$_SESSION['cart'][$ctsp]['soluong'] = $_POST['soluong'];
+		}
+	}
+	//unset($_SESSION['cart']);
+	//echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
+	
+	if(isset($_GET['check']))
+	{
+		if($_GET['check'] == 'huy')	
+		{
+			$id_huy = $_GET['ctsp'];
+			if(isset($_SESSION['cart'][$id_huy]))
+				unset($_SESSION['cart'][$id_huy]);
+			if(count($_SESSION['cart'])==0)
+				unset($_SESSION['cart']);
+		}
+		else
+		{
+			if(isset($_SESSION['cart']))
+				unset($_SESSION['cart']);	
+		}
+	}
+	
+?>
+
+<?php
+	if(!isset($_SESSION['cart']))
+	{
+		echo "<p style='margin-left: 18%; font-size: 25px; font-weight: bold; '>CHƯA CÓ SẢN PHẨM NÀO TRONG GIỎ HÀNG! TIẾP TỤC <a href='home.php' style='font-size: 25px; font-weight: bold; color: blue'>MUA SẮM</a></p>";
+	}
+	else
+	{
 ?>
 
 <div id = "cart-left">
 
 	<div id="cart">
     	<p class="title">GIỎ HÀNG</p><br />
-    	<div class="cart-pro">
         
+    	<div class="cart-pro">
+
         	<ul>
-            
+
+                <li>
+                <div class="checkout-title">
+                	<div class='cart-item'>Sản phẩm</div>
+                    <div class='cart-price'>Giá mua</div>
+                    <div class='cart-soluong'>Số lượng</div>
+                    <div class='cart-thanhtien'>Thành tiền</div>
+        </div><br/><br />
+                </li>
+                <?php
+				$tongtien = 0;
+					foreach($_SESSION['cart'] as $key => $value)
+					{
+						$thanhtien = 0; 
+				?>
+               	
             	<li>
                 	
                     
                 	<div class='cart-item'>
-                    	<img src="image/mypham/00328475-1_1_2.jpg"/>
-                        <a href='#'><p>Xịt khoáng nhiều khoáng chất abc 350ml</p></a>
-                        <a href="#" style="color: #F90">Xóa</a>
+                    	<img src="image/mypham/<?php echo $_SESSION['cart'][$key]['hinhanh'] ?>"/>
+                        <a href='#'><p><?php echo $_SESSION['cart'][$key]['tensp'] ?></p></a>
+                        <?php
+							if($_SESSION['cart'][$key]['mausac'] != "")
+                        		echo "<p>Màu sắc: ".$_SESSION['cart'][$key]['mausac']."</p>";
+						?>
+                        <a href="cart.php?check=huy&ctsp=<?php echo $key ?>" style="color: #F90">Xóa</a>
                     </div>
                     
                     <div class='cart-price'>
-                    	<p class="cart-price-final">185.000 đ</p>
-                        <p><strike>215.000 đ</strike></p>           
+                    	<p class="cart-price-final"><?php echo number_format($_SESSION['cart'][$key]['giaban']) ?>đ</p>
+                        <!--<p><strike>215.000 đ</strike></p> -->         
                     </div>
                     
                     <div class='cart-soluong'>
-                    	<input type="text" class="txt-soluong" value="1"/>
+                    	<input type="text" class="txt-soluong" value="<?php echo $_SESSION['cart'][$key]['soluong'] ?>"/>
                     </div>
                     
                     <div class='cart-thanhtien'>
-                    	<p>185.000 đ</p>
+                    	<p>
+						<?php
+                        	$thanhtien = $_SESSION['cart'][$key]['soluong'] * $_SESSION['cart'][$key]['giaban'];
+							$tongtien += $thanhtien;
+							echo number_format($thanhtien);
+						?> đ
+                        </p>
                     </div>
                 	
                     <div class="clear"></div>
                 </li>
-                
+                <?php
+					}
+				?>
+                <!--
                 <li>
                 
                 	<div class='cart-item'>
@@ -66,12 +156,14 @@
                 	
                     <div class="clear"></div>
                 </li>
-            
+                -->
             </ul>
-		
+			<a href='cart.php?check=huyall' style="color: #F60">Hủy giỏ hàng</a>
+            
         </div>
     </div>
     
+    <!-- quà tặng-->
     <div id="quatang">
     	<p class="title">QUÀ TẶNG KÈM</p><br />
         
@@ -96,7 +188,7 @@
  
     	<tr>
         	<td width="40%" style="text-align: left;">Tạm tính:</td>
-            <td width="60%" style="text-align: right; color: #F06; font-weight: bold; font-size: 20px">189.000 đ</td>
+            <td width="60%" style="text-align: right; color: #F06; font-weight: bold; font-size: 20px"><?php echo number_format($tongtien) ?> đ</td>
         </tr>
         
         <tr>
@@ -116,9 +208,12 @@
         </div>
     </form>
 </div>
-
+<?php
+	}
+?>
 
 
 <?php
+	ob_flush();
 	include_once('module/bottom.php');
 ?>
