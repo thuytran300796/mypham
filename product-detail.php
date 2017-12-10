@@ -39,7 +39,7 @@
 	$re_sp = mysql_fetch_assoc($sp);
 	
 	mysql_query("set names 'utf8'");
-	$binhluan = mysql_query("select mabl, bl.makh,tenkh, noidung, ngay, mablcha from binhluan bl, khachhang kh where masp = '$id' and bl.makh = kh.makh order by ngay desc" );
+	$binhluan = mysql_query("select mabl, bl.makh,tenkh, hinhdaidien, noidung, ngay, mablcha from binhluan bl, khachhang kh where masp = '$id' and bl.makh = kh.makh order by ngay desc" );
 	//echo mysql_num_rows($binhluan);
 ?>
 
@@ -233,7 +233,7 @@
 				?>
                 <li>
                 	<div class='com-info'>
-                    	<img src="image/khachhang/16700007_736167479867040_1149049724_n.jpg"/>
+                    	<img src="image/khachhang/<?php echo $re_bl['hinhdaidien'] ?>"/>
                         <p><?php echo $re_bl['tenkh']." &nbsp;".$re_bl['ngay']." &nbsp;"; ?> </p>
                         <p><?php echo $re_bl['noidung']?></p>
                         <p><a href="javascript:void(0)" class="rep-a" data-repa='<?php echo $re_bl['mabl'] ?>'>Gửi trả lời</a></p>

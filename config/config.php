@@ -10,7 +10,11 @@
 			unset($_SESSION['user']);
 			unset($_SESSION['name']);
 			$url = $_GET['url'];
-			header('location: ../'.$url.'');	
+			$arr = explode("?", $url);
+			if($arr[0] == 'account.php')
+				header('location: ../home.php');
+			else
+				header('location: ../'.$url.'');	
 		}
 		else if($_GET['check'] == 'logad')//admin-nv
 		{

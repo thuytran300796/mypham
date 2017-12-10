@@ -116,7 +116,7 @@
 									
 										if(isset($_SESSION['user']))
 										{
-											echo "<span>Chào <a style = 'font-style: italic' href = 'account.php?id=".$_SESSION['user']."'> ".$_SESSION['name']." </a> | <a href = 'config/config.php?check=logout&url=".$url."'> Đăng xuất </a></span>";
+											echo "<span>Chào <a  style = 'font-style: italic' href = 'account.php?id=".$_SESSION['user']."'> ".$_SESSION['name']." </a> | <a href = 'config/config.php?check=logout&url=".$url."'> Đăng xuất </a></span>";
 										}
 										else if(!isset($_SESSION['user']))
 										{
@@ -142,44 +142,65 @@
             	<ul class='menu'>
                 	<li><a href='#'>DANH MỤC</a>
                     	<ul>
-                        	<li><a href='#'>Trang điểm</a>
+                        	<li><a href="product.php?madm=TD">Trang điểm</a>
                             	<ul>
-                                	<li><a href='#'>Trang điểm mắt</a></li>
-                                    <li><a href='#'>Trang điểm môi</a>
+                                	<li><a href='product.php?madm=TDMA'>Trang điểm mắt</a>
                                     	<ul>
-                                            <li><a href='#'>Son lì</a>
-												<ul>
-													<li><a href='#'>Son lì x</a>
-													<li><a href='#'>Son lì y</a>
-												</ul>
-											</li>
-                                            <li><a href='#'>Son kem</a></li>
-                                            <li><a href='#'>Son tint</a></li>
+                                            <li><a href='product.php?madm=PM'>Phấn mắt</a></li>
+                                            <li><a href='product.php?madm=KMAT'>Kẻ mắt</a></li>
+                                            <li><a href='product.php?MASCARA'>Mascara</a></li>
+                                            <li><a href='product.php?madm=KMAY'>Kẻ mày</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href='#'>Trang điểm mặt</a></li>
-                                </ul>
-                            </li>
-							<li><a href='#'>Chăm sóc tóc</a>
-                            	<ul>
-                                	<li><a href='#'>Dầu gội</a>
+                                    <li><a href='product.php?madm=TDM'>Trang điểm môi</a>
                                     	<ul>
-                                            <li><a href='#'>Dầu gội trị gàu</a></li>
-                                            <li><a href='#'>Dầu gội trị rụng tóc</a></li>
-                                            <li><a href='#'>Dầu gội cho tóc khô</a></li>
+                                            <li><a href='product.php?madm=SThoi'>Son thỏi</a></li>
+                                            <li><a href='product.php?madm=SKem'>Son kem</a></li>
+                                            <li><a href='product.php?madm=SonTint'>Son tint</a></li>
+                                            <li><a href='product.php?madm=SD'>Son dưỡng</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href='#'>Dầu xả</a></li>
+                                    <li><a href='product.php?madm=TDFace'>Trang điểm mặt</a>
+                                    	<ul>
+                                            <li><a href='product.php?madm=BB_CC'>BB Cream - CC Cream</a></li>
+                                            <li><a href='product.php?madm=CKD'>Che khuyết điểm</a></li>
+                                            <li><a href='product.php?madm=KemLot'>Kem lót</a></li>
+                                            <li><a href='product.php?madm=PhanPhu'>Phấn phủ</a></li>
+                                            <li><a href='product.php?madm=PhanMa'>Má hồng</a></li>
+                                            <li><a href='product.php?madm=PhanNen'>Phấn nền</a></li>
+                                            <li><a href='product.php?madm=KemNen'>Kem nền</a></li>
+                                            <li><a href='product.php?madm=HL_TaoKhoi'>High Light - Tạo khối</a></li>
+                                        </ul>
+                                    </li>
                                 </ul>
                             </li>
-                            <li><a href='#'>Chăm sóc da</a></li>
-                            <li><a href='#'>Nước hoa</a></li>
-                            <li><a href='#'>Phụ kiện làm đẹp</a></li>
+							<li><a href='product.php?madm=CST'>Chăm sóc tóc</a>
+                            	<ul>
+                                	<li><a href='product.php?madm=DauGoi'>Dầu gội</a>
+                                    	<ul>
+                                            <li><a href='product.php?madm=DGGau'>Dầu gội trị gàu</a></li>
+                                            <li><a href='product.php?madm=DGRungToc'>Dầu gội trị rụng tóc</a></li>
+                                            <li><a href='product.php?madm=DGKho'>Dầu gội cho tóc khô</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href='product.php?madm=DauXa'>Dầu xả</a></li>
+                                </ul>
+                            </li>
+                            <li><a href='product.php?madm=CSD'>Chăm sóc da</a>
+                            	<ul>
+                                	<li><a href='product.php?madm=SRM'>Sữa rửa mặt</a></li>
+                                    <li><a href='product.php?madm=KCN'>Kem chống nắng</a></li>
+                                    <li><a href='product.php?madm=XitKhoang'>Xịt khoáng</a></li>
+                                    <li><a href='product.php?madm=MatNa'>Mặt nạ</a></li>
+                                    <li><a href='product.php?madm=KemDD'>Kem dưỡng da</a></li>
+                                </ul>
+                            </li>
+                            <li><a href='product.php?madm=NH'>Nước hoa</a></li>
                         </ul>
                     </li>
-                    <li><a href='#'>CHƯƠNG TRÌNH KHUYẾN MÃI</a></li>
-                    <li><a href='#'>HÀNG MỚI VỀ</a></li>
-                    <li><a href='#'>TOP SẢN PHẨM BÁN CHẠY</a></li>
+                    <li><a href="product.php?type=khuyenmai">CHƯƠNG TRÌNH KHUYẾN MÃI</a></li>
+                    <li><a href='product.php?type=hangmoi'>HÀNG MỚI VỀ</a></li>
+                    <li><a href='product.php?type=banchay'>TOP SẢN PHẨM BÁN CHẠY</a></li>
                 </ul>
 
                 <div class='clear'></div>

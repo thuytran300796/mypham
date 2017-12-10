@@ -7,7 +7,44 @@
     	<title>Sản phẩm</title>
 
 <?php
+	session_start();
+	$url="product.php";
 	include_once('module/header.php');
+	include_once('config/config.php');
+	
+	$title = NULL;
+	$sql = NULL;
+	$list_sp = array();
+	
+	if(isset($_GET['madm']))
+	{
+		$madm = $_GET['madm'];
+		mysql_query("SET NAMES 'utf8'");
+		$dm = mysql_query("select tendm, mota from danhmuc where madm = '$madm'");
+		$re_dm = mysql_fetch_assoc($dm);
+		$title = $re_dm['tendm'];
+		$sql = "select masp, tensp, giaban, giadexuat, thuonghieu, makm  from sanpham where trangthai = 1 and madm = '$madm' limit 0,12";
+	}
+	else if(isset($_GET['type']))
+	{
+		mysql_query("SET NAMES 'utf8'");
+		$title = "HÀNG BÁN CHẠY";
+		$sql = "SELECT	sp.masp, tensp, sp.giaban, giadexuat, thuonghieu, sp.makm, sum(cthd.SoLuong)
+				from	sanpham sp, chitietsanpham ctsp, chitiethoadon cthd
+				WHERE	sp.masp = ctsp.masp
+					AND	ctsp.MaCTSP = cthd.MaCTSP
+					and sp.trangthai = 1
+				group by	sp.masp
+				order by sum(cthd.SoLuong) desc
+				limit 0,12";
+	}
+	else
+		$madm = "";	
+
+	mysql_query("SET NAMES 'utf8'");
+	$sp = mysql_query($sql);
+	
+	
 ?>
 
 
@@ -58,101 +95,51 @@
 
 
 <div id="pro-right">
-
 	<div class="pro-orderby">
-    	Sắp xếp theo:
-        <select>
-        	<option>Giá giảm dần</option>
-            <option>Giá tăng dần</option>
-            <option>Sản phẩm bán chạy nhất</option>
-        </select>
-        
+    	<span class="title" style='float: left; line-height: 40px;'><?php echo $title ?></span>
+        <div style='float: right'>
+            Sắp xếp theo:
+            <select>
+                <option>Giá giảm dần</option>
+                <option>Giá tăng dần</option>
+                <option>Sản phẩm bán chạy nhất</option>
+            </select>
+         </div>
+     </div>   
         <div class = 'list-item'>
 
-                                <a href = 'product-detail.php'>
+		<?php
+			while($re_sp = mysql_fetch_assoc($sp))
+			{
+				$ha = mysql_query("select duongdan from hinhanh where masp = '".$re_sp['masp']."' limit 0,1");
+				$re_ha = mysql_fetch_assoc($ha);
+		?>
+                                <a href = 'product-detail.php?id=<?php echo $re_sp['masp'] ?>'>
                                     <div class = 'product-home'>
-                                        <img src="image/mypham/za-1--1-.u3059.d20170516.t110909.650151.jpg"/>
-                                        <p><span class = 'product-price-home'>159.000 VND</span> <strike>205.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Kem Chống Nắng Giúp Bảo Vệ Hiệu Quả Và Làm Sáng Da Dành Cho Da Dầu Za True White Ex Perfect Protector SPF50/PA+++ ZA (30ml)</p>
+                                        <img src="image/mypham/<?php echo $re_ha['duongdan'] ?>"/>
+                                        <p><span class = 'product-price-home'><?php echo number_format($re_sp['giaban']) ?> đ</span> <strike><?php if($re_sp['giadexuat'] == $re_sp['giaban'])  echo ""; else echo number_format($re_sp['giaban'])."đ"; ?></strike></p>
+                                        <p class = 'text-highlight'><?php echo $re_sp['thuonghieu'] ?></p>
+                                        <p class = 'product-name-home'><?php echo $re_sp['tensp'] ?></p>
                                     </div>
                                 </a>
-                                
+        <?php
+			}
+		?>		
+        						<!--
                                 <a href = '#'>
                                     <div class = 'product-home'>
                                         <img src="image/mypham/00328475-1_1_2.jpg"/>
                                         <p><span class = 'product-price-home'>195.000 VND</span> <strike>401.000 VND</strike></p>
                                         <p class = 'product-name-home'>Combo 2 Nước Xịt Khoáng Evoluderm 150ml Và 400ml</p>
                                     </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/5882fee2f11b9277a38a483dee02fed8.jpg"/>
-                                        <p><span class = 'product-price-home'>230.000 VND</span> <strike>315.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Bảng Màu Mắt The 24K Nudes Maybelline (3g)</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/1338573964764_s_01.d20171013.t193702.969943.jpg"/>
-                                        <p><span class = 'product-price-home'>180.000 VND</span> <strike>270.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Son Bền Màu Lâu Trôi Và Dưỡng Ẩm Za Vivid Dare Lipstick 3.5g</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/maybelline-fresh-matte-light.u2409.d20170329.t100000.761073.jpg"/>
-                                        <p><span class = 'product-price-home'>300.000 VND</span> <strike>385.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Phấn Nước Cushion Kiềm Dầu Maybelline 14g</p>
-                                    </div>
-                                </a>
-                        
-                        		
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/00328475-1_1_2.jpg"/>
-                                        <p><span class = 'product-price-home'>195.000 VND</span> <strike>401.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Combo 2 Nước Xịt Khoáng Evoluderm 150ml Và 400ml</p>
-                                    </div>
-                                </a>
+                                </a>-->
                                 
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/za-1--1-.u3059.d20170516.t110909.650151.jpg"/>
-                                        <p><span class = 'product-price-home'>159.000 VND</span> <strike>205.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Kem Chống Nắng Giúp Bảo Vệ Hiệu Quả Và Làm Sáng Da Dành Cho Da Dầu Za True White Ex Perfect Protector SPF50/PA+++ ZA (30ml)</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/maybelline-fresh-matte-light.u2409.d20170329.t100000.761073.jpg"/>
-                                        <p><span class = 'product-price-home'>300.000 VND</span> <strike>385.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Phấn Nước Cushion Kiềm Dầu Maybelline 14g</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/1338573964764_s_01.d20171013.t193702.969943.jpg"/>
-                                        <p><span class = 'product-price-home'>180.000 VND</span> <strike>270.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Son Bền Màu Lâu Trôi Và Dưỡng Ẩm Za Vivid Dare Lipstick 3.5g</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/5882fee2f11b9277a38a483dee02fed8.jpg"/>
-                                        <p><span class = 'product-price-home'>230.000 VND</span> <strike>315.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Bảng Màu Mắt The 24K Nudes Maybelline (3g)</p>
-                                    </div>
-                                </a>
-                                
-                        
-          
-                         
      
                             <div class="clear"></div>
              
                 </div>
         <div class="clear"></div>
-    </div>
+    <!--</div>-->
 
 </div>
 

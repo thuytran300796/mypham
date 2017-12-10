@@ -18,7 +18,7 @@
 	
 	
 	mysql_query("set names 'utf8'");
-	$result = mysql_query("select masp, tensp, giaban, giadexuat from sanpham where trangthai = 1 order by ngaynhap desc limit 0,10");
+	$result = mysql_query("select masp, tensp, giaban, giadexuat, thuonghieu, makm from sanpham where trangthai = 1 order by ngaynhap desc limit 0,10");
 	
 	mysql_query("set names 'utf8'");
 	$makeup = mysql_query("select masp, tensp, giaban, giadexuat from sanpham where madm = 'SThoi' and trangthai = 1 order by ngaynhap desc limit 0,10");
@@ -60,7 +60,9 @@
                                         	<span class = 'product-price-home'><?php echo number_format($record['giaban']) ?> đ</span>
                                             <strike><?php if($record['giadexuat'] == $record['giaban'])  echo ""; else echo number_format($record['giaban'])."đ"; ?></strike>
                                         </p>
+                                        <p class = 'text-highlight'><?php echo $record['thuonghieu'] ?></p>
                                         <p class = 'product-name-home'><?php echo $record['tensp'] ?></p>
+                                        
                                     </div>
                                 </a>
                             

@@ -11,6 +11,9 @@
 	ob_start();
 	$url = "checkout.php";
 	include_once('module/header.php');
+	
+	$loi = array();
+	$ten = $diachi = $sdt = $loi['ten'] = $loi['diachi'] = $loi['sdt'] = NULL;
 ?>
 
 <form>
@@ -26,25 +29,41 @@
                     <div class='cart-soluong'>Số lượng</div>
                 </li>
                 <br />
+                
+                <?php
+				$tongtien = 0;
+					foreach($_SESSION['cart'] as $key => $value)
+					{
+				?>
             	<li>
-                	
-                    
                 	<div class='cart-item'>
-                    	<img src="image/mypham/00328475-1_1_2.jpg"/>
-                        <a href='#'><p>Xịt khoáng nhiều khoáng chất abc 350ml</p></a>
+                    	<img src="image/mypham/<?php echo $_SESSION['cart'][$key]['hinhanh'] ?>"/>
+                        <a href='product-detail.php?id=<?php echo $_SESSION['cart'][$key]['id'] ?>'><p><?php echo $_SESSION['cart'][$key]['tensp'] ?></p></a>
+                    	<?php
+							if($_SESSION['cart'][$key]['mausac'] != "")
+                        		echo "<p>Màu sắc: ".$_SESSION['cart'][$key]['mausac']."</p>";
+						?>
                     </div>
                     
                     <div class='cart-price'>
-                    	<p class="cart-price-final">185.000 đ</p>
+                    <?php
+						$giaban = $_SESSION['cart'][$key]['giaban'];
+						echo "<p class='cart-price-final'>".number_format($giaban)." đ</p>";
+					?>
+                    	
                     </div>
                     
                     <div class='cart-soluong'>
-                    	<p>1</p>
+                    	<p><?php echo $_SESSION['cart'][$key]['soluong'] ?></p>
                     </div>
   
                     <div class="clear"></div>
                 </li>
-                
+                <?php
+						$tongtien += ($giaban * $_SESSION['cart'][$key]['soluong']);
+					}
+				?>
+                <!--
                 <li>
                 
                 	<div class='cart-item'>
@@ -62,7 +81,7 @@
                 	
                     <div class="clear"></div>
                 </li>
-            
+            	-->
             </ul>
     </div>
     
@@ -88,12 +107,14 @@
     <table cellspacing="10px">
     	<tr>
         	<td width="40%">Tiền sản phẩm:</td>
-            <td width="56%">189.000 đ</td>
+            <td width="56%"><?php echo number_format($tongtien) ?> đ</td>
         </tr>
+        <!--
         <tr>
         	<td width="40%">Phí vận chuyển:</td>
             <td width="56%">.. đ</td>
         </tr>
+        -->
         <tr>
         	<td width="40%">Thuế VAT:</td>
             <td width="56%">... đ</td>
@@ -104,7 +125,7 @@
         </tr>
         <tr>
         	<td width="40%" style="text-align: right; font-weight: bold;font-size: 20px;">Tổng cộng:</td>
-            <td width="56%" style="text-align: right; font-size: 20px; font-weight: bold; color: #F06;">189.000 đ</td>
+            <td width="56%" style="text-align: right; font-size: 20px; font-weight: bold; color: #F06;"><?php echo number_format($tongtien) ?> đ</td>
         </tr>
     </table>
     
@@ -114,13 +135,13 @@
     <div id="ship-info">
         
         <p>Họ và tên người nhận</p>
-        <input type='text' value="" class='txt-info'/>
+        <input type='text' value="" class='txt-info' name='ten'/>
         <p>Số điện thoại</p>
-        <input type='text' value="" class='txt-info'/>
+        <input type='text' value="" class='txt-info' name='sdt'/>
         <p>Địa chỉ giao hàng</p>
-        <textarea class="txt-diachi"></textarea>
+        <textarea class="txt-diachi" name='diachi'></textarea>
         <p>Chọn ngày giao hàng</p>
-        <input type='date' class="txt-info"/>
+        <input type='date' class="txt-info" name='ngaygiao'/>
     </div>
     
     <br /><br />

@@ -520,7 +520,7 @@ body
 
 .cart-pro li
 {
-	border-bottom: solid 1px #ccc;	margin-bottom: 3%;
+	border-bottom: solid 1px #ccc;	margin-bottom: 3%; padding-bottom: 3%;
 }
 
 .cart-pro div
@@ -576,7 +576,7 @@ body
 .btn-cart
 {
 	background: #F90; color: white; font-size: 16px; padding: 10px; font-weight: bold;	
-	border: none; border-radius: 3px; width: 100%; margin: 2px;
+	border: none;border-radius: 3px; width: 100%; margin: 2px;
 }
 
 .btn-cart:hover
@@ -602,6 +602,16 @@ body
 #code-submit
 {
 	width: 80px; height: 40px; color: white; font-weight: bold;background:#F06; border: none; border-radius: 3px; padding: 5px;
+}
+
+.btn-sub, .btn-plus
+{
+	width: 20%; height: 30px; border: none; border: solid 1px; border-radius: 2px;
+}
+
+.btn-sub:hover, .btn-plus:hover
+{
+	cursor: pointer;	
 }
 
 /*----------------CHECK OUT------------------*/
@@ -693,10 +703,10 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 .pro-orderby select
 {
-	width: 20%; height: 40px; background: white; border-radius: 3px;
+	width: 65%; height: 40px; background: white; border-radius: 3px;
 }
 
-.pro-orderby .product-home
+.list-item .product-home
 {
 	 width: 220px; margin-bottom: 20px; border: none;
 }
@@ -766,6 +776,96 @@ float: right;		width: 25%;	 margin-right: 20px;
 }
 
 .btn-login:hover{cursor: pointer}
+
+/*------------------ ACCOUNT ---------------------*/
+#acc-left
+{
+	width: 14.5%; padding: 2%;
+	float: left;
+	border: solid 3px #6B6767 ;	
+	border-radius: 3px;	
+}
+
+#acc-left ul li
+{
+	height: 40px; padding-bottom: 4%; padding-left: 4%;
+	border-bottom: solid 1px #6b6767;
+	line-height: 45px;
+}
+
+#acc-left ul  a 
+{
+	font-weight: bold;	
+	color: #6B6767;
+}
+
+#acc-left ul li:hover
+{
+	color: #F90;  
+}
+
+#acc-right
+{
+	width: 70%;
+	float: right;
+	border-top: solid 3px #6B6767;	 border-bottom: solid 3px #6B6767;
+	color: #6B6767;
+	padding: 3%;
+	
+}
+
+.info_account input
+{
+	width: 40%;
+	height: 30px;
+	border: solid 1px #6B6767; border-radius: 3px;
+	font-size: 13px; padding: 5px 5px;
+	
+}
+
+.info_account textarea
+{
+	width: 70%;
+	height: 60px;	
+	border: solid 1px #6B6767; border-radius: 3px;
+	font-size: 10px; padding: 5px 5px;
+}
+
+.info_account select
+{
+	width: 43%;
+	height: 30px;
+	border: solid 1px #6B6767; border-radius: 3px;
+	font-size: 13px; padding: 5px 5px;
+}
+
+.list-bill
+{
+	width: 100%;
+	border-collapse: collapse;
+	border: solid 1px black;
+	text-align: center;
+	color: black;
+	margin-top: 3%;
+}
+
+.list-bill tr td a
+{
+	color: 	#3CA937 ;
+	font-weight: bold;
+}
+
+.list-bill th
+{
+	font-size: 22px;
+	height: 40px; 
+}
+
+.list-bill tr
+{
+	font-size: 20px;	
+	height: 30px;
+}
 
 /*-----------------------------------------------*/
 .bottom

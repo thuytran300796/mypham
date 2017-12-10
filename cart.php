@@ -5,6 +5,56 @@
         <script src="js/jquery-1.12.4.js"></script>
         <link type="text/css" rel='stylesheet' href="style.css"/>
     	<title>Giỏ hàng</title>
+        
+        <script>
+			
+			$(document).ready(function(e) {
+                
+				$('.btn-plus').click(function()
+				{
+					ctsp = $(this).attr('data-id');  //alert(ctsp);
+					soluong = parseInt($('.txt-soluong-'+ctsp).val());
+					soluong = soluong + 1; //alert(soluong);
+					
+					$.ajax
+					({
+						url: "js/xuly/cart_xuly.php",
+						type: "post",
+						data: "ctsp=" + ctsp + "&soluongmoi=" + soluong,
+						async: true,
+						success:function(kq)
+						{
+							//location:reload();
+							//alert(kq);
+							window.location="cart.php";
+						}
+					});
+					//return false;	
+				});
+				$('.btn-sub').click(function()
+				{
+					ctsp = $(this).attr('data-id');  //alert(ctsp);
+					soluong = parseInt($('.txt-soluong-'+ctsp).val());
+					soluong = (soluong - 1) == 0 ? 1 : (soluong-1); //alert(soluong);
+					
+					$.ajax
+					({
+						url: "js/xuly/cart_xuly.php",
+						type: "post",
+						data: "ctsp=" + ctsp + "&soluongmoi=" + soluong,
+						async: true,
+						success:function(kq)
+						{
+							//location:reload();
+							//alert(kq);
+							window.location="cart.php";
+						}
+					});
+					//return false;	
+				});
+            });
+			
+		</script>
 
 <?php
 	session_start();
@@ -21,6 +71,7 @@
 	
 	if(isset($_POST['ctsp']))
 	{
+		//echo "có";
 		$ctsp = $_POST['ctsp'];
 		if(!isset($_SESSION['cart'][$ctsp]))
 		{
@@ -100,7 +151,7 @@
                     
                 	<div class='cart-item'>
                     	<img src="image/mypham/<?php echo $_SESSION['cart'][$key]['hinhanh'] ?>"/>
-                        <a href='#'><p><?php echo $_SESSION['cart'][$key]['tensp'] ?></p></a>
+                        <a href='product-detail.php?id=<?php echo $_SESSION['cart'][$key]['id'] ?>'><p><?php echo $_SESSION['cart'][$key]['tensp'] ?></p></a>
                         <?php
 							if($_SESSION['cart'][$key]['mausac'] != "")
                         		echo "<p>Màu sắc: ".$_SESSION['cart'][$key]['mausac']."</p>";
@@ -114,7 +165,9 @@
                     </div>
                     
                     <div class='cart-soluong'>
-                    	<input type="text" class="txt-soluong" value="<?php echo $_SESSION['cart'][$key]['soluong'] ?>"/>
+                    	<input type='submit' class='btn-sub' data-id='<?php echo $key ?>' value='-' />
+                    	<input type="text" class="txt-soluong txt-soluong-<?php echo $key ?> " value="<?php echo $_SESSION['cart'][$key]['soluong'] ?>"/>
+                        <input type='submit' class='btn-plus' data-id='<?php echo $key ?>' value='+' />
                     </div>
                     
                     <div class='cart-thanhtien'>
