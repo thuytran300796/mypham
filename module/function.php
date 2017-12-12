@@ -20,6 +20,28 @@
 		
 	}*/
 	
+	function Tao_MaNCC()
+	{
+		//require('../config/config.php');
+		
+		$result = mysql_query("select MaNCC from NhaCungCap");
+		
+		if(mysql_num_rows($result) == 0)
+			return 'NCC1';
+			
+		$dong = mysql_fetch_assoc($result);
+		
+		$number = substr($dong['MaNCC'], 3);
+		
+		while($dong = mysql_fetch_assoc($result))
+		{
+			$temp = substr($dong['MaNCC'], 3);
+			if($number < $temp)
+				$number = $temp;
+		}
+		return 'NCC'.++$number;
+	}
+	
 	function Tao_MaLuong()
 	{
 		require('../config/config.php');

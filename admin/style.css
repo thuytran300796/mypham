@@ -790,8 +790,76 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 /*-------------NHÀ CUNG CẤP----------------*/
 
+.btn-ad
+{
+	width: 7%; height: 30px; padding: 5px 10px; border: 0; border-radius: 2px;
+	background: #0CF; color: white; font-weight: bold; float: right;
+}
 
+.btn-ad:hover
+{
+	cursor: pointer;	
+}
 
+.popup-background
+{
+	position: absolute;
+	width: 95%; height: 100%;  margin: auto;
+	display: none;
+}	
+
+.popup
+{
+	position: absolute; z-index: 90; margin: auto; left: 30%;
+	/*width: 70%; height: 500px; border: solid 1px red;*/
+	background: #FFF;
+	border-radius: 4px;
+	padding: 3px 3px 2px 3px;
+	box-shadow: 0 0 1px #888;	
+}
+
+.popup div
+{
+	height: 40px; line-height: 40px; background: #088A68;	
+}
+
+.popup h3
+{
+	color: 	white; font-weight: bold;
+	padding-left: 13px;
+}
+
+.popup table input[type='submit']
+{
+	height:30px;
+	background:#FFF; color:#666;
+	font-weight:bold;
+	padding:0 10px;
+	margin:12px 10px 0 0;
+	border:0; border-radius:3px;
+	box-shadow: inset 0 0 1px #333;
+}
+
+.popup table input[type='submit']:hover{ background:#088A68; color:#FFF; cursor:pointer; }
+
+.popup table
+{
+	padding: 30px 50px 20px;
+}
+
+.popup table td
+{
+	padding: 5px;	
+}
+
+.popup table input[type='text']
+{
+	padding:0 10px; width: 250px; height:25px; border: solid 1px; border-radius:3px; 
+}
+.popup table textarea
+{
+	padding: 10px; width: 250px; height:50px; border: solid 1px; border-radius:3px; 
+}
 
 /*-----------------------------------------------*/
 .bottom

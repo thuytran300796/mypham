@@ -5,7 +5,7 @@
     		<!--cart, search, logo-->
             <div class = 'top' > 
             	
-                <a href='home.php'>
+                <a href='../home.php'>
                 <div class = 'logo' >
                     <span style="color:#088A68; font-size: 36px; font-weight: bold;">AZURA.vn</span>
                 </div>

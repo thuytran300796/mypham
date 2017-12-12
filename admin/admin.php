@@ -87,6 +87,8 @@
 <?php
 	ob_start();
 	include_once('module/header.php');
+	include_once('../module/function.php');
+	include_once('../config/config.php');
 ?>
 
 <?php
