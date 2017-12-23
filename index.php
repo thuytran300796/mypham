@@ -17,7 +17,7 @@
     <head>
     	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     	<title>Trang chủ</title>
-        <script src="jquery-1.12.4.js"></script>
+        <script src="js/jquery-1.12.4.js"></script>
         <script>
 
 			$(document).ready(function(e) {

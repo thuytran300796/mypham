@@ -74,12 +74,16 @@
                             <li><a href='#'>Phụ kiện làm đẹp</a></li>
                         </ul>
                     </li>
-                    <li><a href='admin.php?quanly=nhacc'>NHÀ CUNG CẤP</a></li>
+                    <li><a href='admin.php?quanly=nhacc&ac=them'>NHÀ CUNG CẤP</a></li>
                     <li><a href='#'>KHUYẾN MÃI</a></li>
                     <li><a href='#'>HÓA ĐƠN</a></li>
                     <li><a href='#'>BÁO CÁO, THỐNG KÊ</a></li>
-                    <li><a href='#'>NHÂN VIÊN</a></li>
-                    <li><a href='#'>KHÁCH HÀNG</a></li>
+                    <li><a href='#'>NHÂN VIÊN</a>
+                    	<ul>
+                        	<li><a href='admin.php?quanly=chucvu'>Chức vụ</a></li>
+                        </ul>
+                    </li>
+                    <li><a href='admin.php?quanly=khachhang'>KHÁCH HÀNG</a></li>
                 </ul>
 
                 <div class='clear'></div>

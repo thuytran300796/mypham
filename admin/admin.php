@@ -5,6 +5,7 @@
    	<head>
     	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <script src="../js/jquery-1.12.4.js"></script>
+        
         <link type="text/css" rel='stylesheet' href="style.css"/>
     	<title>Trang quản trị</title>
         <script>
@@ -76,10 +77,45 @@
 					$('.code').slideToggle();	
 				});
 				
-				$('.tb-lietke tr:even').css('background-color', '#F2F2F2');
+				$('.tb-lietke tr:even, #sp-right table tr:even').css('background-color', '#F2F2F2');
 				
             });
 			
+			function ConfirmDel()
+			{
+				if(confirm("Bạn có chắn chắn muốn xóa không?"))
+				{
+					return true;
+				}
+				else
+				{
+					return false;	
+				}
+			}
+			
+			function ConfirmDelBill()
+			{
+				if(confirm("Bạn có chắn chắn muốn hủy đơn hàng này không?"))
+				{
+					return true;
+				}
+				else
+				{
+					return false;	
+				}
+			}
+			
+			function ConfirmReset()
+			{
+				if(confirm("Bạn có chắn chắn muốn cấp lại mật khẩu cho tài khoản này với mật khẩu mặc định sẽ là số CMND?"))
+				{
+					return true;
+				}
+				else
+				{
+					return false;	
+				}
+			}
 			
 		</script>
     </head>
@@ -100,6 +136,10 @@
 			include_once('module/sanpham/main.php');
 		else if($temp == 'nhacc')
 			include_once('module/nhacungcap/main.php');
+		else if($temp == 'chucvu')
+			include_once('module/chucvu/main.php');
+		else if($temp == 'khachhang')
+			include_once('module/khachhang/main.php');
 	}
 
 ?>
@@ -108,5 +148,6 @@
 
 <?php
 	ob_flush();
+	mysql_close($conn);
 	include_once('module/bottom.php');
 ?>

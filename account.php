@@ -68,31 +68,39 @@
 			$diachi = $_POST['diachi'];	
 			$ngaysinh = $_POST['ngaysinh'];
 			
-			$file_size = $_FILES["hinh"]["size"];
-		
-			if($file_size > 1024 * 1024 * 2)
+			if($_FILES['hinh']['size'] != 0)
 			{
-				echo "File được chọn phải nhỏ hơn 2MB </br>";
-				return;
+				$file_size = $_FILES["hinh"]["size"];
+				echo "size: ".$file_size;
+				if($file_size > 1024 * 1024 * 2)
+				{
+					echo "File được chọn phải nhỏ hơn 2MB </br>";
+					return;
+				}
+				
+				$file_type = $_FILES["hinh"]["type"];
+				
+				if($file_type == "image/jpeg" || $file_type == "image/png")
+				{
+					$duongdan = "image/khachhang/".basename($_FILES["hinh"]["name"]);
+					move_uploaded_file($_FILES["hinh"]["tmp_name"], "$duongdan".$_FILES["hinh"]["name"]);
+				}
+				else
+				{
+					$loi['hinh']= 'Vui lòng chọn tập tin có dạng "jpg" hoặc "png" </br>';
+					$check = 0;
+				}
 			}
 			
-			$file_type = $_FILES["hinh"]["type"];
 			
-			if($file_type == "image/jpeg" || $file_type == "image/png")
-			{
-				$duongdan = "image/khachhang/".basename($_FILES["hinh"]["name"]);
-				move_uploaded_file($_FILES["hinh"]["tmp_name"], "$duongdan".$_FILES["hinh"]["name"]);
-			}
-			else
-			{
-				$loi['hinh']= 'Vui lòng chọn tập tin có dạng "jpg" hoặc "png" </br>';
-				$check = 0;
-			}
 			
 			if($check)
 			{
 				mysql_query("SET NAMES 'utf8'");
-				$kq = mysql_query("UPDATE KhachHang SET TenKH = N'$ten', DiaChi = N'$diachi', GioiTinh = $gioitinh, SoDienThoai = '$sdt', NgaySinh = '$ngaysinh', HinhDaiDien = '".$_FILES["hinh"]["name"]."'  WHERE MaKH = '$user'");	
+				if($_FILES['hinh']['size'] != 0)
+					$kq = mysql_query("UPDATE KhachHang SET TenKH = N'$ten', DiaChi = N'$diachi', GioiTinh = $gioitinh, SoDienThoai = '$sdt', NgaySinh = '$ngaysinh', HinhDaiDien = '".$_FILES["hinh"]["name"]."'  WHERE MaKH = '$user'");	
+				else
+					$kq = mysql_query("UPDATE KhachHang SET TenKH = N'$ten', DiaChi = N'$diachi', GioiTinh = $gioitinh, SoDienThoai = '$sdt', NgaySinh = '$ngaysinh'  WHERE MaKH = '$user'");	
 				$_SESSION['name'] = $ten;
 				//header('location: account.php?id='.$id);
 				echo "<script> alert('Cập nhật thành công!'); </script>";	

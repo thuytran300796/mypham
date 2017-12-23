@@ -9,7 +9,7 @@
 		{
 			unset($_SESSION['user']);
 			unset($_SESSION['name']);
-			$url = $_GET['url'];
+			$url = $_REQUEST['url'];
 			$arr = explode("?", $url);
 			if($arr[0] == 'account.php')
 				header('location: ../home.php');

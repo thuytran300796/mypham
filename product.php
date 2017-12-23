@@ -15,6 +15,7 @@
 	$title = NULL;
 	$sql = NULL;
 	$list_sp = array();
+	//$type = 'bt';
 	
 	if(isset($_GET['madm']))
 	{
@@ -23,13 +24,17 @@
 		$dm = mysql_query("select tendm, mota from danhmuc where madm = '$madm'");
 		$re_dm = mysql_fetch_assoc($dm);
 		$title = $re_dm['tendm'];
-		$sql = "select masp, tensp, giaban, giadexuat, thuonghieu, makm  from sanpham where trangthai = 1 and madm = '$madm' limit 0,12";
+		$sql = "select masp, tensp, sp.giaban, sp.giadexuat, thuonghieu, makm  from sanpham where trangthai = 1 and madm = '$madm'";
+		
+		if(isset($_GET['price']))
+		
+		$sql.="limit 0,12";
 	}
 	else if(isset($_GET['type']))
 	{
 		mysql_query("SET NAMES 'utf8'");
 		$title = "HÀNG BÁN CHẠY";
-		$sql = "SELECT	sp.masp, tensp, sp.giaban, giadexuat, thuonghieu, sp.makm, sum(cthd.SoLuong)
+		$sql = "SELECT	sp.masp, tensp, sp.giaban, sp.giadexuat, thuonghieu, sp.makm, sum(cthd.SoLuong)
 				from	sanpham sp, chitietsanpham ctsp, chitiethoadon cthd
 				WHERE	sp.masp = ctsp.masp
 					AND	ctsp.MaCTSP = cthd.MaCTSP
@@ -99,10 +104,10 @@
     	<span class="title" style='float: left; line-height: 40px;'><?php echo $title ?></span>
         <div style='float: right'>
             Sắp xếp theo:
-            <select>
-                <option>Giá giảm dần</option>
-                <option>Giá tăng dần</option>
-                <option>Sản phẩm bán chạy nhất</option>
+            <select name='price'>
+                <option value='giam'>Giá giảm dần</option>
+                <option value='tang'>Giá tăng dần</option>
+                <option value='banchay'>Sản phẩm bán chạy nhất</option>
             </select>
          </div>
      </div>   

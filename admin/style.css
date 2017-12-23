@@ -206,7 +206,7 @@ body
 
 .tb-lietke a
 {
-	color: #F90;	
+	color: #096;	
 }
 
 .tb-lietke td, .tb-lietke th
@@ -519,7 +519,7 @@ body
 /*-----------------CART--------------------*/
 .title
 {
-	font-size: 20px; font-weight: bold; color: #333;
+	font-size: 20px; font-weight: bold; color: #333; text-align: center;
 }	
 
 #cart-left
@@ -732,7 +732,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 	//text-align: left;	
 	color: #FA2359;
 	font-weight: bold;
-	font-size: 18px;	
+	font-size: 13px;	
 }
 
 #login-page
@@ -789,6 +789,11 @@ float: right;		width: 25%;	 margin-right: 20px;
 }
 
 /*-------------NHÀ CUNG CẤP----------------*/
+#nhacungcap table
+{
+	width: 95%; margin: auto;	
+}
+
 
 .btn-ad
 {
@@ -808,7 +813,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 	display: none;
 }	
 
-.popup
+.popup 
 {
 	position: absolute; z-index: 90; margin: auto; left: 30%;
 	/*width: 70%; height: 500px; border: solid 1px red;*/
@@ -820,27 +825,28 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 .popup div
 {
-	height: 40px; line-height: 40px; background: #088A68;	
+	height: 40px; line-height: 40px; background: #F90;	
 }
 
 .popup h3
 {
 	color: 	white; font-weight: bold;
-	padding-left: 13px;
+	padding-left: 13px; float: left;
 }
 
-.popup table input[type='submit']
+.popup table input[type='submit'], .popup table input[type='button'], #left-ncc table input[type='submit']
 {
 	height:30px;
-	background:#FFF; color:#666;
+	background:#088A68; color: white;
 	font-weight:bold;
 	padding:0 10px;
 	margin:12px 10px 0 0;
 	border:0; border-radius:3px;
-	box-shadow: inset 0 0 1px #333;
+	box-shadow: inset 0 0 1px #333; width: 100px;
 }
 
-.popup table input[type='submit']:hover{ background:#088A68; color:#FFF; cursor:pointer; }
+
+.popup table input[type='submit']:hover, #left-ncc table input[type='submit']:hover { background: #066 ; color: white; cursor:pointer; }
 
 .popup table
 {
@@ -852,13 +858,125 @@ float: right;		width: 25%;	 margin-right: 20px;
 	padding: 5px;	
 }
 
+#left-ncc table td
+{
+	padding: 5px;	
+}
+
 .popup table input[type='text']
 {
 	padding:0 10px; width: 250px; height:25px; border: solid 1px; border-radius:3px; 
 }
+
+#left-ncc table input[type='text']
+{
+	padding:0 10px; width: 200px; height:25px; border: solid 1px; border-radius:3px; 
+}
+
 .popup table textarea
 {
-	padding: 10px; width: 250px; height:50px; border: solid 1px; border-radius:3px; 
+	padding:0 10px; width: 250px; height:50px; border: solid 1px; border-radius:3px; 
+}
+
+#left-ncc table textarea
+{
+	padding: 5px 10px; width: 200px; height:80px; border: solid 1px; border-radius:3px; 
+}
+
+.txt-timkiem
+{
+	margin-left: 50%;width: 300px; height: 20px; padding: 5px 10px; border: solid 1px;; border-radius: 3px;	
+}
+
+.sub
+{
+	width: 10%; height: 30px; padding: 5px 10px; color: white; font-weight: bold; background: #088A68; border: none; border-radius: 3px;	
+}
+
+.sub:hover{cursor: pointer};
+
+#khachhang table
+{
+	width: 90%; margin: auto;	
+}
+
+/*-------------------THÊM SẢN PHẨM------------------*/
+.txt-sp
+{
+	width: 200px; height: 20px; padding: 5px 10px;
+	border: solid 1px; border-radius: 3px;	
+}
+
+.cbb-sp
+{
+	width: 220px; height: 40px; padding: 5px 10px;
+	border: solid 1px; border-radius: 3px;	
+}
+
+#parent table td, #phanloai table td, #ctsp table td
+{
+	padding: 5px 10px;	
+}
+
+#phanloai
+{
+	position: absolute;
+	width: 30%; height: 500px; border: solid 2px; border-radius: 3px;	margin:auto;
+	top: 15%; left: 35%;
+	display: none;
+	padding: 10px 20px;
+}
+
+#nhaplieu .sub
+{
+	width: 30%;	
+}
+
+#ctsp .error
+{
+	display: none; 
+}
+
+/*---------LIỆT KÊ SẢN PHẨM-----------*/
+#sp-left
+{
+	width: 20%; height: 500px; float: left;	
+}
+
+#sp-left div
+{
+	width: 100%; 
+	margin-bottom: 8%;  border: solid 1px #ccc; border-radius: 3px;
+}
+
+#sp-left input
+{
+	margin: 4%;	
+}
+
+#sp-right table
+{
+	border: solid 1px #ccc;	
+}
+
+#sp-right table th
+{
+	height: 30px;	 background: #0489B1;color: white;
+}
+
+#sp-right table td
+{
+	height: 30px;	padding: 5px;  //border: solid 1px #ccc;
+}
+
+#sp-right table tr:hover
+{
+	cursor: pointer;	
+}
+
+.ctsp-item
+{
+	width: 20%; line-height: 30px; float: left; text-align: center;
 }
 
 /*-----------------------------------------------*/

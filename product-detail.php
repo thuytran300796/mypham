@@ -307,7 +307,8 @@
             	SẢN PHẨM CÙNG THƯƠNG HIỆU
             </div>
             <?PHP
-				$sp_thuonghieu = mysql_query("select masp, tensp, giaban, giadexuat, thuonghieu from sanpham where thuonghieu = '".$re_sp['thuonghieu']."' and masp not in ('".$re_sp['masp']."')");
+				//$sp_thuonghieu = mysql_query("select masp, tensp, giaban, giadexuat, thuonghieu from sanpham where thuonghieu = '".$re_sp['thuonghieu']."' and masp not in ('".$re_sp['masp']."')");
+				$sp_thuonghieu = mysql_query("select sp.masp, mactsp, tensp, mausac, ctsp.giaban, ctsp.giadexuat, thuonghieu from sanpham sp, chitietsanpham ctsp where sp.masp = ctsp.masp and thuonghieu = '".$re_sp['thuonghieu']."' and sp.masp not in ('".$re_sp['masp']."')");
 				while($re_sp = mysql_fetch_assoc($sp_thuonghieu))
 				{
 					$ha = mysql_query("select duongdan from hinhanh where masp = '".$re_sp['masp']."' limit 0,1");
@@ -318,6 +319,7 @@
                 <img src="image/mypham/<?php echo $re_ha['duongdan']?>"/>
                 <div>
                 	<p><?php echo $re_sp['tensp']?></p>
+                    <p>Màu: <?php echo $re_sp['mausac']?></p>
                     <p class="text-highlight"><?php echo $re_sp['thuonghieu']?></p>
                     <p class="product-price-home"><?php echo number_format($re_sp['giaban'])?> đ</p>
                     <p><strike><?php if($re_sp['giadexuat'] == $re_sp['giaban'])  echo ""; else echo number_format($re_sp['giaban'])."đ"; ?></strike></p>
@@ -341,10 +343,15 @@
             </div>
   			
             <?php
-				$sql = "	select	sp.masp, tensp, sp.giaban, giadexuat, thuonghieu, sum(cthd.soluong) as 'tong'
+				/*$sql = "	select	sp.masp, tensp, sp.giaban, sp.giadexuat, thuonghieu, sum(cthd.soluong) as 'tong'
 							from	sanpham sp, chitietsanpham ctsp, chitiethoadon cthd
 							where	sp.masp = ctsp.masp and ctsp.mactsp = cthd.mactsp and sp.trangthai = 1
 							group by sp.masp
+							order by sum(cthd.soluong) desc";*/
+				$sql = "	select	sp.masp, tensp, mausac, ctsp.giaban, ctsp.giadexuat, thuonghieu, sum(cthd.soluong) as 'tong'
+							from	sanpham sp, chitietsanpham ctsp, chitiethoadon cthd
+							where	sp.masp = ctsp.masp and ctsp.mactsp = cthd.mactsp and sp.trangthai = 1
+							group by ctsp.mactsp
 							order by sum(cthd.soluong) desc";
 				mysql_query("set names 'utf8'");
 				$banchay = mysql_query($sql);
@@ -358,6 +365,7 @@
                 <img src="image/mypham/<?php echo $re_ha['duongdan'] ?>"/>
                 <div>
                 	<p><?php echo $re_banchay['tensp'] ?></p>
+                    <p>Màu: <?php echo $re_banchay['mausac'] ?></p>
                     <p class="text-highlight"><?php echo $re_banchay['thuonghieu'] ?></p>
                     <p class="product-price-home"><?php echo number_format($re_banchay['giaban']) ?> đ</p>
                     <p><strike><?php if($re_banchay['giadexuat'] == $re_banchay['giaban'])  echo ""; else echo number_format($re_banchay['giadexuat'])."đ"; ?></strike></p>

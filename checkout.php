@@ -5,19 +5,115 @@
         <script src="js/jquery-1.12.4.js"></script>
         <link type="text/css" rel='stylesheet' href="style.css"/>
     	<title>Thanh toán</title>
+        
+<?php
+
+	function Tao_MaGH()
+	{
+		$result = mysql_query('Select MaGH from GioHang ');
+		
+		if(mysql_num_rows($result) == 0)
+			return 'GH1';
+			
+		$dong = mysql_fetch_assoc($result);
+		
+		$number = substr($dong['MaGH'], 2);
+		
+		while($dong = mysql_fetch_assoc($result))
+		{
+			$temp = substr($dong['MaGH'], 2);
+			if($number < $temp)
+				$number = $temp;
+		}
+		return 'GH'.++$number;	
+	}
+
+?>
 
 <?php
 	session_start();
 	ob_start();
 	$url = "checkout.php";
 	include_once('module/header.php');
-	
+	require('config/config.php');
 	$loi = array();
-	$ten = $diachi = $sdt = $loi['ten'] = $loi['diachi'] = $loi['sdt'] = NULL;
+	$ten = $diachi = $sdt = $ngaygiao = $loi['ten'] = $loi['diachi'] = $loi['sdt'] = NULL;
+	$check_dn = 1;
+	if(!isset($_SESSION['user']))
+	{
+		echo "<p class='title' style='margin-left: 23%; color: #f90;'>Vui lòng <a href='login.php?url=$url' style='color: blue; font-size: 20px;'>đăng nhập</a> để có thể nhận nhiều ưu đãi từ Azura Shop!</p><br><br>";
+	}
+	else
+	{
+		mysql_query("set names 'utf8'");
+		$kh = mysql_query("select makh, tenkh, diachi, sodienthoai from khachhang where makh = '".$_SESSION['user']."'");
+		$re_kh = mysql_fetch_assoc($kh);
+		$ten = $re_kh['tenkh']; $diachi = $re_kh['diachi']; $sdt = $re_kh['sodienthoai'] ;
+	}
+	$check = 1;
+	if(isset($_POST['ok']))
+	{
+		if(empty($_POST['ten']))
+		{
+			$loi['ten'] = 'Vui lòng nhập tên người nhận';	
+			$check = 0;
+		}
+		else
+			$ten = $_POST['ten'];
+			
+		if(empty($_POST['diachi']))
+		{
+			$loi['diachi'] = 'Vui lòng nhập địa chỉ người nhận';	
+			$check = 0;
+		}
+		else
+			$diachi = $_POST['diachi'];
+			
+		if(empty($_POST['sdt']))
+		{
+			$loi['sdt'] = 'Vui lòng nhập số điện thoại người nhận';	
+			$check = 0;
+		}
+		else
+			$sdt = $_POST['sdt'];
+		
+		$ngaygiao = $_POST['ngaygiao'];
+		
+		if(isset($_SESSION['cart']))
+		{
+			if($check)
+			{
+				mysql_query("set name 'utf8'");
+				date_default_timezone_set('Asia/Ho_Chi_Minh');
+				$date = date('Y/m/d H:i:s');	
+	
+				$id = Tao_MaGH();
+				//echo $id;		
+				mysql_query("set names 'utf8'");
+				$kq = mysql_query("insert into giohang values('$id', '".$_SESSION['user']."', '$date', '$ten', '$sdt', '$diachi', '$ngaygiao', 1)");
+				
+				foreach($_SESSION['cart'] as $key => $value)
+				{
+					mysql_query("set names 'utf8'");
+					$kq = mysql_query("insert into chitietgiohang values('$id', '$key', ".$_SESSION['cart'][$key]['soluong'].", ".$_SESSION['cart'][$key]['giaban'].", '000')");
+					$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - ".$_SESSION['cart'][$key]['soluong']." WHERE MaCTSP = '$key'");
+					$kq = mysql_query("UPDATE SanPham SET LuotMua = LuotMua + ".$_SESSION['cart'][$key]['soluong']." WHERE MaSP = '".$_SESSION['cart'][$key]['id']."'");
+				}
+				unset($_SESSION['cart']);
+						//header('location: index.php');
+				echo "<br/><br/><p class='title'>ĐẶT HÀNG THÀNH CÔNG</p>";
+				$check_dn = 0;
+			}
+		}
+	}
 ?>
 
-<form>
+<?php
+if($check_dn == 1)
+{
 
+?>
+<form method="post">
 <div id="ship-left">
 	<p class="title">XÁC NHẬN ĐƠN HÀNG</p>
     
@@ -135,24 +231,43 @@
     <div id="ship-info">
         
         <p>Họ và tên người nhận</p>
-        <input type='text' value="" class='txt-info' name='ten'/>
+        <input type='text' value="<?php echo $ten ?>" class='txt-info' name='ten'/>
+        <?php
+        	
+			if(!empty($loi['ten']))
+				echo "<p class='error'>".$loi['ten']."</p>";
+		?>
         <p>Số điện thoại</p>
-        <input type='text' value="" class='txt-info' name='sdt'/>
+        <input type='text' value="<?php echo $sdt ?>" class='txt-info' name='sdt'/>
+        <?php
+        	
+			if(!empty($loi['sdt']))
+				echo "<p class='error'>".$loi['sdt']."</p>";
+		?>
         <p>Địa chỉ giao hàng</p>
-        <textarea class="txt-diachi" name='diachi'></textarea>
+        <textarea class="txt-diachi" name='diachi'><?php echo $diachi ?></textarea>
+        <?php
+        	
+			if(!empty($loi['diachi']))
+				echo "<p class='error'>".$loi['diachi']."</p>";
+		?>
         <p>Chọn ngày giao hàng</p>
         <input type='date' class="txt-info" name='ngaygiao'/>
     </div>
     
     <br /><br />
-    <input type='submit' class='btn-cart' value='Đặt hàng'/>
+    <input type='submit' name='ok' class='btn-cart' value='Đặt hàng'/>
     
 </div>
 
 <div class="clear"></div>
+<?php
+}
+?>
 </form>
 
 <?php
 	ob_flush();
+	mysql_close($conn);
 	include_once('module/bottom.php');
 ?>

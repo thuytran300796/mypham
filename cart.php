@@ -82,7 +82,7 @@
 			$_SESSION['cart'][$ctsp]['id'] = $_POST['id'];
 			$_SESSION['cart'][$ctsp]['tensp'] = $_POST['tensp'];
 			mysql_query("set names 'utf8'");
-			$mausac = mysql_query("select mausac from chitietsanpham where mactsp = '$ctsp'");
+			$mausac = mysql_query("select mausac, giaban, giadexuat from chitietsanpham where mactsp = '$ctsp' and soluong > 0");
 			$re_mausac = mysql_fetch_assoc($mausac);
 			$_SESSION['cart'][$ctsp]['mausac'] = $re_mausac['mausac'];
 		}

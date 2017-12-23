@@ -293,4 +293,5 @@
             
 <?php
 	include_once('module/bottom.php');
+	mysql_close($conn);
 ?>
