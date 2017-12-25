@@ -372,10 +372,8 @@
 	$check_sp = $check_ctsp = 1; $mota = $mancc = $madm = NULL;
 	if(isset($_POST['ok']))
 	{
-		if(isset($_SESSION['list-ctsp']))
-			echo "Có";
-		else
-			echo "ko";
+		$mota = $_POST['mota'];
+		
 		//echo "<pre>"; echo $_SESSION['list-ctsp']; echo "</pre>";
 		if(empty($_POST['masp']))
 		{
@@ -391,7 +389,7 @@
 			$check_sp = 0;
 		}
 		else
-			$tensp = $_POST['tensp'];
+			$tensp = mysql_escape_string($_POST['tensp']);
 			
 		if(empty($_POST['dvt']))
 		{
@@ -399,7 +397,7 @@
 			$check_sp = 0;
 		}
 		else
-			$dvt = $_POST['dvt'];
+			$dvt = mysql_escape_string($_POST['dvt']);
 		
 		if(empty($_POST['trongluong']))
 		{
@@ -415,7 +413,7 @@
 			$check_sp = 0;
 		}
 		else
-			$thuonghieu = $_POST['thuonghieu'];
+			$thuonghieu = mysql_escape_string($_POST['thuonghieu']);
 		
 		if(empty($_POST['quycach']))
 		{
@@ -423,7 +421,7 @@
 			$check_sp = 0;
 		}
 		else
-			$quycach = $_POST['quycach'];
+			$quycach = mysql_escape_string($_POST['quycach']);
 		
 		if(empty($_POST['thue']))
 		{
@@ -433,7 +431,7 @@
 		else
 			$thue = $_POST['thue'];
 			
-		if(count($_FILES['file']['name'])==0)
+		if(count($_FILES['file']['name'])==1)
 		{
 			if(empty($_FILES['file']['name'][0]))
 			{
@@ -442,15 +440,8 @@
 				unset($_FILES['file']);
 			}
 		}
-		/*
-		else if(count($_FILES['file']['name']) > 3)
+		else if(count($_FILES['file']['name']) > 1)
 		{
-			$check_sp = 0;
-			$loi['file'] = "Chỉ được upload tối đa 3 ảnh";
-			unset($_FILES['file']);
-		}*/
-		
-			echo count($_FILES['file']);
 			foreach($_FILES['file']['name'] as $i => $value)
 			{
 				$list_ext = array('jpeg', 'jpg', 'png', 'gif', 'bmp');
@@ -463,6 +454,17 @@
 					break;
 				}
 			}
+		}
+		/*
+		else if(count($_FILES['file']['name']) > 3)
+		{
+			$check_sp = 0;
+			$loi['file'] = "Chỉ được upload tối đa 3 ảnh";
+			unset($_FILES['file']);
+		}*/
+		
+			//echo count($_FILES['file']);
+			
 		
 			
 		$mancc = $_POST['mancc']; $madm = $_POST['madm'];
@@ -475,8 +477,10 @@
 			
 			mysql_query("set names 'utf8'");
 			
-			$sp = mysql_query("insert into sanpham(masp, tensp, donvitinh, trongluong, thuonghieu, quycachdonggoi, mota, ngaynhap, thue, mancc, madm, luotmua, trangthai) values('$masp', '$tensp', '$dvt', '$trongluong', '$thuonghieu', '$quycach', '$mota', '$date', $thue, '$mancc', '$madm', 0, 1) ");	
-			
+			$sp = mysql_query("insert into sanpham(masp, tensp, donvitinh, trongluong, thuonghieu, quycachdonggoi, mota, ngaynhap, thue, mancc, madm, trangthai) values('$masp', '$tensp', '$dvt', '$trongluong', '$thuonghieu', '$quycach', '$mota', '$date', $thue, '$mancc', '$madm',  1) ");	
+			if(!$sp)
+				echo mysql_error();
+				
 			foreach($_SESSION['list-ctsp'] as $key => $value)
 			{
 				$mactsp = mysql_query("select count(mactsp) as 'number' from chitietsanpham");
@@ -484,6 +488,30 @@
 				$mactsp =(int)$mactsp['number'] + 1;
 				mysql_query("set names 'utf8'");
 				$ctsp = mysql_query("insert into chitietsanpham(masp, mactsp, mausac, ngaysx, hansudung, soluong, giaban, trangthai) values('$masp', '$mactsp', '".$_SESSION['list-ctsp'][$key]['mausac']."', '".$_SESSION['list-ctsp'][$key]['ngaysx']."', '".$_SESSION['list-ctsp'][$key]['hsd']."', ".$_SESSION['list-ctsp'][$key]['soluong'].", ".$_SESSION['list-ctsp'][$key]['giaban'].", 1)");	
+				
+				/*--------------INSERT BẢNG NHẬP KHO--------------*/
+				$phieunhap = mysql_query('select MaPhieu from PhieuNhap');
+		
+				if(mysql_num_rows($phieunhap) == 0)
+					$mapn = 'PN1';
+				else
+				{
+					$re_pn = mysql_fetch_assoc($phieunhap);
+					$number = substr($re_pn['MaPhieu'], 4);
+				
+					while($re_pn = mysql_fetch_assoc($phieunhap))
+					{
+						$temp = substr($re_pn['MaPhieu'], 2);
+						if($number < $temp)
+							$number = $temp;
+					}
+					$mapn = 'PN'.++$number;
+				}
+				
+				mysql_query("set names 'utf8'");
+				$nhapkho = mysql_query("insert into phieunhap values('$mapn','$date', '$mactsp', ".$_SESSION['list-ctsp'][$key]['soluong'].", ".$_SESSION['list-ctsp'][$key]['gianhap'].")");
+				if(!$nhapkho)
+					echo mysql_error();
 			}
 			unset($_SESSION['list-ctsp']);
 			
@@ -515,7 +543,10 @@
 				if(!$kq)
 					echo mysql_error()."<br/>";
 			}
+			
 			unset($_FILES['file']);
+			echo "<script>alert('Thêm sản phẩm thành công');</script>";
+			header('admin.php?quanly=sanpham');
 		}
 	}
 	/*
@@ -565,7 +596,7 @@
     
         <tr>
             <td>Mã sản phẩm: </td>
-            <td><input type='text' class='txt-sp' name="masp"/></td>
+            <td><input type='text' class='txt-sp' name="masp" value="<?php echo $masp ?>"/></td>
             <?php
 				if($loi['masp'] != NULL)
 					echo "<td class='error'>".$loi['masp']."</td>";
@@ -575,7 +606,7 @@
     
         <tr>
             <td>Tên sản phẩm: </td>
-            <td><input type='text' class='txt-sp' name="tensp"/></td>
+            <td><input type='text' class='txt-sp' name="tensp" value="<?php echo $tensp ?>"/></td>
             <?php
 				if($loi['tensp'] != NULL)
 					echo "<td class='error'>".$loi['tensp']."</td>";
@@ -584,7 +615,7 @@
         
         <tr>
             <td>Đơn vị tính: </td>
-            <td><input type='text' class='txt-sp' name="dvt"/></td>
+            <td><input type='text' class='txt-sp' name="dvt" value="<?php echo $dvt ?>"/></td>
             <?php
 				if($loi['dvt'] != NULL)
 					echo "<td class='error'>".$loi['dvt']."</td>";
@@ -593,7 +624,7 @@
         
         <tr>
             <td>Trọng lượng: </td>
-            <td><input type='text' class='txt-sp' name="trongluong"/></td>
+            <td><input type='text' class='txt-sp' name="trongluong" value="<?php echo $trongluong ?>"/></td>
             <?php
 				if($loi['trongluong'] != NULL)
 					echo "<td class='error'>".$loi['trongluong']."</td>";
@@ -602,7 +633,7 @@
         
         <tr>
             <td>Thương hiệu: </td>
-            <td><input type='text' class='txt-sp' name="thuonghieu"/></td>
+            <td><input type='text' class='txt-sp' name="thuonghieu" value="<?php echo $thuonghieu ?>"/></td>
             <?php
 				if($loi['thuonghieu'] != NULL)
 					echo "<td class='error'>".$loi['thuonghieu']."</td>";
@@ -611,7 +642,7 @@
         
         <tr>
             <td>Quy cách đóng gói: </td>
-            <td><input type='text' class='txt-sp' name="quycach"/></td>
+            <td><input type='text' class='txt-sp' name="quycach" value="<?php echo $quycach ?>"/></td>
             <?php
 				if($loi['quycach'] != NULL)
 					echo "<td class='error'>".$loi['quycach']."</td>";
@@ -620,7 +651,7 @@
         
         <tr>
             <td>Mô tả: </td>
-            <td><textarea class="txt-sp"></textarea></td>
+            <td><textarea name="mota" class="txt-sp"><?php echo $mota ?></textarea></td>
            
         </tr>
         
@@ -641,7 +672,10 @@
 						$ncc = mysql_query("select mancc, tenncc from nhacungcap where trangthai = 1");
 						while($re_ncc = mysql_fetch_assoc($ncc))
 						{
-							echo "<option value='".$re_ncc['mancc']."'>".$re_ncc['tenncc']."</option>";
+							if($re_ncc['mancc'] == $mancc)
+								echo "<option selected='selected' value='".$re_ncc['mancc']."'>".$re_ncc['tenncc']."</option>";
+							else
+								echo "<option value='".$re_ncc['mancc']."'>".$re_ncc['tenncc']."</option>";
 						}
 					?>	
                 	
@@ -653,7 +687,7 @@
         
         <tr>
             <td>Thuế: </td>
-            <td><input type='text' class='txt-sp' name="thue"/></td>
+            <td><input type='text' class='txt-sp' name="thue" value="<?php echo $thue ?>"/></td>
             <?php
 				if($loi['thue'] != NULL)
 					echo "<td class='error'>".$loi['thue']."</td>";
@@ -669,7 +703,10 @@
 						$ncc = mysql_query("select madm, tendm from danhmuc");
 						while($re_ncc = mysql_fetch_assoc($ncc))
 						{
-							echo "<option value='".$re_ncc['madm']."'>".$re_ncc['tendm']."</option>";
+							if($re_ncc['madm'] == $madm)
+								echo "<option selected='selected' value='".$re_ncc['madm']."'>".$re_ncc['tendm']."</option>";
+							else
+								echo "<option value='".$re_ncc['madm']."'>".$re_ncc['tendm']."</option>";
 						}
 					?>	
                 	

@@ -216,7 +216,7 @@ body
 
 .tb-lietke th
 {
-	background: #FFA729;  color: white;
+	background: #0489B1;  color: white;
 }
 
 .list-item-title
@@ -954,6 +954,16 @@ float: right;		width: 25%;	 margin-right: 20px;
 	margin: 4%;	
 }
 
+#parent li
+{
+	float: left; margin-right: 3%;	line-height: 150px;
+}
+
+#parent li img
+{
+	float: left; width: 150px; height: 170px; padding: 3px; border: solid 1px #ccc; border-radius: 3px;
+}
+
 #sp-right table
 {
 	border: solid 1px #ccc;	
@@ -977,6 +987,103 @@ float: right;		width: 25%;	 margin-right: 20px;
 .ctsp-item
 {
 	width: 20%; line-height: 30px; float: left; text-align: center;
+}
+
+/*------------------NHẬP KHO----------------------*/
+.quick-search
+{
+	position: relative; margin: 0px 0px 50px 30px;	
+}
+
+.quick-result
+{
+	position: absolute; width: 420px; height: 300px; top: 35px; border: solid 1px;
+	display: none;
+	z-index: 70; background: #fff;
+	overflow:scroll;
+}
+
+.quick-result li
+{
+	padding: 20px 10px; height: 90px;
+}
+
+.quick-result li:hover, .quick-result li:hover a
+{
+	
+	background: #EFFBF2;
+	border-radius: 4px;	
+}
+
+.quick-result img
+{
+	width: 80px; height: 90px;
+	float: left;
+}
+
+.quick-result a
+{
+	color: #999;	
+	font-weight: bold;
+ display: block; font-size: 13px;
+}
+
+.quick-result a div
+{
+	float: left; padding-left: 10px; width: 290px;
+}
+
+/*------------------KHUYẾN MÃI--------------------*/
+
+.item-km
+{
+	background: #EFFBF2; height: 100px;
+	width: 80%;
+}
+
+#themkm .cbb-sp
+{
+	width: 170px; height: 33px;
+}
+
+#themkm .txt-sp
+{
+	width: 180px;
+}
+
+#themkm table span
+{
+	font-weight: bold; padding-left: 10px;	
+}
+
+#themkm .quick-result
+{
+	top: 120px; left: 300px;	width: 350px;
+}
+
+#themkm .quick-result img
+{
+	width: 40px; height: 70px;
+	float: left;
+}
+
+#themkm .quick-result a
+{
+	color: black;  display: block; font-size: 12px; 
+}
+
+#themkm .quick-result a div
+{
+	float: left; padding-left: 10px; width: 250px;
+}
+
+#themkm .quick-result li
+{
+	padding: 5px 0px 0px 5px;
+}
+#list-qt ul li
+{
+	padding-left: 10px;	
 }
 
 /*-----------------------------------------------*/

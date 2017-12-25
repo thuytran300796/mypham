@@ -4,14 +4,15 @@
 	
 	$(document).ready(function(e) {
    
+		
 		$('.btn-ctsp').click(function()
 		{
 			check = 1;
-				
+				masp = $('#masp').val();
 				mausac = $('#mausac').val();
 				ngaysx = $('#ngaysx').val();
 				hsd = $('#hsd').val();
-				gianhap = $('#gianhap').val();
+				//gianhap = $('#gianhap').val();
 				giaban = $('#giaban').val();
 				
 				soluong = $('#soluong').val();
@@ -32,13 +33,13 @@
 					$('#hsd').next('.error').fadeIn();
 					check = 0;	
 				}
-				
+				/*
 				if(gianhap == "")
 				{
 					$('#gianhap').next('.error').fadeIn();
 					check = 0;	
 				}
-				
+				*/
 				if(giaban == "")
 				{
 					$('#giaban').next('.error').fadeIn();
@@ -49,13 +50,14 @@
 			{
 				//ajax('them');
 
-				data = "ac=them&mausac="+mausac+"&ngaysx="+ngaysx+"&hsd="+hsd+"&gianhap="+gianhap+"&giaban="+giaban+"&soluong="+soluong;
+				//data = "ac=them&mausac="+mausac+"&ngaysx="+ngaysx+"&hsd="+hsd+"&gianhap="+gianhap+"&giaban="+giaban+"&soluong="+soluong;
+				data = "ac=them&masp="+masp+"&mausac="+mausac+"&ngaysx="+ngaysx+"&hsd="+hsd+"&giaban="+giaban+"&soluong="+soluong;
 				//alert(data);
 				if(check)
 				{
 					$.ajax
 					({
-						url: "module/sanpham/xuly/xuly.php",
+						url: "module/sanpham/xuly/xuly_sua.php",
 						type: "post",
 						data: data,
 						dataType: "json", 
@@ -63,7 +65,8 @@
 						success:function(kq)
 						{
 							//alert(kq.mausac + " - " + kq.soluong);
-							$('#ctsp table:eq(1)').append("<tr><td>"+kq.mausac+"</td><td>"+kq.ngaysx+"</td><td>"+kq.hsd+"</td><td>"+kq.soluong+"</td><td>"+kq.gianhap+"</td><td>"+kq.giaban+"</td><td><a href='javascript:void(0)' class='edit-ctsp' data-id="+kq.id+">Sửa</a></td><td><a href='javascript:void(0)' class='del-ctsp' data-id="+kq.id+">Xóa</a></td></tr>");
+							$('#ctsp table:eq(1)').append("<tr><td>"+kq.mausac+"</td><td>"+kq.ngaysx+"</td><td>"+kq.hsd+"</td><td>"+kq.soluong+"</td><td>"+kq.giaban+"</td><td><a href='javascript:void(0)' class='edit-ctsp' data-id="+kq.mactsp+">Sửa</a></td><td><a href='javascript:void(0)' class='del-ctsp' data-id="+kq.mactsp+">Xóa</a></td></tr>");
+							//$('#text').html(kq);
 						},
 						error: function (jqXHR, exception)
 						{
@@ -93,25 +96,25 @@
 			else if($('.btn-ctsp').attr('id') == 'suactsp')
 			{
 				//id lấy từ edit-ctsp.click giống như biến toàn cục được bao bọc trong $(document).ready()
-				data = "ac=sua&id="+id+"&mausac="+mausac+"&ngaysx="+ngaysx+"&hsd="+hsd+"&gianhap="+gianhap+"&giaban="+giaban+"&soluong="+soluong;
+				data = "ac=sua&id="+id+"&mausac="+mausac+"&ngaysx="+ngaysx+"&hsd="+hsd+"&giaban="+giaban+"&soluong="+soluong;
 				//alert(data);
 				if(check)
 				{
 					$.ajax
 					({
-						url: "module/sanpham/xuly/xuly.php",
+						url: "module/sanpham/xuly/xuly_sua.php",
 						type: "post",
 						data: data,
 						//dataType: "json", 
 						async: true,
-						success:function()
+						success:function(kq)
 						{
+							//$('#text').html(kq);
 							$("a[data-id='"+id+"']").closest("tr").find("td:eq(0)").html(mausac);
 							$("a[data-id='"+id+"']").closest("tr").find("td:eq(1)").html(ngaysx);
 							$("a[data-id='"+id+"']").closest("tr").find("td:eq(2)").html(hsd);
 							$("a[data-id='"+id+"']").closest("tr").find("td:eq(3)").html(soluong);
-							$("a[data-id='"+id+"']").closest("tr").find("td:eq(4)").html(gianhap);
-							$("a[data-id='"+id+"']").closest("tr").find("td:eq(5)").html(giaban);
+							$("a[data-id='"+id+"']").closest("tr").find("td:eq(4)").html(giaban);
 						},
 						error: function (jqXHR, exception)
 						{
@@ -143,6 +146,8 @@
 						id: "themctsp"
 					});
 					$('.cancle').hide();
+					$('#giaban').removeAttr('readonly');	
+					$('#soluong').removeAttr('readonly');	
 				}
 			}
 			
@@ -151,22 +156,27 @@
 		
 		$('#ctsp table:eq(1)').delegate('.del-ctsp', 'click', function()
 		{
-			id = $(this).attr('data-id');
-			$.ajax
-			({
-				url: "module/sanpham/xuly/xuly.php",
-				type: "post",
-				data: "ac=xoa&id="+id,
-				async: true,
-				success:function()
-				{
-					$("a[data-id='"+id+"']").closest("tr").fadeOut('fast');
-				}
-			});
+			if(confirm('Bạn có chắc chắn muốn xóa không'))
+			{
+				id = $(this).attr('data-id');
+				$.ajax
+				({
+					url: "module/sanpham/xuly/xuly_sua.php",
+					type: "post",
+					data: "ac=xoa&id="+id,
+					async: true,
+					success:function()
+					{
+						$("a[data-id='"+id+"']").closest("tr").fadeOut('fast');
+					}
+				});
+			}
 			return false;
 		});
 		
 		$('#ctsp table:eq(1)').delegate('.edit-ctsp', 'click', function(){
+			$('#giaban').prop('readonly', 'true');	
+			$('#soluong').prop('readonly', 'true');	
 			$('.btn-ctsp').attr
 			({
 				value: "Chỉnh sửa",
@@ -174,10 +184,9 @@
 			});
 			id = $(this).attr('data-id');
 			//alert(id);
-			
 			$.ajax
 					({
-						url: "module/sanpham/xuly/xuly.php",
+						url: "module/sanpham/xuly/xuly_sua.php",
 						type: "post",
 						data: "ac=get&id="+id,
 						dataType: "json", 
@@ -185,12 +194,15 @@
 						success:function(kq)
 						{
 							//alert(kq.mausac + " - " + kq.soluong);
+							//$('#gianhap').val(kq.gianhap);
+							
 							$('#mausac').val(kq.mausac);
 							$('#soluong').val(kq.soluong);
-							$('#gianhap').val(kq.gianhap);
 							$('#giaban').val(kq.giaban);
 							$('#ngaysx').val(kq.ngaysx);
 							$('#hsd').val(kq.hsd);
+							
+							//$('#text').html(kq);
 						},
 						error: function (jqXHR, exception)
 						{
@@ -228,6 +240,8 @@
 			});
 			$('#giaban').val(""); $('#gianhap').val(""); $('#soluong').val(""); $('#ngaysx').val(""); $('#hsd').val(""); $('#mausac').val("");
 			$('.cancle').hide();
+			$('#giaban').removeAttr('readonly');	
+			$('#soluong').removeAttr('readonly');	
 		});
 		
 		$('#ngaysx, #hsd').click(function()
@@ -286,15 +300,37 @@
 			return false;
 		});
 		
-		//window.onbeforeunload = function () {
-			//return "Do you really want to close?";
+		$('.del-hinh').click(function()
+		{
+			if(confirm('Bạn có chắn chắn muốn xóa không'))
+			{
+				maha = $(this).attr('data-id');
+				//alert(maha);
+				$.ajax
+				({
+					url: "module/sanpham/xuly/xuly_sua.php",
+					type: "post",
+					data: "ac=xoahinh&maha="+maha,
+					async: true,
+					success:function(kq)
+					{
+						$("a[data-id='"+maha+"']").closest("li").fadeOut('fast');
+					}
+				});	
+			}
+			return false;
+		});
+		
+		$('#ctsp table:eq(1) tr').click(function()
+		{
 			
-			//if(myWindow.closed)
-			//{
-					
-			//}
-			
-		//};
+			//alert('a');
+			id = $(this).attr('data-id');
+			//alert(id);
+			$(this).after($('.phieunhap'+id).slideToggle());
+			//$('.ctsp'+id).slideToggle();
+		});
+		
     });
 	
 	
@@ -320,6 +356,7 @@
 			echo "ko";
 		//echo "<pre>"; echo $_SESSION['list-ctsp']; echo "</pre>";
 
+		$mota = $_POST['mota'];
 			
 		if(empty($_POST['tensp']))
 		{
@@ -368,7 +405,8 @@
 		}
 		else
 			$thue = $_POST['thue'];
-			
+		
+		/*
 		if(count($_FILES['file']['name'])==1)
 		//if(count($_FILES['file']['name'])==0)
 		{
@@ -378,7 +416,7 @@
 				$loi['file'] = "Vui lòng chọn ít nhất 1 file ảnh";
 				unset($_FILES['file']);
 			}
-		}
+		}*/
 		/*
 		else if(count($_FILES['file']['name']) > 3)
 		{
@@ -387,9 +425,10 @@
 			unset($_FILES['file']);
 		}*/
 		
-		if(isset($_FILES['file']['name']))
+		if(isset($_FILES['file']['name']) && $_FILES['file']['name'][0] != "")
 		{
 			echo count($_FILES['file']['name']);
+			echo "<br/>".$_FILES['file']['name'][0];
 			foreach($_FILES['file']['name'] as $i => $value)
 			{
 				$list_ext = array('jpeg', 'jpg', 'png', 'PNG', 'gif', 'bmp');
@@ -411,8 +450,10 @@
 			mysql_query("set names 'utf8'");
 			
 			$sp = mysql_query("update sanpham set tensp = '$tensp', donvitinh = '$dvt', trongluong = '$trongluong', thuonghieu = '$thuonghieu', quycachdonggoi = '$quycach', mota = '$mota', thue = $thue, mancc = '$mancc', madm = '$madm' where masp = '$masp'");
+			if(!$sp)
+				echo mysql_error();
 			//$sp = mysql_query("insert into sanpham(masp, tensp, donvitinh, trongluong, thuonghieu, quycachdonggoi, mota, thue, mancc, madm, luotmua, trangthai) values('$masp', '$tensp', '$dvt', '$trongluong', '$thuonghieu', '$quycach', '$mota', $thue, '$mancc', '$madm', 0, 1) ");	
-			/*
+			
 			
 			foreach($_FILES['file']['name'] as $i => $value)
 			{
@@ -442,7 +483,7 @@
 				if(!$kq)
 					echo mysql_error()."<br/>";
 			}
-			*/
+			
 			unset($_FILES['file']);
 		}
 	}
@@ -509,7 +550,7 @@
     
         <tr>
             <td>Mã sản phẩm: </td>
-            <td><input type='text' class='txt-sp' name="masp" value="<?php echo $masp ?>"/></td>
+            <td><input type='text' class='txt-sp' name="masp" id='masp' value="<?php echo $masp ?>"/></td>
             <?php
 				if($loi['masp'] != NULL)
 					echo "<td class='error'>".$loi['masp']."</td>";
@@ -564,7 +605,7 @@
         
         <tr>
             <td>Mô tả: </td>
-            <td><textarea class="txt-sp"><?php echo $mota ?></textarea></td>
+            <td><textarea name="mota" class="txt-sp"><?php echo $mota ?></textarea></td>
            
         </tr>
         
@@ -656,6 +697,28 @@
         </tr>
     </table>
     
+    <?php
+		$hinhanh = mysql_query("select maha, duongdan from hinhanh where masp = '$masp'");
+	?>
+    
+    
+    <div style="width: 100%;  margin-top:3%;">
+    	
+        <p class="title">HÌNH ẢNH CHO SẢN PHẨM</p><br />
+    	<ul>
+        <?php
+			while($re_ha = mysql_fetch_assoc($hinhanh))
+			{
+		?>
+        		<li><img src="../image/mypham/<?php echo $re_ha['duongdan'] ?>" />
+                	<a  href='javascript:void(0)' class="del-hinh" data-id="<?php echo $re_ha['maha'] ?>">Xóa</a>
+                </li>
+        <?php
+			}
+		?>
+        <div class="clear"></div>
+        </ul>
+    </div>
     
 </div>
 
@@ -663,9 +726,9 @@
 	
 	mysql_query("set names 'utf8'");
 	
-	$ctsp = mysql_query("select ctsp.mactsp, ctsp.mausac, ctsp.ngaysx, ctsp.hansudung, ctsp.soluong, pn.gianhap, ctsp.giaban
-						from chitietsanpham ctsp, phieunhap pn
-						where ctsp.mactsp = pn.mactsp and ctsp.trangthai = 1 and ctsp.masp = '$masp'");
+	$ctsp = mysql_query("select ctsp.mactsp, ctsp.mausac, ctsp.ngaysx, ctsp.hansudung, ctsp.soluong, ctsp.giaban
+						from chitietsanpham ctsp
+						where  ctsp.trangthai = 1 and ctsp.masp = '$masp'");
 ?>
 
 <div id='ctsp' style="width: 46%; height: 100%; float: right;">
@@ -694,16 +757,16 @@
             <td><input type='text' class='txt-sp' id='soluong' name='soluong'/> <span class='error'> Vui lòng nhập số lượng</span></td>
             <td></td>
         </tr>
-        
+        <!--
         <tr>
             <td>Giá nhập: </td>
             <td><input type='text' class='txt-sp' id='gianhap' name='gianhap'/>  <span class='error'> Vui lòng nhập giá nhập</span></td>
             <td></td>
         </tr>
-        
+        -->
         <tr>
             <td>Giá bán: </td>
-            <td><input type='text' class='txt-sp' id='giaban' name='giaban'/>  <span class='error'> Vui lòng nhập giá bán</span></td>
+            <td><input  type='text' class='txt-sp' id='giaban' name='giaban'/>  <span class='error'> Vui lòng nhập giá bán</span></td>
             <td></td>
         </tr>
       
@@ -717,16 +780,14 @@
     	
     </table>
     
-    <table border="1" class='tb-lietke'>
+    <table class='tb-lietke'>
     	
         <tr>
         	<th>Màu sắc</th>
             
             <th>NSX</th>
             <th>HSD</th>
-            
             <th>Số lượng</th>
-            <th>Giá nhập</th>
             <th>Giá bán</th>
             <th>Sửa</th>
             <th>Xóa</th>
@@ -738,21 +799,50 @@
 			{
 					//echo $key." ";
 		?>
-        		<tr>
+        		<tr data-id='<?php echo $re_ctsp['mactsp'] ?>'>
                     <td><?php echo $re_ctsp['mausac']==""?"Không":$re_ctsp['mausac'] ?></td>
-                    <td><?php echo date('d-m-Y', strtotime($re_ctsp['ngaysx'])) ?></td>
-                    <td><?php echo date('d-m-Y', strtotime($re_ctsp['hansudung']))?></td>
+                    <td><?php echo $re_ctsp['ngaysx'] ?></td>
+                    <td><?php echo $re_ctsp['hansudung']?></td>
                     <td><?php echo $re_ctsp['soluong'] ?></td>
-                    <td><?php echo number_format($re_ctsp['gianhap']) ?></td>
                     <td><?php echo number_format($re_ctsp['giaban']) ?></td>
                     
-                    <td><a href='javascript:void(0)'  class='edit-ctsp'>Sửa</a></td>
-                    <td><a href='javascript:void(0)'  class='del-ctsp'>Xóa</a></td>
+                    <td><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?> class='edit-ctsp'>Sửa</a></td>
+                    <td><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?>  class='del-ctsp'>Xóa</a></td>
                 </tr>
+                <div  class='phieunhap<?php echo $re_ctsp['mactsp'] ?>' style="display: none; background: #EFFBF2; width: 250%;   padding: 10px; ">
+                
+                    <div style="width: 100%; height: 30px; line-height: 30px; font-weight: bold;">
+                        <div class='ctsp-item'  >Mã phiếu</div>
+                        <div class='ctsp-item'  style="text-align: left;" >Ngày nhập</div>
+                        <div class='ctsp-item'  style="text-align: left;" >Số lượng nhập</div>
+                        <div class='ctsp-item' >Giá nhập</div>
+                    </div>
+                    <div class="clear"></div>
+                    
+                    <?php
+						mysql_query("set names 'utf8'");
+						$phieunhap = mysql_query("select mactsp, maphieu, ngaynhap, soluong, gianhap from phieunhap where mactsp = '".$re_ctsp['mactsp']."'");
+                        while($re_pn = mysql_fetch_assoc($phieunhap))
+                        {
+
+                    ?>
+                    <div style="border-bottom: solid 1px #ccc; width: 100%">
+                        <div class='ctsp-item'><a href='#'><?php echo $re_pn['maphieu'] ?></a></div>
+                        <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($re_pn['ngaynhap'])) ?></div>
+                        <div class='ctsp-item' style="text-align: left;"><?php echo $re_pn['soluong'] ?></div>
+                        <div class='ctsp-item'><?php echo $re_pn['gianhap'] ?></div>
+                    </div>
+                    <div class="clear"></div>
+                    <?php
+                        }
+                    ?>
+                    
+                    <div class="clear"></div>
+        		</div>
+				<div class="clear"></div>
         <?php	
 			}
 		?>
-        
         
     </table>
     
@@ -804,76 +894,8 @@
             </form>
 </div>
 
-<!--popup-->
-<!--
-<div id='phanloai'>
-	
-    <table id='nhaplieu'>
-                
-		<tr>
-        	<td>Màu sắc:</td>
-            <td><input type='text' name = 'mausac' class = 'mausac txt-sp'/></td>
-            <td class = 'error'></td>
-        </tr>
-        
-        <tr>
-            <td>Ngày sản xuất: </td>
-            <td><input type = 'date'  class="ngaysx txt-sp"/></td>
-            <td></td>
-        </tr>
-        
-        <tr>
-            <td>Hạn sử dụng: </td>
-            <td><input type = 'date' class="hsd txt-sp" /></td>
-            <td></td>
-        </tr>
-        
-        <tr>
-            <td>Giá bán: </td>
-            <td><input type='text' class='giaban txt-sp' /></td>
-            <td></td>
-        </tr>
-        
-        <tr>
-            <td>Giá nhập: </td>
-            <td><input type='text' class='gianhap txt-sp' /></td>
-            <td></td>
-        </tr>
-        
-        <tr>
-            <td>Nhà cung cấp: </td>
-            <td>
-            	<select class="ncc">
-                	<?php
-						mysql_query("set names 'utf8'");
-						$ncc = mysql_query("select mancc, tenncc from nhacungcap where trangthai = 1");
-						while($re_ncc = mysql_fetch_assoc($ncc))
-						{
-							echo "<option value='".$re_ncc['mancc']."'>".$re_ncc['tenncc']."</option>";
-						}
-					?>	
-                	
-                </select>
-            </td>
-            <td></td>
-        </tr>
-                            
-        <tr>
-            <td>Số lượng:</td>
-           	<td><input type='text' name = 'soluongctsp' class = 'soluongctsp txt-sp'/></td>
-            <td class = 'error'></td>
-        </tr>
-                    
-        <tr>
-            <td></td>
-            <td><input value = 'Thêm' id = 'themctsp' class="sub" name = 'themctsp' type="submit"/></td>
-        </tr>
-                
-    </table>
-                
-    <table id = 'list-ctsp' style="border-collapse: collapse 1px">
-                
-	</table>
-    
+
+
+<div id='text'>
+	aaaaaaaaa
 </div>
--->

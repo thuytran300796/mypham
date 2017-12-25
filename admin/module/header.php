@@ -75,7 +75,7 @@
                         </ul>
                     </li>
                     <li><a href='admin.php?quanly=nhacc&ac=them'>NHÀ CUNG CẤP</a></li>
-                    <li><a href='#'>KHUYẾN MÃI</a></li>
+                    <li><a href='admin.php?quanly=khuyenmai&ac=lietke'>KHUYẾN MÃI</a></li>
                     <li><a href='#'>HÓA ĐƠN</a></li>
                     <li><a href='#'>BÁO CÁO, THỐNG KÊ</a></li>
                     <li><a href='#'>NHÂN VIÊN</a>

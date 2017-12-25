@@ -140,6 +140,8 @@
 			include_once('module/chucvu/main.php');
 		else if($temp == 'khachhang')
 			include_once('module/khachhang/main.php');
+		else if($temp == 'khuyenmai')
+			include_once('module/khuyenmai/main.php');
 	}
 
 ?>

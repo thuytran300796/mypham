@@ -12,6 +12,10 @@
 		{
 			include_once('module/sanpham/suasp.php');		
 		}
+		else if($_REQUEST['ac'] == 'nhapsp')
+			{
+				require('module/sanpham/nhapsp.php');		
+			}
 	}
 
 	//include_once('main-left.php');

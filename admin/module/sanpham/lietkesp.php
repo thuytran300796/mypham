@@ -46,9 +46,15 @@
 
 <div style=" width: 100%; ">
 <form method="get">
-	<input type='submit' class='sub' value="Thêm mới" style="float: right;"/>
+	<input type='submit' class='sub' value="Nhập hàng mới" style="float: right;"/>
     <input type='hidden' name='quanly' value="sanpham"/>
     <input type='hidden' name='ac' value="themsp"/>
+</form>
+<form method="get">
+
+    <input type='submit' class='sub' value="Nhập hàng cũ" style="float: right;"/>
+    <input type='hidden' name='quanly' value="sanpham"/>
+    <input type='hidden' name='ac' value="nhapsp"/>
 </form>
 </div>
 <div class="clear"></div>
