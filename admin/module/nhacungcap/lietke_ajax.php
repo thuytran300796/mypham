@@ -23,6 +23,7 @@
             
             <div>
             	<h3></h3>
+                <img style="float: right; padding-top: 5px; padding-right: 5px;" src="../image/close.PNG" id='close-submit'/>
             </div>
             
            	<!--<form action="admin.php?quanly=nhacc" method="post">-->
@@ -62,23 +63,25 @@
         </div>
     </div>
     
-    <div id="nhacungcap">
+    <div id="nhacungcap" style="width: 100%;">
     	
         <p class="title">DANH SÁCH CÁC NHÀ CUNG CẤP</p>
-        <input type='submit' name='add' value='Thêm' id="nhacc-add" class="btn-ad"/>
+        
+        <input type='submit' name='add' value='Thêm mới' id="nhacc-add" class="sub" style=" margin-left: 90.5%;"/>
         <div class="clear"></div>
         <!--<p id='content'>ssssss</p>-->
     
-        <table class = "tb-lietke"  border="1" >
+        <table class = "tb-lietke" width="100%"  border="1" >
         
             <tr>
-                <th width="12%">Mã NCC</th>
-                <th width="23%">Tên nhà cung cấp</th>
-                <th width="26%">Địa chỉ</th>
-                <th width="12%">Số điện thoại</th>
-                <th width="16">Email</th>
-                <th width="5%">Sửa</th>
-                <th width="5%">Xóa</th>
+                <th width="7%">Mã NCC</th>
+                <th width="19%">Tên nhà cung cấp</th>
+                <th width="25%">Địa chỉ</th>
+                <th width="11%">Số điện thoại</th>
+                <th width="15%">Email</th>
+                <th width="15%">Ghi chú</th>
+                <th width="4%">Sửa</th>
+                <th width="4%">Xóa</th>
             </tr>
            
         <?php
@@ -91,8 +94,9 @@
                     <td><?php echo $re_ncc['DiaChi'] ?></td>
                     <td align="center"><?php echo $re_ncc['SDT'] ?></td>
                     <td><?php echo $re_ncc['Email'] ?></td>
-                    <td align="center"><a href = "admin.php?quanly=nhacc&ac=sua&id=<?php echo $re_ncc['MaNCC'] ?>">Sửa</a></td>
-                    <td align="center"><a href = "#">Xóa</a></td>
+                    <td><?php echo $re_ncc['GhiChu'] ?></td>
+                    <td align="center"><a href = "javascript:void(0)" class="edit-submit" data-id='<?php echo $re_ncc['MaNCC'] ?>'>Sửa</a></td>
+                    <td align="center"><a href = "javascript:void(0)" class="del-submit" data-id='<?php echo $re_ncc['MaNCC'] ?>'>Xóa</a></td>
                 </tr>
         <?php
 			}
@@ -101,4 +105,4 @@
         </table>
     
     </div>
-
+	<div class="clear"></div>

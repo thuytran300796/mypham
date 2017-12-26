@@ -1,5 +1,10 @@
 
 $(document).ready(function(e) {
+	
+	$('#close-submit').click(function()
+	{
+		$('.popup').fadeOut();
+	});
     
 	$('#nhacc-add').click(function()
 	{
@@ -14,6 +19,30 @@ $(document).ready(function(e) {
 		$('.popup-background').fadeIn('fast'); 
 	});
 	
+	$('#nhacungcap .tb-lietke').delegate('.edit-submit', 'click', function()
+	{
+		$('.popup div h3').html('Chỉnh sửa thông tin nhà cung cấp');
+		
+		$('.pop-sub').attr
+		({
+			value: "Sửa",
+			id: "edit"
+		});
+		
+		$('.popup-background').fadeIn('fast'); 
+		id = $(this).attr('data-id');
+		ajax('get_data', id);
+	});
+	
+	$('#nhacungcap .tb-lietke').delegate('.del-submit', 'click', function()
+	{	
+		if(confirm("Bạn có chắc chắn muốn xóa không?"))
+		{
+			id = $(this).attr('data-id');
+			ajax('del', id);
+		}
+	});
+	
 	/*nhấn vô pop-sub thì nó sẽ xem là mình đang thêm hay sửa ncc*/
 	$('.pop-sub').click(function()
 	{
@@ -24,8 +53,8 @@ $(document).ready(function(e) {
 		}
 		else
 		{
-			//id = $(this).
-			ajax('edit');	
+			//id lấy từ hàm delegate('edit-submit')
+			ajax('edit', id);	
 		}
 		return false;
 	});
@@ -40,10 +69,25 @@ $(document).ready(function(e) {
 			email = $('#email_ncc').val();
 			ghichu = $('#ghichu_ncc').val();
 			data = "action=add&ten=" + ten + "&sdt=" + sdt + "&diachi=" + diachi + "&email=" + email + "&ghichu=" + ghichu;
-			//alert(data);
 			
 		}
-		//alert(action); //$('.popup-background').stop().fadeOut('fast');
+		else if(action == 'get_data')
+		{
+			data = "action=get_data&id="+id;	
+		}
+		else if(action == 'edit')
+		{
+			ten = $('#ten_ncc').val();
+			sdt = $('#sdt_ncc').val();
+			diachi = $('#diachi_ncc').val();
+			email = $('#email_ncc').val();
+			ghichu = $('#ghichu_ncc').val();
+			data = "action=edit&id="+id+"&ten=" + ten + "&sdt=" + sdt + "&diachi=" + diachi + "&email=" + email + "&ghichu=" + ghichu;
+		}
+		else
+		{
+			data = "action=del&id="+id;	
+		}
 		$.ajax
 		({
 			//gọi file ncc.php từ file ncc.js => cùng nằm trong 1 thư mục
@@ -55,20 +99,12 @@ $(document).ready(function(e) {
 			success:function(kq)
 			{
 
-				//$('.popup-background').stop().fadeOut('fast');
-				//$('#nhacungcap .tb-lietke').append("<tr><td>"+kq.id+"</td><td>"+kq.ten+"</td><td>"+kq.diachi+"</td><td align='center'>"+kq.sdt+"</td><td>"+kq.email+"</td><td align='center'><a href = 'admin.php?quanly=nhacc&ac=sua&id=NCC1'>Sửa</a></td><td align='center'><a href = '#'>Xóa</a></td></tr>");
-				data = jQuery.parseJSON(kq);
 				if(action == 'add')
 				{
-					//alert('hihi');
-					//$('#content').html("trân");
-					//window.location.href = "admin.php?quanly=nhacc";
-
-					 
 					$('.popup-background').fadeOut('fast', function()
 					{
 						//$('#content').html(kq.ten + " " + kq.diachi);
-						html = "<tr><td>"+kq.id+"</td><td>"+data.ten+"</td><td>"+data.diachi+"</td><td align='center'>"+data.sdt+"</td><td>"+data.email+"</td><td align='center'><a href = 'admin.php?quanly=nhacc&ac=sua&id=NCC1'>Sửa</a></td><td align='center'><a href = '#'>Xóa</a></td></tr>";
+						html = "<tr><td>"+kq.id+"</td><td>"+kq.ten+"</td><td>"+kq.diachi+"</td><td align='center'>"+kq.sdt+"</td><td>"+kq.email+"</td><td align='center'><a href='javascript:void(0)' class='edit-submit' data-id='"+kq.id+"'>Sửa</a></td><td align='center'><a href='javascript:void(0)' class='del-submit' data-id='"+kq.id+"'>Xóa</a></td></tr>";
 						$('#nhacungcap table').append(html);
 						$('#ten_ncc').val("");
 						$('#sdt_ncc').val("");
@@ -76,6 +112,34 @@ $(document).ready(function(e) {
 						$('#email_ncc').val("");
 						$('#ghichu_ncc').val("");
 					}); 
+				}
+				else if(action =='get_data')
+				{
+					$('#ten_ncc').val(kq.ten);
+					$('#sdt_ncc').val(kq.sdt);
+					$('#diachi_ncc').val(kq.diachi);
+					$('#email_ncc').val(kq.email);
+					$('#ghichu_ncc').val(kq.ghichu);
+				}
+				else if(action == 'edit')
+				{
+					$('.popup-background').fadeOut('fast', function()
+					{
+						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(1)").html(kq.ten);
+						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(2)").html(kq.diachi);
+						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(3)").html(kq.sdt);
+						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(4)").html(kq.email);
+						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(1)").html(kq.ghichu);
+						$('#ten_ncc').val("");
+						$('#sdt_ncc').val("");
+						$('#diachi_ncc').val("");
+						$('#email_ncc').val("");
+						$('#ghichu_ncc').val("");
+					});
+				}
+				else
+				{
+					$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").fadeOut('fast');
 				}
 			},
 			error: function (jqXHR, exception)

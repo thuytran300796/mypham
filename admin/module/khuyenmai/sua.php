@@ -2,74 +2,94 @@
 
 <script>
 
-	$(document).ready(function(e) {
+	function Check_LoaiKM()
+	{
+		loaikm = $('#loaikm').val();
+		if(loaikm == 'QT')
+		{
+			$('#noidung-km').attr('placeholder', 'Nhập tên hoặc mã sản phẩm');
+			$('#noidung-km').attr('data-noidung', 'qt');
+			$('#title-km').html("Chọn quà tặng: ");
+			$('#list-qt').show();
+			$('#voucher').hide();
+		}
+		else if(loaikm == '%')
+		{
+			$('#noidung-km').attr('placeholder', 'Nhập % giảm giá');
+			$('#noidung-km').attr('data-noidung', '%');
+			$('#title-km').html("Giảm: ");
+			$('#list-qt').hide();
+			$('#voucher').hide();
+			<?php unset($_SESSION['list-qt']); ?>
+					//alert('%');
+		}
+		else if(loaikm == 'VND')
+		{
+			$('#noidung-km').attr('placeholder', 'Nhập số tiền giảm giá');
+			$('#noidung-km').attr('data-noidung', 'tien');
+			$('#title-km').html("Giảm: ");
+			$('#list-qt').hide();
+			$('#voucher').hide();
+			<?php unset($_SESSION['list-qt']); ?>
+					//alert('VND');
+		}
+		else if(loaikm == 'PMH')
+		{
+			$('#noidung-km').attr('placeholder', 'Nhập giá trị voucher');
+			$('#noidung-km').attr('data-noidung', 'voucher');
+			$('#title-km').html("Trị giá: ");
+			$('#list-qt').hide();
+			//$('#voucher').show();
+			<?php unset($_SESSION['list-qt']); ?>
+			//alert('PMH');
+		}	
+	}
+
+	function Check_LoaiAD()
+	{
+		loaiad = $('#loaiad').val();
+
+		if(loaiad == 'all')
+		{
+			$('#doituong').fadeOut();
+			$('#spad').hide();
+		}
+		else if(loaiad == 'trigia')
+		{
+			$('#doituong').attr('placeholder', 'Nhập trị giá đơn hàng');
+			$('#doituong').attr('data-doituong', 'trigia');
+			$('#doituong').fadeIn();
+			$('#spad').hide();
+		}
+		else if(loaiad == 'sp')
+		{
+			$('#doituong').attr('placeholder', 'Nhập mã hoặc tên sản phẩm ');
+			$('#doituong').attr('data-doituong', 'sp');
+			$('#doituong').fadeIn();
+		}
+	}
+	
+	$(document).ready(function(e)
+	{
+		/*
+		if($('#loaiad').val() == 'all')
+		{
+			$('#doituong').fadeOut();
+			$('#spad').hide();
+		}
+		*/
+		Check_LoaiKM();Check_LoaiAD();
+	
         check_qt = check_spad = 1;
 		$('#loaikm').change(function()
 		{
-			loaikm = $(this).val();
-			
-			//alert(loaikm);
-			if(loaikm == 'QT')
-			{
-				$('#noidung-km').attr('placeholder', 'Nhập tên hoặc mã sản phẩm');
-				$('#noidung-km').attr('data-noidung', 'qt');
-				$('#title-km').html("Chọn quà tặng: ");
-				$('#list-qt').show();
-				$('#voucher').hide();
-			}
-			else if(loaikm == '%')
-			{
-				$('#noidung-km').attr('placeholder', 'Nhập % giảm giá');
-				$('#noidung-km').attr('data-noidung', '%');
-				$('#title-km').html("Giảm: ");
-				$('#list-qt').hide();
-				$('#voucher').hide();
-				<?php unset($_SESSION['list-qt']); ?>
-			}
-			else if(loaikm == 'VND')
-			{
-				$('#noidung-km').attr('placeholder', 'Nhập số tiền giảm giá');
-				$('#noidung-km').attr('data-noidung', 'tien');
-				$('#title-km').html("Giảm: ");
-				$('#list-qt').hide();
-				$('#voucher').hide();
-				<?php unset($_SESSION['list-qt']); ?>
-			}
-			else if(loaikm == 'PMH')
-			{
-				$('#noidung-km').attr('placeholder', 'Nhập giá trị voucher');
-				$('#noidung-km').attr('data-noidung', 'voucher');
-				$('#title-km').html("Trị giá: ");
-				$('#list-qt').hide();
-				//$('#voucher').show();
-				<?php unset($_SESSION['list-qt']); ?>
-			}
+			Check_LoaiKM();
 			return false;
 		});
 		
 		$('#loaiad').change(function()
 		{
-			loaiad = $(this).val();
-
-			if(loaiad == 'all')
-			{
-				$('#doituong').fadeOut();
-				$('#spad').hide();
-			}
-			else if(loaiad == 'trigia')
-			{
-				$('#doituong').attr('placeholder', 'Nhập trị giá đơn hàng');
-				$('#doituong').attr('data-doituong', 'trigia');
-				$('#doituong').fadeIn();
-				$('#spad').hide();
-			}
-			else if(loaiad == 'sp')
-			{
-				$('#doituong').attr('placeholder', 'Nhập mã hoặc tên sản phẩm ');
-				$('#doituong').attr('data-doituong', 'sp');
-				$('#doituong').fadeIn();
-			}
-			
+			Check_LoaiAD();
 			return false;
 		});
 		
@@ -171,7 +191,7 @@
 		{
 			//maqt = $('.ctsp-qt').attr('data-ctspqt');
 			maqt = $(this).attr('data-ctspqt');
-			//alert(maqt);
+			alert(maqt);
 			
 			$.ajax
 			({
@@ -240,6 +260,7 @@
 		
 		$('#ok').click(function()
 		{
+			alert('makm: '+$('#makm').val());
 			
 			check = 1;
 			sl = "0";
@@ -288,14 +309,15 @@
 
 			if(check == 1)
 			{
+				makm = $('#makm').val(); alert(makm);
 				noidung = $('#noidung-km').val();
 				doituong = $('#doituong').val();
 				mota = $('#mota').val();
 				ngaybd = $('#ngaybd').val(); ngaykt = $('#ngaykt').val();
 				voucher_bd = $('#voucher-bd').val(); voucher_kt = $('#voucher-kt').val();
-				data = "ac=themkm&loaikm=" + loaikm + "&loaiad=" + loaiad + "&noidung=" +noidung+ "&doituong=" +doituong+ "&mota="+mota+"&ngaybd="+ngaybd+"&ngaykt="+ngaykt+"&voucher_bd="+voucher_bd+"&voucher_kt"+voucher_kt;
+				data = "ac=suakm&makm="+makm+"&loaikm=" + loaikm + "&loaiad=" + loaiad + "&noidung=" +noidung+ "&doituong=" +doituong+ "&mota="+mota+"&ngaybd="+ngaybd+"&ngaykt="+ngaykt+"&voucher_bd="+voucher_bd+"&voucher_kt"+voucher_kt;
 				//data = "ac=themkm&loaikm=" + loaikm + "&loaiad=" + loaiad + "&noidung=" +noidung+ "&doituong=" +doituong+ "&mota="+mota+"&ngaybd="+ngaybd+"&ngaykt="+ngaykt;
-				alert(data);
+				//alert(data);
 				$.ajax
 				({
 					url: "module/khuyenmai/xuly/xuly.php",
@@ -318,10 +340,10 @@
 						}
 						if(kq.notify == "Thành công")
 						{
-							alert('Thêm thành công');
+							alert('Chỉnh sửa thông tin thành công');
 							//window.onunload();
 							//Load();
-							<?php //unset($_SESSION['list-qt']); //unset($_SESSION['spad']); ?>	
+							<?php unset($_SESSION['list-qt']); unset($_SESSION['spad']); ?>	
 							window.location.replace("admin.php?quanly=khuyenmai&ac=them");
 						}
 					}
@@ -349,6 +371,7 @@
 			if(myWindow.closed)
 			{
 				<?php unset($_SESSION['list-qt']); unset($_SESSION['spad']); ?>	
+				//alert('load');
 			}
 			
 		};
@@ -360,10 +383,9 @@
 		window.onunload = function ()
 		{
 			//return "Do you really want to close?";
-			
 			if(myWindow.closed)
 			{
-				<?php unset($_SESSION['list-qt']); unset($_SESSION['spad']); ?>	
+				<?php //unset($_SESSION['list-qt']); //unset($_SESSION['spad']); ?>	
 			}
 			
 		};
@@ -372,11 +394,76 @@
 </script>
 
 <?php
-	//unset($_SESSION['list-qt']);
-	date_default_timezone_set('Asia/Ho_Chi_Minh');
-	$date = date('Y-m-d');
-	$ngaybd = $ngaykt = $date;
-	//echo $date;
+	
+	$makm = $_GET['makm'];
+	mysql_query("set names 'utf8'");
+	$km = mysql_query("	select	km.makm, km.masp, km.chietkhau, km.tiengiamgia, km.giatrivoucher, km.giatridonhang, mota, ctkm.ngaybd, ctkm.ngaykt
+						from	khuyenmai km, ctsp_km ctkm
+						where	km.makm = ctkm.makm and km.makm = '$makm'");
+	$re_km = mysql_fetch_assoc($km);
+	
+	$loaikm = $loaiad = $noidung = $doituong = $spad = NULL;
+	$list_qt = array();
+	$ngaybd = $re_km['ngaybd']; $ngaykt = $re_km['ngaykt'];
+	
+	if($re_km['chietkhau'] != "0")
+	{
+		$loaikm = "%";
+		$noidung = $re_km['chietkhau'];
+	}
+	else if($re_km['tiengiamgia'] != "0")
+	{
+		$loaikm = "VND";
+		$noidung = $re_km['tiengiamgia'];
+	}
+	else if($re_km['giatrivoucher'] != "0")
+	{
+		$loaikm = "PMH";
+		$noidung = $re_km['giatrivoucher'];
+	}
+	else if($re_km['chietkhau']==0 &&  $re_km['tiengiamgia']==0  && $re_km['giatrivoucher']==0)
+	{
+		$loaikm = "QT";
+		mysql_query("set names 'utf8'");
+		$quatang = mysql_query("select 	ctsp.masp, ctkm.mactsp, tensp, ctsp.mausac
+								from	ctsp_km ctkm, khuyenmai km, sanpham sp, chitietsanpham ctsp
+								where	ctkm.makm = km.makm and sp.masp = ctsp.masp and ctsp.mactsp = ctkm.mactsp
+									and km.makm = '".$re_km['makm']."'");	
+		while($re_qt = mysql_fetch_assoc($quatang))
+		{
+			$_SESSION['list-qt'][] = $re_qt['mactsp'];
+			$list_qt[] = "<li>"."<p>".$re_qt['tensp'].".".($re_qt['mausac'] == "" ? "" : " - Màu sắc: ".$re_qt['mausac']).""."<a href='javascript:void(0)' class='del-ctspqt' data-ctspqt='".$re_qt['mactsp']."' > - Xóa</a>".count($_SESSION['list-qt'])."</p>"."</li>";
+			
+			//$re_qt['tensp'].($re_qt['mausac']=="" ? "" : " - Màu sắc: ".$re_qt['mausac'])."<a href='javascript:void(0)' class='del-ctspqt' data-ctspqt='".$re_qt['mactsp']."'> - Xóa</a>";
+		}
+		//echo count($_SESSION['list-qt']);
+	}
+	
+	if($re_km['giatridonhang'] != "0")
+	{
+		$loaiad = "trigia";
+		$doituong = $re_km['giatridonhang'];
+	}
+	else if($re_km['giatridonhang'] == "0" && $re_km['masp'] == "")
+	{
+		$loaiad = "all";
+	}
+	else if($re_km['masp'] != "")
+	{
+		echo "nè:". $re_km['masp'];
+		$loaiad = "sp";
+		mysql_query("set names 'utf8'");
+		$sanpham = mysql_query("select masp, tensp, tenncc from sanpham sp, nhacungcap ncc where sp.mancc = ncc.mancc and masp = '".$re_km['masp']."'");
+		$re_sp = mysql_fetch_assoc($sanpham);
+		$_SESSION['spad'][0]['masp'] = $re_sp['masp'];
+		$_SESSION['spad'][0]['tensp'] = $re_sp['tensp']." - Nhà cung cấp: ".$re_sp['tenncc']."<a href ='javascript:void(0)' class='del-spad' data-spad='".$re_sp['masp']."'> - Xóa</a>";
+
+	}
+	
+?>
+
+<?php
+
 	if(isset($_SESSION['list-qt']))
 	{	
 		echo "<pre>"; print_r($_SESSION['list-qt']); echo "</pre>";
@@ -390,25 +477,14 @@
 	}
 	else
 		echo "ko";
-		
-	if(isset($_POST['ok']))
-	{
-		//nhớ unset SESSION[list-qt] và SESSION[spad]
-		echo "hey";
-		
-		$loaikm = $_POST['loaikm'];
-		$loaiad = $_POST['loaiad'];
-		$ngaybd = $_POST['ngaybd'];
-		$ngaykt = $_POST['ngaykt'];
-	}
-	
+
 ?>
 
 <form method="post">
 <div id='themkm' style="width: 95%; margin: auto; position: relative">
 
-	<p class="title">THÊM KHUYẾN MÃI</p>
-
+	<p class="title">CHỈNH SỬA THÔNG TIN KHUYẾN MÃI</p>
+	<input type="hidden" id='makm' value="<?php echo $_GET['makm'] ?>" style="display: none;">
 	<table width="100%" cellspacing="20px">
     
     	<tr>
@@ -416,43 +492,51 @@
             <td class="item-km">
             
             	<select id='loaikm' name='loaikm' class="cbb-sp">
-                	<option value='%'>Giảm theo %</option>
-                    <option value='VND'>Giảm theo VND</option>
-                    <option value='QT'>Quà tặng</option>
-                    <option value='PMH'>Phiếu mua hàng</option>
+            
                 	<?php
-					/*
+					
                     	if($loaikm == '%')
 						{
 							echo "<option selected='selected' value='%'>Giảm theo %</option>";
 							echo "<option value='VND'>Giảm theo VND</option>";
 							echo "<option value='QT'>Quà tặng</option>";
+							echo "<option value='PMH'>Phiếu mua hàng</option>";
 						}
 						else if($loaikm == 'VND')
 						{
 							echo "<option value='%'>Giảm theo %</option>";
 							echo "<option selected='selected' value='VND'>Giảm theo VND</option>";
 							echo "<option value='QT'>Quà tặng</option>";
+							echo "<option value='PMH'>Phiếu mua hàng</option>";
 						}
 						else if($loaikm == 'QT')
 						{
 							echo "<option value='%'>Giảm theo %</option>";
 							echo "<option value='VND'>Giảm theo VND</option>";
 							echo "<option selected='selected' value='QT'>Quà tặng</option>";
+							echo "<option value='PMH'>Phiếu mua hàng</option>";
+						}
+						else if($loaikm == 'PMH')
+						{
+							echo "<option value='%'>Giảm theo %</option>";
+							echo "<option value='VND'>Giảm theo VND</option>";
+							echo "<option value='QT'>Quà tặng</option>";
+							echo "<option selected='selected' value='PMH'>Phiếu mua hàng</option>";
 						}
 						else
 						{
 							echo "<option value='%'>Giảm theo %</option>";
 							echo "<option value='VND'>Giảm theo VND</option>";
 							echo "<option value='QT'>Quà tặng</option>";
+							echo "<option value='PMH'>Phiếu mua hàng</option>";
 						}
-						*/	
+						
 					?>
                     
                     
                    
                 </select>
-                <span id='title-km'>Giảm: </span><input id='noidung-km'  data-noidung='%' class="txt-sp" value=""/>
+                <span id='title-km'>Giảm: </span><input id='noidung-km'  data-noidung='%' class="txt-sp" value="<?php echo $noidung ?>"/>
                 
                 <span>Áp dụng cho: </span>
                 <select id='loaiad' name='loaiad' class="cbb-sp">
@@ -487,25 +571,37 @@
                     
                 </select>
                 
-                <input class="txt-sp" style="display: none" id='doituong' data-doituong='all' value=""/>
+                <input class="txt-sp" id='doituong' data-doituong='all' value="<?php echo $doituong ?>"/>
                 
                 <div style="width: 88%; height: 20px;">
-                	<span class="error error-loaikm" style="float: left; display: none; width: 45%; text-align: right; ">Vui lòng abc</span>
-                	<span class="error error-loaiad" style="float: right; display: none; width: 45%; text-align: right;  ">Vui lòng abc</span>
+                	<span class="error error-loaikm" style="float: left; display: none; width: 45%; text-align: right; "></span>
+                	<span class="error error-loaiad" style="float: right; display: none; width: 45%; text-align: right;  "></span>
         		</div>
                 <div class="clear"></div>
                 
-                <div id='spad' style="display: none; margin-top: 20px;">
+                <div id='spad' style=" margin-top: 20px;">
                 	<p><i>Sản phẩm áp dụng</i></p>
                     <p>
-                    
+                    	<?php
+                        	if(isset($_SESSION['spad']))
+								echo $_SESSION['spad'][0]['tensp'];
+						?>
                     </p>
                 </div>
             
-                        
-                <div id='list-qt' style="display: none; margin-top: 20px;">
+                
+                <div id='list-qt' style=" margin-top: 20px;">
                     <p><i>Các sản phẩm được tặng kèm</i></p>
                     <ul >
+                    	<?php
+						if(isset($list_qt))
+						{
+							foreach($list_qt as $key => $value)
+							{
+								echo "$value";	
+							}
+						}
+						?>
                     </ul>
                 </div>
                 
@@ -544,7 +640,7 @@
         
         <tr>
         	<td></td>
-        	<td><input type='submit' id='ok' class="sub" value="Thêm"/></td>
+        	<td><input type='submit' id='ok' class="sub" value="Chỉnh sửa"/></td>
         </tr>
     
     </table>
