@@ -21,7 +21,7 @@
   				-->
                 <div id = 'login-icon' >
                 
-                    <span><a href = 'login.php'> Chào Thủy Trân </a> | <a href = 'login.php'> Đăng xuất </a></span>
+                    <span><a href = 'login.php'><?php echo $_SESSION['name']; ?></a> | <a href = '../config/config.php?check=logad'> Đăng xuất </a></span>
                     
                 </div>
 
@@ -78,7 +78,7 @@
                     <li><a href='admin.php?quanly=khuyenmai&ac=lietke'>KHUYẾN MÃI</a></li>
                     <li><a href='#'>HÓA ĐƠN</a></li>
                     <li><a href='#'>BÁO CÁO, THỐNG KÊ</a></li>
-                    <li><a href='#'>NHÂN VIÊN</a>
+                    <li><a href='admin.php?quanly=nhanvien&ac=lietke'>NHÂN VIÊN</a>
                     	<ul>
                         	<li><a href='admin.php?quanly=chucvu'>Chức vụ</a></li>
                         </ul>

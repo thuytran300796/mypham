@@ -20,7 +20,7 @@
 		{
 			unset($_SESSION['username']);
 			unset($_SESSION['name']);
-			header('location: ../login.php');
+			header('location: ../admin/login.php');
 		}
 	}
 

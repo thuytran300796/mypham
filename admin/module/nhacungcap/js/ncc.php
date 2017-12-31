@@ -69,7 +69,7 @@
 	{
 		$id = $_POST['id'];
 		mysql_query("set names 'utf8'");
-		$result = "delete from nhacungcap where mancc = '$id'";
+		$result = mysql_query("update nhacungcap set trangthai = 0 where mancc = '$id'");
 		echo json_encode(array("id"=>"$id"));
 	}
 

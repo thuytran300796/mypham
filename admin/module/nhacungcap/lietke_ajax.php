@@ -5,7 +5,14 @@
 <?php
 	
 	mysql_query("set names 'utf8'");
-	$ncc = mysql_query("select * from nhacungcap");	
+	$ncc = mysql_query("select * from nhacungcap where trangthai = 1");
+	$keyword = "";
+	if(isset($_POST['search']))
+	{
+		$keyword = $_POST['keyword'];
+		mysql_query("set names 'utf8'");
+		$ncc = mysql_query("select * from nhacungcap where tenncc LIKE '%$keyword%' and trangthai = 1");
+	}
 	
 ?>
 
@@ -54,8 +61,6 @@
                     <tr>
                     	<td></td>
                         <td><input type='submit'  class='pop-sub' value='' />
-                        	<input type='submit' class="cancle" value='Thoát'/>
-                      
                         </td>
                     </tr>
                 </table>
@@ -67,7 +72,19 @@
     	
         <p class="title">DANH SÁCH CÁC NHÀ CUNG CẤP</p>
         
-        <input type='submit' name='add' value='Thêm mới' id="nhacc-add" class="sub" style=" margin-left: 90.5%;"/>
+        
+        <div style='width: 95%; height: 50px; margin: 3% auto 1%; '>
+        	<form method='post'>
+        	<div style=" width: 92%; float: left; text-align: right">
+            	<input type='text' class='txt-sp' value='<?php echo $keyword ?>' name = 'keyword' style="width: 300px"/>
+                <input type='submit' class='sub' name='search' value='Tìm'/>
+            </div>
+            </form>  
+            <div style=" width: 7%; float: right;">
+            	<input type='submit' name='add' value='Thêm mới' id="nhacc-add" class="sub" />
+            </div>
+        </div>
+              
         <div class="clear"></div>
         <!--<p id='content'>ssssss</p>-->
     
@@ -76,9 +93,9 @@
             <tr>
                 <th width="7%">Mã NCC</th>
                 <th width="19%">Tên nhà cung cấp</th>
-                <th width="25%">Địa chỉ</th>
                 <th width="11%">Số điện thoại</th>
                 <th width="15%">Email</th>
+                <th width="25%">Địa chỉ</th>
                 <th width="15%">Ghi chú</th>
                 <th width="4%">Sửa</th>
                 <th width="4%">Xóa</th>
@@ -91,9 +108,9 @@
                 <tr>
                     <td><?php echo $re_ncc['MaNCC'] ?></td>
                     <td><?php echo $re_ncc['TenNCC'] ?></td>
-                    <td><?php echo $re_ncc['DiaChi'] ?></td>
-                    <td align="center"><?php echo $re_ncc['SDT'] ?></td>
+                    <td><?php echo $re_ncc['SDT'] ?></td>
                     <td><?php echo $re_ncc['Email'] ?></td>
+                    <td><?php echo $re_ncc['DiaChi'] ?></td>
                     <td><?php echo $re_ncc['GhiChu'] ?></td>
                     <td align="center"><a href = "javascript:void(0)" class="edit-submit" data-id='<?php echo $re_ncc['MaNCC'] ?>'>Sửa</a></td>
                     <td align="center"><a href = "javascript:void(0)" class="del-submit" data-id='<?php echo $re_ncc['MaNCC'] ?>'>Xóa</a></td>

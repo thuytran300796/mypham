@@ -98,9 +98,9 @@
                     <span style="color:#088A68;  font-size: 48px; ">AZURA.vn</span>
                 </div>
                 </a>
-                <form>
+                <form action="product.php" method='get'>
                 <div class = 'search-icon'>
-                    <input type='text' class = 'search-text' placeholder="Nhập sản phẩm cần tìm..."/>
+                    <input type='text' class = 'search-text' name='keyword' value="<?php if(isset($_GET['keyword'])) echo $_GET['keyword'] ?>" placeholder="Nhập sản phẩm cần tìm..."/>
                     <input type ='submit' class = 'search-submit' value=""/>
                 </div>
                 </form>
@@ -146,7 +146,7 @@
                             	<ul>
                                 	<li><a href='product.php?madm=TDMA'>Trang điểm mắt</a>
                                     	<ul>
-                                            <li><a href='product.php?madm=PM'>Phấn mắt</a></li>
+                                            <li><a href='product.php?madm=PhanMat'>Phấn mắt</a></li>
                                             <li><a href='product.php?madm=KMAT'>Kẻ mắt</a></li>
                                             <li><a href='product.php?MASCARA'>Mascara</a></li>
                                             <li><a href='product.php?madm=KMAY'>Kẻ mày</a></li>

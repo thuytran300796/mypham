@@ -80,7 +80,7 @@
 
 ?>
 
-<p class="title">CẬP NHẬT THÔNG TIN NHÀ CUNG CẤP</p><br />
+<p class="title">CẬP NHẬT THÔNG TIN CHỨC VỤ</p><br />
 
 
 <form method="post">

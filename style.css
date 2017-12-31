@@ -21,6 +21,26 @@ body
 }
 			
 *{padding:0; margin:0}
+
+input[type='submit'], input[type='button']
+{
+	cursor: pointer;	
+}
+
+.phantrang ul li
+{
+	float: left; margin-right: 20px; width: 30px;
+}
+
+.phantrang ul li a
+{
+	font-size: 18px; display: block;
+}
+
+.phantrang ul li:hover a
+{
+	color: #F90;	
+}
 			
 .top
 {
@@ -251,10 +271,12 @@ body
 	width: 100%; height: 220px; margin-bottom: 3%;
 }
 
-.product-name-home, .product-name-detail
+.product-name-home, .product-name-detail, .product-mausac
 {
 	color: #088A68;  font-size: 13px;margin-top: 4%;
 }
+
+.product-mausac {color: black; font-size: 12px;}
 
 .product-price-home, .product-price-detail
 {
@@ -300,7 +322,7 @@ body
 
 .img-big
 {
-	width: 98%; height: 350px; 
+	width: 90%; height: 400px; 
 }
 
 .img-big img
@@ -336,6 +358,21 @@ body
 .product-name-detail, .product-price-detail
 {
 	font-size: 25px;	
+}
+
+.product-km
+{
+	width: 100%; 
+}
+
+.product-km ul li
+{
+	float: left; width: 70px; height: 70px; border: solid 1px #ccc; margin-left: 10px; padding: 5px;
+}
+
+.product-km img
+{
+	width: 70px; height: 70px;		
 }
 
 .text-highlight
@@ -392,7 +429,7 @@ body
 	float: left; width: 32%; height: 90px;	 
 }
 
-.pro-sml div
+.pro-sml a div
 {
 	float: right;	width: 65%; height: 120px; font-size: 12px;
 }
@@ -614,6 +651,16 @@ body
 	cursor: pointer;	
 }
 
+#list-voucher li
+{
+	padding-left: 20px;	 font-size: 12px;
+}
+
+#list-voucher li a
+{
+	color: #0CF; font-weight: bold;  font-size: 12px;
+}
+
 /*----------------CHECK OUT------------------*/
 #ship-right
 {
@@ -664,6 +711,12 @@ float: right;		width: 25%;	 margin-right: 20px;
 {
 	width: 50%;	text-align: right;
 }
+
+#ship-left .cart-item{width: 50%;}
+
+#ship-left .cart-price{width: 24%; text-align: right}	
+
+#ship-left .cart-soluong{width: 12%; text-align: center;}
 
 /*------------------PRODUCT---------------------*/
 #pro-left

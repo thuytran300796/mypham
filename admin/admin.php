@@ -122,6 +122,14 @@
     
 <?php
 	ob_start();
+	session_start();
+	
+	if(!isset($_SESSION['user']))
+	{
+		header('location: login.php');
+		return;	
+	}
+	
 	include_once('module/header.php');
 	include_once('../module/function.php');
 	include_once('../config/config.php');
@@ -142,6 +150,8 @@
 			include_once('module/khachhang/main.php');
 		else if($temp == 'khuyenmai')
 			include_once('module/khuyenmai/main.php');
+		else if($temp == 'nhanvien')
+			include_once('module/nhanvien/main.php');
 	}
 
 ?>

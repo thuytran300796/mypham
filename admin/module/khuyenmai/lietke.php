@@ -265,7 +265,7 @@
 		?>
         	<div class='km<?php echo $re_km['makm'] ?>'  style="display: none; background: #EFFBF2; width: 142%;   padding: 10px; border: solid 1px; ">
             	<div style="width: 100%; height: 20px; line-height: 10px;">
-                	<div class='ctsp-item' style="font-weight: bold; width: 30%" >Tên SP</div>
+                	<div class='ctsp-item' style="font-weight: bold; width: 35%" >Tên SP</div>
                 	<div class='ctsp-item' style="font-weight: bold" >Màu sắc</div>
                     <div class='ctsp-item' style="font-weight: bold; text-align: left;" >Ngày sản xuất</div>
                     <div class='ctsp-item' style="font-weight: bold; text-align: left;" >Hạn sử dụng</div>
@@ -284,7 +284,7 @@
 
 				?>
                 <div style="border-bottom: solid 1px #ccc; width: 100%">
-                	<div class='ctsp-item' style="width: 30%"><?php echo $re_ctsp['tensp'] ?></div>
+                	<div class='ctsp-item' style="width: 35%; text-align: left;"><?php echo $re_ctsp['tensp'] ?></div>
                 	<div class='ctsp-item'><?php echo $re_ctsp['mausac']==""?"Không":$re_ctsp['mausac'] ?></div>
                     <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($re_ctsp['ngaysx'])) ?></div>
                     <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($re_ctsp['hansudung'])) ?></div>

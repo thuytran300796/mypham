@@ -4,6 +4,7 @@ $(document).ready(function(e) {
 	$('#close-submit').click(function()
 	{
 		$('.popup').fadeOut();
+		//return false;
 	});
     
 	$('#nhacc-add').click(function()
@@ -104,7 +105,7 @@ $(document).ready(function(e) {
 					$('.popup-background').fadeOut('fast', function()
 					{
 						//$('#content').html(kq.ten + " " + kq.diachi);
-						html = "<tr><td>"+kq.id+"</td><td>"+kq.ten+"</td><td>"+kq.diachi+"</td><td align='center'>"+kq.sdt+"</td><td>"+kq.email+"</td><td align='center'><a href='javascript:void(0)' class='edit-submit' data-id='"+kq.id+"'>Sửa</a></td><td align='center'><a href='javascript:void(0)' class='del-submit' data-id='"+kq.id+"'>Xóa</a></td></tr>";
+						html = "<tr><td>"+kq.id+"</td><td>"+kq.ten+"</td><td>"+kq.diachi+"</td><td align='center'>"+kq.sdt+"</td><td>"+kq.email+"</td><td>"+kq.ghichu+"</td><td align='center'><a href='javascript:void(0)' class='edit-submit' data-id='"+kq.id+"'>Sửa</a></td><td align='center'><a href='javascript:void(0)' class='del-submit' data-id='"+kq.id+"'>Xóa</a></td></tr>";
 						$('#nhacungcap table').append(html);
 						$('#ten_ncc').val("");
 						$('#sdt_ncc').val("");
@@ -126,10 +127,10 @@ $(document).ready(function(e) {
 					$('.popup-background').fadeOut('fast', function()
 					{
 						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(1)").html(kq.ten);
-						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(2)").html(kq.diachi);
-						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(3)").html(kq.sdt);
-						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(4)").html(kq.email);
-						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(1)").html(kq.ghichu);
+						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(2)").html(kq.sdt);
+						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(3)").html(kq.email);
+						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(4)").html(kq.diachi);
+						$("a[data-id='"+kq.id+"']").closest("#nhacungcap .tb-lietke tr").find("td:eq(5)").html(kq.ghichu);
 						$('#ten_ncc').val("");
 						$('#sdt_ncc').val("");
 						$('#diachi_ncc').val("");

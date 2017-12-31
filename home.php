@@ -15,16 +15,96 @@
 	include_once('module/header.php');
 	include_once('config/config.php');
 	
-	
-	
-	mysql_query("set names 'utf8'");
-	$result = mysql_query("select masp, tensp, giaban, giadexuat, thuonghieu, makm from sanpham where trangthai = 1 order by ngaynhap desc limit 0,10");
+	date_default_timezone_set('Asia/Ho_Chi_Minh');
+	$date = date('Y-m-d');
 	
 	mysql_query("set names 'utf8'");
-	$makeup = mysql_query("select masp, tensp, giaban, giadexuat from sanpham where madm = 'SThoi' and trangthai = 1 order by ngaynhap desc limit 0,10");
+	/*$hangmoi = mysql_query("select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+							from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+							where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp
+							group by ctsp.mactsp
+							order by ngaynhap desc limit 0,10");
+	*/
+	$hangmoi = mysql_query("SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+							FROM
+							(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+								from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+								where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp
+								group by ctsp.mactsp
+								order by ngaynhap desc limit 0,10
+							)t1 left join
+							(
+								SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+								FROM	khuyenmai km, ctsp_km ctkm
+								where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+								group by km.makm
+							)t2 on t1.masp = t2.masp");
 	
-
+	mysql_query("set names 'utf8'");	
+	/*$khuyenmai = mysql_query("	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+							from	sanpham sp, chitietsanpham ctsp, khuyenmai km, hinhanh ha
+							where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = km.masp and sp.masp = ha.masp
+							group by ctsp.mactsp
+							order by ngaynhap desc limit 0,10");*/
+	$khuyenmai = mysql_query("SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+							FROM
+							(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+								from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+								where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp
+								group by ctsp.mactsp
+								limit 0,10
+							)t1,
+							(
+								SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+								FROM	khuyenmai km, ctsp_km ctkm
+								where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+								group by km.makm
+							)t2 where t1.masp = t2.masp");
 	
+	mysql_query("set names 'utf8'");
+	/*$makeup = mysql_query("	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+							from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+							where 	ctsp.trangthai = 1 and sp.trangthai = 1 and sp.masp = ha.masp and sp.masp = ctsp.masp and sp.madm in ('SThoi', 'MASCARA', 'KMAY', 'KMAT', 'SKem')
+							group by ctsp.mactsp
+							limit 0,10");
+	)*/
+	$makeup = mysql_query("SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+							FROM
+							(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+								from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+								where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and sp.madm in ('SThoi', 'MASCARA', 'KMAY', 'KMAT', 'SKem')
+								group by ctsp.mactsp 
+								limit 0,10
+							)t1 left join
+							(
+								SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+								FROM	khuyenmai km, ctsp_km ctkm
+								where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+								group by km.makm
+							)t2 on t1.masp = t2.masp");
+							
+	mysql_query("set names 'utf8'");
+	/*
+	$chamsocda = mysql_query("	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+							from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+							where 	ctsp.trangthai = 1 and sp.masp = ha.masp and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.madm in ('MatNa', 'NHH', 'KCN', 'KemDD')
+							group by ctsp.mactsp
+							order by ngaynhap desc limit 0,10");
+	*/
+	$chamsocda = mysql_query("SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+							FROM
+							(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+								from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+								where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and sp.madm in ('MatNa', 'NHH', 'KCN', 'KemDD')
+								group by ctsp.mactsp 
+								limit 0,10
+							)t1 left join
+							(
+								SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+								FROM	khuyenmai km, ctsp_km ctkm
+								where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+								group by km.makm
+							)t2 on t1.masp = t2.masp");
 ?>
 
 
@@ -33,7 +113,7 @@
             	<div class = 'list-item'>
                 	
                     <div class = 'list-item-title'>
-                    	<div>CÁC SẢN PHẨM ĐANG ÁP DỤNG KHUYẾN MÃI</div>
+                    	<div>HÀNG MỚI VỀ</div>
                         <a href='#'>Xem thêm</a>
                     </div>
                     
@@ -46,25 +126,55 @@
                             <?php
                             	$i = 0;
 
-								while($record = mysql_fetch_assoc($result))
+								while($record = mysql_fetch_assoc($hangmoi))
 								{
-									$ha = mysql_query("select duongdan from hinhanh where masp = '".$record['masp']."' limit 0,1");
-									$re_ha = mysql_fetch_assoc($ha);
 									$i++;
 							?>
                             
-                                <a href = 'product-detail.php?id=<?php echo $record['masp'] ?>'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/<?php echo $re_ha['duongdan'] ?>"/>
-                                        <p>
-                                        	<span class = 'product-price-home'><?php echo number_format($record['giaban']) ?> đ</span>
-                                            <strike><?php if($record['giadexuat'] == $record['giaban'])  echo ""; else echo number_format($record['giaban'])."đ"; ?></strike>
-                                        </p>
-                                        <p class = 'text-highlight'><?php echo $record['thuonghieu'] ?></p>
-                                        <p class = 'product-name-home'><?php echo $record['tensp'] ?></p>
-                                        
-                                    </div>
-                                </a>
+                                <a href = 'product-detail.php?id=<?php echo $record['mactsp'] ?>'>
+                                        <div class = 'product-home'>
+                                            <img src="image/mypham/<?php echo $record['duongdan'] ?>"/>
+                                            <p>
+                                            <?php
+												$giamgia = $giaban = 0; $check_qt = 0;
+												if($record['makm'] == "")
+												{
+													$giaban = $record['giaban'];
+												}
+												else
+												{
+													if($record['chietkhau'] != 0)
+													{
+														$giamgia = $record['chietkhau'];
+														$giaban = $record['giaban'] - ($record['giaban']*($giamgia/100));	
+													}
+													else if($record['tiengiamgia'] != 0)
+													{
+														$giamgia = $record['tiengiamgia'];
+														$giaban = $record['giaban'] - $record['tiengiamgia'];	
+													}
+													else if($record['chietkhau'] == 0 && $record['tiengiamgia'] == 0)
+													{
+														$check_qt = 1;
+														$giaban = $record['giaban'];	
+													}
+												}
+											?>
+                                            	<span class = 'product-price-home'><?php echo number_format($giaban) ?> đ</span>
+                                            	<strike><?php echo $giamgia == 0 ?  "" :  number_format($record['giaban'])."đ" ?></strike>
+                                            </p>
+                                            <p class = 'text-highlight'><?php echo $record['thuonghieu'] ?></p>
+                                            <?php
+												echo $record['mausac'] != "" ? "<p class='product-mausac'>Màu: ".$record['mausac']."</p>" : "";
+											?>
+                                            <?php
+                                            	if($check_qt == 1)
+													echo "<p>Có quà tặng</p>";
+											?>
+                                            <p class = 'product-name-home'><?php echo $record['tensp'] ?></p>
+                                           
+                                        </div>
+                                    </a>
                             
                         	<?php
 									if($i == 5)
@@ -79,20 +189,54 @@
 								<?php
                                     $i = 0;
     
-                                    while($record = mysql_fetch_assoc($result))
+                                    while($record = mysql_fetch_assoc($hangmoi))
                                     {
-                                        $ha = mysql_query("select duongdan from hinhanh where masp = '".$record['masp']."' limit 0,1");
-									$re_ha = mysql_fetch_assoc($ha);
                                         $i++;
                                 ?>
                                 
-                                    <a href = 'product-detail.php?id=<?php echo $record['masp'] ?>'>
+                                    <a href = 'product-detail.php?id=<?php echo $record['mactsp'] ?>'>
                                         <div class = 'product-home'>
-                                            <img src="image/mypham/<?php echo $re_ha['duongdan'] ?>"/>
+                                            <img src="image/mypham/<?php echo $record['duongdan'] ?>"/>
                                             <p>
-                                            	<span class = 'product-price-home'><?php echo number_format($record['giaban']) ?> đ</span>
-                                            	<strike><?php if($record['giadexuat'] == $record['giaban'])  echo ""; else echo number_format($record['giaban'])."đ"; ?></strike></p>
+                                            <?php
+												$giamgia = $giaban = 0; $check_qt = 0;
+												if($record['makm'] == "")
+												{
+													$giaban = $record['giaban'];
+												}
+												else
+												{
+													if($record['chietkhau'] != 0)
+													{
+														$giamgia = $record['chietkhau'];
+														$giaban = $record['giaban'] - ($record['giaban']*($giamgia/100));	
+													}
+													else if($record['tiengiamgia'] != 0)
+													{
+														$giamgia = $record['tiengiamgia'];
+														$giaban = $record['giaban'] - $record['tiengiamgia'];	
+													}
+													else if($record['chietkhau'] == 0 && $record['tiengiamgia'] == 0)
+													{
+														$check_qt = 1;
+														$giaban = $record['giaban'];	
+													}
+												
+												}
+											?>
+                                            	<span class = 'product-price-home'><?php echo number_format($giaban) ?> đ</span>
+                                            	<strike><?php echo $giamgia == 0 ?  "" :  number_format($record['giaban'])."đ" ?></strike>
+                                            </p>
+                                            <p class = 'text-highlight'><?php echo $record['thuonghieu'] ?></p>
+                                            <?php
+												echo $record['mausac'] != "" ? "<p class='product-mausac'>Màu: ".$record['mausac']."</p>" : "";
+											?>
+                                            <?php
+                                            	if($check_qt == 1)
+													echo "<p>Có quà tặng</p>";
+											?>
                                             <p class = 'product-name-home'><?php echo $record['tensp'] ?></p>
+                                           
                                         </div>
                                     </a>
                                 
@@ -127,25 +271,58 @@
                         	<li>
                             	<?php
 									$i = 0;
-    
+    								//echo mysql_num_rows($makeup);
                                     while($re_make = mysql_fetch_assoc($makeup))
                                     {
-                                        $ha = mysql_query("select duongdan from hinhanh where masp = '".$re_make['masp']."' limit 0,1");
-										$re_ha = mysql_fetch_assoc($ha);
                                         $i++;
 								?>
-                                <a href = 'product-detail.php?id=<?php echo $re_make['masp'] ?>'>
+                                <a href = 'product-detail.php?id=<?php echo $re_make['mactsp'] ?>'>
                                         <div class = 'product-home'>
-                                            <img src="image/mypham/<?php echo $re_ha['duongdan']?>"/>
-                                            <p>
-                                            	<span class = 'product-price-home'><?php echo number_format($re_make['giaban']) ?> đ</span>
-                                            	<strike><?php if($record['giadexuat'] == $record['giaban'])  echo ""; else echo number_format($record['giaban'])."đ"; ?></strike></p>
+                                            <img src="image/mypham/<?php echo $re_make['duongdan']?>"/>
+                                            <?php
+												$giamgia = $giaban = 0; $check_qt = 0;
+												if($re_make['makm'] == "")
+												{
+													$giaban = $re_make['giaban'];
+												}
+												else
+												{
+													if($re_make['chietkhau'] != 0)
+													{
+														$giamgia = $re_make['chietkhau'];
+														$giaban = $re_make['giaban'] - ($re_make['giaban']*($giamgia/100));	
+													}
+													else if($re_make['tiengiamgia'] != 0)
+													{
+														$giamgia = $re_make['tiengiamgia'];
+														$giaban = $re_make['giaban'] - $re_make['tiengiamgia'];	
+													}
+													else if($re_make['chietkhau'] == 0 && $re_make['tiengiamgia'] == 0)
+													{
+														$check_qt = 1;
+														$giaban = $re_make['giaban'];	
+													}
+												
+												}
+											?>
+                                            	<span class = 'product-price-home'><?php echo number_format($giaban) ?> đ</span>
+                                            	<strike><?php echo $giamgia == 0 ?  "" :  number_format($re_make['giaban'])."đ" ?></strike>
+                                            </p>
+                                            <p class = 'text-highlight'><?php echo $re_make['thuonghieu'] ?></p>
+                                            <?php
+												echo $re_make['mausac'] != "" ? "<p class='product-mausac'>Màu: ".$re_make['mausac']."</p>" : "";
+											?>
+                                            <?php
+                                            	if($check_qt == 1)
+													echo "<p>Có quà tặng</p>";
+											?>
                                             <p class = 'product-name-home'><?php echo $re_make['tensp'] ?></p>
                                         </div>
                                     </a>
                                 
                                 <?php
-								
+										if($i==5)
+											break;
 									}
 								?>
                         
@@ -162,16 +339,49 @@
 										$re_ha = mysql_fetch_assoc($ha);
                                         $i++;
 								?>
-                                <a href = 'product-detail.php?id=<?php echo $re_make['masp'] ?>'>
+                                <a href = 'product-detail.php?id=<?php echo $re_make['mactsp'] ?>'>
                                         <div class = 'product-home'>
-                                            <img src="image/mypham/<?php echo $re_ha['duongdan'] ?>"/>
-                                            <p>
-                                            	<span class = 'product-price-home'><?php echo number_format($re_make['giaban']) ?> đ</span>
-                                            	<strike><?php if($record['giadexuat'] == $record['giaban'])  echo ""; else echo number_format($record['giaban'])."đ"; ?></strike></p>
+                                            <img src="image/mypham/<?php echo $re_make['duongdan']?>"/>
+                                            <?php
+												$giamgia = $giaban = 0; $check_qt = 0;
+												if($re_make['makm'] == "")
+												{
+													$giaban = $re_make['giaban'];
+												}
+												else
+												{
+													if($re_make['chietkhau'] != 0)
+													{
+														$giamgia = $re_make['chietkhau'];
+														$giaban = $re_make['giaban'] - ($re_make['giaban']*($giamgia/100));	
+													}
+													else if($re_make['tiengiamgia'] != 0)
+													{
+														$giamgia = $re_make['tiengiamgia'];
+														$giaban = $re_make['giaban'] - $re_make['tiengiamgia'];	
+													}
+													else if($re_make['chietkhau'] == 0 && $re_make['tiengiamgia'] == 0)
+													{
+														$check_qt = 1;
+														$giaban = $re_make['giaban'];	
+													}
+												
+												}
+											?>
+                                            	<span class = 'product-price-home'><?php echo number_format($giaban) ?> đ</span>
+                                            	<strike><?php echo $giamgia == 0 ?  "" :  number_format($re_make['giaban'])."đ" ?></strike>
+                                            </p>
+                                            <p class = 'text-highlight'><?php echo $re_make['thuonghieu'] ?></p>
+                                            <?php
+												echo $re_make['mausac'] != "" ? "<p class='product-mausac'>Màu: ".$re_make['mausac']."</p>" : "";
+											?>
+                                            <?php
+                                            	if($check_qt == 1)
+													echo "<p>Có quà tặng</p>";
+											?>
                                             <p class = 'product-name-home'><?php echo $re_make['tensp'] ?></p>
                                         </div>
                                     </a>
-                                
                                 <?php
 								
 									}
@@ -200,86 +410,121 @@
                     	<ul>
                     	
                         	<li>
-                            
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/za-1--1-.u3059.d20170516.t110909.650151.jpg"/>
-                                        <p><span class = 'product-price-home'>2.159.000 đ</span> <strike>205.000 đ</strike></p>
-                                        <p class = 'product-name-home'>Kem Chống Nắng Giúp Bảo Vệ Hiệu Quả Và Làm Sáng Da Dành Cho Da Dầu Za True White Ex Perfect Protector SPF50/PA+++ ZA (30ml)</p>
-                                    </div>
-                                </a>
+                            	<?php
+									$i = 0;
+    
+                                    while($re_csd = mysql_fetch_assoc($chamsocda))
+                                    {
+                                        $i++;
+								?>
+                                <a href = 'product-detail.php?id=<?php echo $re_csd['mactsp'] ?>'>
+                                        <div class = 'product-home'>
+                                            <img src="image/mypham/<?php echo $re_csd['duongdan']?>"/>
+                                            <?php
+												$giamgia = $giaban = 0; $check_qt = 0;
+												if($re_csd['makm'] == "")
+												{
+													$giaban = $re_csd['giaban'];
+												}
+												else
+												{
+													if($re_csd['chietkhau'] != 0)
+													{
+														$giamgia = $re_csd['chietkhau'];
+														$giaban = $re_csd['giaban'] - ($re_csd['giaban']*($giamgia/100));	
+													}
+													else if($re_csd['tiengiamgia'] != 0)
+													{
+														$giamgia = $re_csd['tiengiamgia'];
+														$giaban = $re_csd['giaban'] - $re_csd['tiengiamgia'];	
+													}
+													else if($re_csd['chietkhau'] == 0 && $re_csd['tiengiamgia'] == 0)
+													{
+														$check_qt = 1;
+														$giaban = $re_csd['giaban'];	
+													}
+												
+												}
+											?>
+                                            	<span class = 'product-price-home'><?php echo number_format($giaban) ?> đ</span>
+                                            	<strike><?php echo $giamgia == 0 ?  "" :  number_format($re_csd['giaban'])."đ" ?></strike>
+                                            </p>
+                                            <p class = 'text-highlight'><?php echo $re_csd['thuonghieu'] ?></p>
+                                            <?php
+												echo $re_csd['mausac'] != "" ? "<p class='product-mausac'>Màu: ".$re_csd['mausac']."</p>" : "";
+											?>
+                                            <?php
+                                            	if($check_qt == 1)
+													echo "<p>Có quà tặng</p>";
+											?>
+                                            <p class = 'product-name-home'><?php echo $re_csd['tensp'] ?></p>
+                                        </div>
+                                    </a>
                                 
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/00328475-1_1_2.jpg"/>
-                                        <p><span class = 'product-price-home'>195.000 VND</span> <strike>401.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Combo 2 Nước Xịt Khoáng Evoluderm 150ml Và 400ml</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/5882fee2f11b9277a38a483dee02fed8.jpg"/>
-                                        <p><span class = 'product-price-home'>230.000 VND</span> <strike>315.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Bảng Màu Mắt The 24K Nudes Maybelline (3g)</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/1338573964764_s_01.d20171013.t193702.969943.jpg"/>
-                                        <p><span class = 'product-price-home'>180.000 VND</span> <strike>270.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Son Bền Màu Lâu Trôi Và Dưỡng Ẩm Za Vivid Dare Lipstick 3.5g</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/maybelline-fresh-matte-light.u2409.d20170329.t100000.761073.jpg"/>
-                                        <p><span class = 'product-price-home'>300.000 VND</span> <strike>385.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Phấn Nước Cushion Kiềm Dầu Maybelline 14g</p>
-                                    </div>
-                                </a>
+                                <?php
+										if($i==5)
+											break;
+									}
+								?>
                         
                         		<div class="clear"></div>
                                 
                             </li>
                             <li>
-
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/00328475-1_1_2.jpg"/>
-                                        <p><span class = 'product-price-home'>195.000 VND</span> <strike>401.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Combo 2 Nước Xịt Khoáng Evoluderm 150ml Và 400ml</p>
-                                    </div>
-                                </a>
-                                
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/za-1--1-.u3059.d20170516.t110909.650151.jpg"/>
-                                        <p><span class = 'product-price-home'>159.000 VND</span> <strike>205.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Kem Chống Nắng Giúp Bảo Vệ Hiệu Quả Và Làm Sáng Da Dành Cho Da Dầu Za True White Ex Perfect Protector SPF50/PA+++ ZA (30ml)</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/maybelline-fresh-matte-light.u2409.d20170329.t100000.761073.jpg"/>
-                                        <p><span class = 'product-price-home'>300.000 VND</span> <strike>385.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Phấn Nước Cushion Kiềm Dầu Maybelline 14g</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/1338573964764_s_01.d20171013.t193702.969943.jpg"/>
-                                        <p><span class = 'product-price-home'>180.000 VND</span> <strike>270.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Son Bền Màu Lâu Trôi Và Dưỡng Ẩm Za Vivid Dare Lipstick 3.5g</p>
-                                    </div>
-                                </a>
-                                <a href = '#'>
-                                    <div class = 'product-home'>
-                                        <img src="image/mypham/5882fee2f11b9277a38a483dee02fed8.jpg"/>
-                                        <p><span class = 'product-price-home'>230.000 VND</span> <strike>315.000 VND</strike></p>
-                                        <p class = 'product-name-home'>Bảng Màu Mắt The 24K Nudes Maybelline (3g)</p>
-                                    </div>
-                                </a>
-                                
+                            	<?php
+									$i = 0;
+    
+                                    while($re_csd = mysql_fetch_assoc($chamsocda))
+                                    {
+                                        $i++;
+								?>
+                                <a href = 'product-detail.php?id=<?php echo $re_csd['mactsp'] ?>'>
+                                        <div class = 'product-home'>
+                                            <img src="image/mypham/<?php echo $re_csd['duongdan']?>"/>
+                                            <?php
+												$giamgia = $giaban = 0; $check_qt = 0;
+												if($re_csd['makm'] == "")
+												{
+													$giaban = $re_csd['giaban'];
+												}
+												else
+												{
+													if($re_csd['chietkhau'] != 0)
+													{
+														$giamgia = $re_csd['chietkhau'];
+														$giaban = $re_csd['giaban'] - ($re_csd['giaban']*($giamgia/100));	
+													}
+													else if($re_csd['tiengiamgia'] != 0)
+													{
+														$giamgia = $re_csd['tiengiamgia'];
+														$giaban = $re_csd['giaban'] - $re_csd['tiengiamgia'];	
+													}
+													else if($re_csd['chietkhau'] == 0 && $re_csd['tiengiamgia'] == 0)
+													{
+														$check_qt = 1;
+														$giaban = $re_csd['giaban'];	
+													}
+												
+												}
+											?>
+                                            	<span class = 'product-price-home'><?php echo number_format($giaban) ?> đ</span>
+                                            	<strike><?php echo $giamgia == 0 ?  "" :  number_format($re_csd['giaban'])."đ" ?></strike>
+                                            </p>
+                                            <p class = 'text-highlight'><?php echo $re_csd['thuonghieu'] ?></p>
+                                            <?php
+												echo $re_csd['mausac'] != "" ? "<p class='product-mausac'>Màu: ".$re_csd['mausac']."</p>" : "";
+											?>
+                                            <?php
+                                            	if($check_qt == 1)
+													echo "<p >Có quà tặng</p>";
+											?>
+                                            <p class = 'product-name-home'><?php echo $re_csd['tensp'] ?></p>
+                                        </div>
+                                    </a>
+                                <?php
+								
+									}
+								?>
                         
                         		<div class="clear"></div>
                                 

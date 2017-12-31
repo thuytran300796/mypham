@@ -296,7 +296,8 @@
 				$sql = "update khuyenmai set chietkhau = $noidung, tiengiamgia = 0, giatrivoucher = 0, giatridonhang = 0, masp = '', mota = '$mota' where makm = '$makm' ";
 				truyvan($sql);
 				
-				$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt' where makm = '$makm'";
+				//$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt' where makm = '$makm'";
+				$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt', mactsp = '' where makm = '$makm'";
 				truyvan($sql);
 			}
 			else if($_POST['loaiad'] == 'trigia')
@@ -304,7 +305,8 @@
 				$sql = "update khuyenmai set chietkhau = $noidung, tiengiamgia = 0, giatrivoucher = 0, giatridonhang = $doituong, masp = '', mota = '$mota' where makm = '$makm' ";
 				truyvan($sql);
 				
-				$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt' where makm = '$makm'";
+				//$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt' where makm = '$makm'";
+				$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt', mactsp = '' where makm = '$makm'";
 				truyvan($sql);
 			}
 			else
@@ -319,10 +321,11 @@
 				{
 					$sql = "update khuyenmai set chietkhau = $noidung, tiengiamgia = 0, giatrivoucher = 0, giatridonhang = 0, masp = '".$_SESSION['spad'][0]['masp']."', mota = '$mota' where makm = '$makm' ";
 					truyvan($sql);
-				
-					$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt' where makm = '$makm'";
+					
+					$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt', mactsp = '' where makm = '$makm'";
 					truyvan($sql);
 				}
+				
 			}
 			
 		}
@@ -333,7 +336,8 @@
 				$sql = "update khuyenmai set chietkhau = 0, tiengiamgia = $noidung, giatrivoucher = 0, giatridonhang = 0, masp = '', mota = '$mota' where makm = '$makm' ";
 				truyvan($sql);
 				
-				$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt' where makm = '$makm'";
+				//$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt' where makm = '$makm'";
+				$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt', mactsp = '' where makm = '$makm'";
 				truyvan($sql);
 			}
 			else if($_POST['loaiad'] == 'trigia')
@@ -341,7 +345,7 @@
 				$sql = "update khuyenmai set chietkhau = 0, tiengiamgia = $noidung, giatrivoucher = 0, giatridonhang = $doituong, masp = '', mota = '$mota' where makm = '$makm' ";
 				truyvan($sql);
 				
-				$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt' where makm = '$makm'";
+				$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt', mactsp = '' where makm = '$makm'";
 				truyvan($sql);
 			}
 			else
@@ -356,8 +360,8 @@
 				{
 					$sql = "update khuyenmai set chietkhau = 0, tiengiamgia = $noidung, giatrivoucher = 0, giatridonhang = 0, masp = '".$_SESSION['spad'][0]['masp']."', mota = '$mota' where makm = '$makm' ";
 					truyvan($sql);
-				
-					$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt' where makm = '$makm'";
+					
+					$sql = "update ctsp_km set ngaybd='$ngaybd', ngaykt='$ngaykt', mactsp = '' where makm = '$makm'";
 					truyvan($sql);
 				}
 			}

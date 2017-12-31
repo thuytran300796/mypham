@@ -314,10 +314,10 @@
 				doituong = $('#doituong').val();
 				mota = $('#mota').val();
 				ngaybd = $('#ngaybd').val(); ngaykt = $('#ngaykt').val();
-				voucher_bd = $('#voucher-bd').val(); voucher_kt = $('#voucher-kt').val();
-				data = "ac=suakm&makm="+makm+"&loaikm=" + loaikm + "&loaiad=" + loaiad + "&noidung=" +noidung+ "&doituong=" +doituong+ "&mota="+mota+"&ngaybd="+ngaybd+"&ngaykt="+ngaykt+"&voucher_bd="+voucher_bd+"&voucher_kt"+voucher_kt;
+				//voucher_bd = $('#voucher-bd').val(); voucher_kt = $('#voucher-kt').val();
+				data = "ac=suakm&makm="+makm+"&loaikm=" + loaikm + "&loaiad=" + loaiad + "&noidung=" +noidung+ "&doituong=" +doituong+ "&mota="+mota+"&ngaybd="+ngaybd+"&ngaykt="+ngaykt;
 				//data = "ac=themkm&loaikm=" + loaikm + "&loaiad=" + loaiad + "&noidung=" +noidung+ "&doituong=" +doituong+ "&mota="+mota+"&ngaybd="+ngaybd+"&ngaykt="+ngaykt;
-				//alert(data);
+				alert(data);
 				$.ajax
 				({
 					url: "module/khuyenmai/xuly/xuly.php",
@@ -327,7 +327,7 @@
 					async: true,
 					success:function(kq)
 					{
-						$('#test').html(kq);
+						//$('#test').html(kq);
 						if(kq.error_sp != "")
 						{
 							$('.error-loaiad').html(kq.error_sp);
@@ -346,7 +346,28 @@
 							<?php unset($_SESSION['list-qt']); unset($_SESSION['spad']); ?>	
 							window.location.replace("admin.php?quanly=khuyenmai&ac=them");
 						}
-					}
+					},
+					error: function (jqXHR, exception)
+					{
+						//alert("Lỗi rồi");
+						 var msg = '';
+						if (jqXHR.status === 0) {
+							msg = 'Not connect.\n Verify Network.';
+						} else if (jqXHR.status == 404) {
+							msg = 'Requested page not found. [404]';
+						} else if (jqXHR.status == 500) {
+							msg = 'Internal Server Error [500].';
+						} else if (exception === 'parsererror') {
+							msg = 'Requested JSON parse failed.';
+						} else if (exception === 'timeout') {
+							msg = 'Time out error.';
+						} else if (exception === 'abort') {
+							msg = 'Ajax request aborted.';
+						} else {
+							msg = 'Uncaught Error.\n' + jqXHR.responseText;
+						}
+						alert(msg);
+					}	
 				});	
 			}
 			
@@ -466,17 +487,17 @@
 
 	if(isset($_SESSION['list-qt']))
 	{	
-		echo "<pre>"; print_r($_SESSION['list-qt']); echo "</pre>";
+		echo "QT:"."<pre>"; print_r($_SESSION['list-qt']); echo "</pre>";
 	}
 	else
-		echo "ko";
+		echo "ko QT";
 		
 	if(isset($_SESSION['spad']))
 	{	
-		echo "<pre>"; print_r($_SESSION['spad']); echo "</pre>";
+		echo "SP:"."<pre>"; print_r($_SESSION['spad']); echo "</pre>";
 	}
 	else
-		echo "ko";
+		echo "ko SP";
 
 ?>
 

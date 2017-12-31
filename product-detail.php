@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -5,7 +7,24 @@
         <script src="js/jquery-1.12.4.js"></script>
         <link type="text/css" rel='stylesheet' href="style.css"/>
     	<title>Chi tiết sản phẩm</title>
+		<script>
 
+			$(document).ready(function(e) {
+				
+				$('.choose-qt').click(function()
+				{
+					$('.product-km li').css('border', 'solid 1px #ccc');
+					maqt = $(this).attr('data-maqt');	
+					$("a[data-maqt='"+maqt+"']").closest('li').css('border', 'solid 2px #3CC');
+				});
+				
+				$('#them').click(function()
+				{
+					alert('hello');	
+				});
+			});
+	
+		</script>
 <?php
 	session_start();
 	//$_SESSION['user'] = 'thuytran3007';
@@ -13,19 +32,18 @@
 	//unset($_SESSION['user']);
 	ob_start();
 	
-	if(isset($_GET['id']))
-		$id = $_GET['id'];
+	if(isset($_REQUEST['id']))
+		$id = $_REQUEST['id'];
 		
 	$url = "product-detail.php?id=$id";
 	
 	include_once('module/header.php');
 	require('config/config.php');
 	
+	date_default_timezone_set('Asia/Ho_Chi_Minh');
+	$date = date('Y-m-d');
 	
-	//else
-		//header('location: home.php');
-	//echo $id;
-	$ha = mysql_query("select duongdan from hinhanh where masp = '".$id."'");
+	$ha = mysql_query("select duongdan from hinhanh ha, sanpham sp, chitietsanpham ctsp where ctsp.masp = sp.masp and sp.masp = ha.masp and ctsp.mactsp = '".$id."'");
 	
 	$list_ha = array();
 	$m = 0;
@@ -35,12 +53,40 @@
 	}
 	
 	mysql_query("set names 'utf8'");
-	$sp = mysql_query("select masp, tensp, donvitinh, mota, trongluong, thuonghieu, makm, giadexuat, giaban, madm, makm from sanpham where masp = '$id'");
+	$sp = mysql_query("select sp.masp, tensp, ctsp.mausac, donvitinh, mota, trongluong, thuonghieu, ctsp.giadexuat, ctsp.giaban, madm, ctsp.soluong from sanpham sp, chitietsanpham ctsp  where sp.masp = ctsp.masp and ctsp.mactsp = '$id'");
 	$re_sp = mysql_fetch_assoc($sp);
 	
 	mysql_query("set names 'utf8'");
+	$khuyenmai = mysql_query("select km.makm, km.mota, km.masp, km.giatrivoucher, km.giatridonhang, km.chietkhau, km.tiengiamgia, ctkm.id, ctkm.ngaybd, ctkm.ngaykt, ctkm.mactsp
+							from 	khuyenmai km, ctsp_km ctkm, sanpham sp, chitietsanpham ctsp
+							where 	km.makm = ctkm.MaKM and km.masp = sp.masp and ctsp.MaSP = sp.MaSP
+								and ctsp.MaCTSP = '$id' and km.trangthai = 1 
+								and ('$date' >= ctkm.ngaybd and '$date' <= ctkm.ngaykt)");
+								
+	$list_km = array();
+	$dem = 0;
+	while($re_km = mysql_fetch_assoc($khuyenmai))
+	{
+		$list_km[$dem]['makm'] = $re_km['makm'];
+		$list_km[$dem]['mota'] = $re_km['mota'];
+		$list_km[$dem]['giatrivoucher'] = $re_km['giatrivoucher'];
+		$list_km[$dem]['giatridonhang'] = $re_km['giatridonhang'];
+		$list_km[$dem]['chietkhau'] = $re_km['chietkhau'];
+		$list_km[$dem]['tiengiamgia'] = $re_km['tiengiamgia'];
+		$list_km[$dem]['mactkm'] = $re_km['id'];
+		$list_km[$dem]['ngaybd'] = $re_km['ngaybd'];
+		$list_km[$dem]['ngaykt'] = $re_km['ngaykt'];
+		$list_km[$dem]['maqt'] = $re_km['mactsp'];
+		$dem++;
+	}
+	//echo "km: ".count($list_km);
+	mysql_query("set names 'utf8'");
 	$binhluan = mysql_query("select mabl, bl.makh,tenkh, hinhdaidien, noidung, ngay, mablcha from binhluan bl, khachhang kh where masp = '$id' and bl.makh = kh.makh order by ngay desc" );
 	//echo mysql_num_rows($binhluan);
+	
+	
+
+	
 ?>
 
 
@@ -118,89 +164,153 @@
 			
 			<div class = 'product-normal'>
 				<p class="product-name-detail"><?php echo $re_sp['tensp'] ?></p>
-            <p>Thương hiệu: <span class="text-highlight"><?php echo $re_sp['thuonghieu'] ?></span></p>
-            
-                <p><span class = 'product-price-detail'><?php echo number_format($re_sp['giaban']) ?> đ</span> Đã bao gồm thuế VAT</p>
-                <?php
-					if($re_sp['giadexuat'] > $re_sp['giaban'])
+                <?php echo ($re_sp['mausac'] != "" ? "<p>Màu sắc: ".$re_sp['mausac']."</p>" : "" ) ?>
+            	<p>Thương hiệu: <span class="text-highlight"><?php echo $re_sp['thuonghieu'] ?></span></p>
+                <!--<p><span class = 'product-price-detail'><?php echo number_format($re_sp['giaban']) ?> đ</span> Đã bao gồm thuế VAT</p>-->
+   
+   				<?php
+					$loaiqt = 0; //giảm giá
+					
+					//nếu là giảm bằng % hay tiền thì trong bảng ctsp_km chỉ có 1 record
+					if(count($list_km) == 1)
 					{
-				?>
-                <p>Giá thị trường: <strike><?php echo number_format($re_sp['giadexuat'])." đ" ?></strike></p>
-                <p><?php echo "Tiết kiệm ".number_format($re_sp['giadexuat'] - $re_sp['giaban'])." đ" ?></p>
-                <?php
+						if($list_km[0]['chietkhau'] != "0")
+						{
+							$giamgia = $list_km[0]['chietkhau']; //5%
+							$tiengiamgia = $re_sp['giaban'] * ($giamgia/100); 
+							echo "<p><span class = 'product-price-detail'>".number_format($re_sp['giaban'] - $tiengiamgia)." đ</span> Đã bao gồm thuế VAT</p>";	
+							echo "<p>Giá gốc: ".number_format($re_sp['giaban'])."đ - Tiết kiệm: ".number_format($giamgia)."% (".number_format($tiengiamgia)." đ)</p>";
+						}
+						else if($list_km[0]['tiengiamgia'] != "0")
+						{
+							$giamgia = 	$list_km[0]['tiengiamgia'];
+							echo "<p><span class = 'product-price-detail'>".number_format($re_sp['giaban'] - $giamgia)." đ</span> Đã bao gồm thuế VAT</p>";	
+							echo "<p>Giá gốc: ".number_format($re_sp['giaban'])."đ - Tiết kiệm: ".number_format($giamgia)." đ</p>";
+						}
+						else if($list_km[0]['maqt'] != "")
+						{
+							$loaiqt = 1; echo "<p><span class = 'product-price-detail'>".number_format($re_sp['giaban'])." đ</span> Đã bao gồm thuế VAT</p>";
+						}
 					}
+					// nếu tặng quà thì bảng ctsp_km phải có từ 1 record trở lên và nếu 0 có record nào thì sp đó ko có km
+					else if(count($list_km) > 1)
+					{
+						$loaiqt = 1; //quà tặng
+						echo "<p><span class = 'product-price-detail'>".number_format($re_sp['giaban'])." đ</span> Đã bao gồm thuế VAT</p>";
+					}
+					else if(count($list_km) == 0)
+					{
+						echo "<p><span class = 'product-price-detail'>".number_format($re_sp['giaban'])." đ</span> Đã bao gồm thuế VAT</p>";	
+						$loaiqt = 0;
+					}
+					//echo "Loại qt: ".$loaiqt;
 				?>
                 
+                
                 <table cellspacing="10px">
-                	<?php
-						mysql_query("SET NAMES 'utf8'");
-						$ctsp = mysql_query("select mactsp, masp, mausac from chitietsanpham where masp = '$id' and soluong > 0");
-						$list_ctsp = array();
-						$dem = 0;
-						while($re_ctsp = mysql_fetch_assoc($ctsp))
-						{
-							$list_ctsp[$dem]['ctsp'] = $re_ctsp['mactsp'];
-							$list_ctsp[$dem]['mausac'] = $re_ctsp['mausac'];
-							$dem++;
-						}
-						
-					?>
                     
+ 			                
                 <form action = "cart.php" method="post">
-                	<?php
-						if(count($list_ctsp)==1 && $list_ctsp[0]['mausac'] == "")
-						{
-							echo "<input type='hidden' name='ctsp' value='".$list_ctsp[0]['ctsp']."'/>";
-						}
-						else
-						{
-					?>
-                	<tr>
-                    	<td><p>Chọn màu:</p></td>
-                        <td><select  name='ctsp' class='cbb-pro'>
-                        <?php
-						
-							for($i=0; $i<count($list_ctsp); $i++)
-							{
-						?>
-                            <option value='<?php echo $list_ctsp[$i]['ctsp'] ?>'><?php echo $list_ctsp[$i]['mausac'] ?></option>
-                        <?php
-							}
-						?>
-                        </select></td>
-                    </tr>
-                    <?php
-						}
-					?>
-          		
+                
+                	<input type='hidden' name='id' value='<?php echo $id ?>'/>
+          			<input type='hidden' name='mausac' value='<?php echo $re_sp['mausac'] ?>'/>
+                
                     <tr>
                     	<td><p>Số lượng:</p></td>
                         <td><input type='text' value='1' name='soluong' id='txt-soluong' onKeyPress="check_soluong"/></td>
                     </tr>
                     
                     <tr>
-                    	<td colspan="2"><input id='btn-add-cart' type='submit' value="Thêm vào giỏ hàng"/></td>
+                    	<?php
+							if($re_sp['soluong'] == 0)
+								echo "<p style='font-size: 18px; font-weight: bold'>HẾT HÀNG</p>";
+							else
+								echo "<td colspan='2'><input id='btn-add-cart' name='them' id='them' type='submit' value='Thêm vào giỏ hàng'/></td>";
+						?>
+                    	
                     </tr>
-                    <input type='hidden' name='id' value="<?php echo $id ?>"/>
+                    
+                    
+                    <input type='hidden' name='masp' value="<?php echo $re_sp['masp'] ?>"/>
                     <input type='hidden' name='tensp' value="<?php echo $re_sp['tensp'] ?>"/>
-                    <input type='hidden' name='giaban' value="<?php echo $re_sp['giaban'] ?>"/>
-                    <input type='hidden' name='makm' value="<?php echo $re_sp['makm'] ?>"/>
                     <input type='hidden' name='hinhanh' value="<?php echo $list_ha[0] ?>"/>
+                    <!--<input type='hidden' name='makm' value="<?php echo $re_sp['makm'] ?>"/>-->
+                    <input type='hidden' name='giaban' value="<?php echo $re_sp['giaban'] ?>"/>
+
+                    
+                    
+                    <?php
+						//nếu khách đã chọn quà tặng
+						//if($loaiqt == 1)
+						//{
+							if(isset($_GET['maqt']))
+							{
+								$maqt = $_GET['maqt'];
+							}
+							else
+							{
+								$maqt = "";
+								/*echo "<script>alert('Vui lòng click chọn quà tặng đi kèm');</script>";*/
+							}	
+						//}
+					?>
+                    <input type='hidden' name='maqt' id='quatang' value='<?php echo $maqt ?>'/>
                 </form>
                 </table>
                 
      			<hr />
-                <?php
-					if($re_sp['makm'] != '000')
-					{
-						$khuyenmai = mysql_query("select * from khuyenmai where makm = '".$re_sp['makm']."'");
-						$re_km = mysql_fetch_assoc($re_km);
-				?>
-                <p class='title-general'>KHUYẾN MÃI</p>
-             	<p><?php $re_km['mota'] ?></p>
-                <?php
-					}
-				?>
+                
+                <div class='product-km' >
+                	
+                     <?php
+													
+						//$re_km = mysql_fetch_assoc($khuyenmai);
+						if($loaiqt == 1)
+						{
+							
+							$arr_maqt = array();
+							foreach($list_km as $key => $value)
+							{
+								$arr_maqt[] = "'".$list_km[$key]['maqt']."'";	
+							}
+							$string = implode(',', $arr_maqt);
+							
+							mysql_query("set names 'utf8'");
+							$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string)");
+							
+							echo "<p class='title-general'>KHUYẾN MÃI ĐANG ÁP DỤNG CHO SẢN PHẨM NÀY</p>";
+							echo "<p>".$list_km[0]['mota']."</p>";
+							echo "<ul>";
+							while($re_qt = mysql_fetch_assoc($quatang))
+							{
+								if($re_qt['mactsp'] == $maqt || $maqt == "")
+								{
+									$maqt = $re_qt['mactsp'];
+					?>			
+                    			<li style="border: solid 1px #3cc;" title="<?php echo $re_qt['tensp'].($re_qt['mausac'] != "" ? " - Màu sắc: ".$re_qt['mausac'] : "") ?>">
+                                	<a href='product-detail.php?id=<?php echo $id ?>&maqt=<?php echo $re_qt['mactsp'] ?>' class='choose-qt' data-maqt='<?php echo $re_qt['mactsp'] ?>'>
+                                		<img src='image/mypham/<?php echo $re_qt['duongdan'] ?>'/>
+                                    </a>
+                                </li>
+                    <?php
+								}
+								else
+								{
+					?>
+                    			<li  title="<?php echo $re_qt['tensp'].($re_qt['mausac'] != "" ? " - Màu sắc: ".$re_qt['mausac'] : "") ?>">
+                                	<a href='product-detail.php?id=<?php echo $id ?>&maqt=<?php echo $re_qt['mactsp'] ?>' class='choose-qt' data-maqt='<?php echo $re_qt['mactsp'] ?>'>
+                                		<img src='image/mypham/<?php echo $re_qt['duongdan'] ?>'/>
+                                    </a>
+                                </li>
+                    <?php	
+								}
+							}
+							echo "</ul>";
+						}
+					?>
+                    <div class="clear"></div>
+                </div>
+               
 			</div>
 			
 			<div class ='clear'></div>
@@ -300,46 +410,11 @@
 	
 
 	<div class = 'wrap-right-protail'>
-	
+    
     	<div class="list-pro">
         	
             <div class = 'list-item-title'>
-            	SẢN PHẨM CÙNG THƯƠNG HIỆU
-            </div>
-            <?PHP
-				//$sp_thuonghieu = mysql_query("select masp, tensp, giaban, giadexuat, thuonghieu from sanpham where thuonghieu = '".$re_sp['thuonghieu']."' and masp not in ('".$re_sp['masp']."')");
-				$sp_thuonghieu = mysql_query("select sp.masp, mactsp, tensp, mausac, ctsp.giaban, ctsp.giadexuat, thuonghieu from sanpham sp, chitietsanpham ctsp where sp.masp = ctsp.masp and thuonghieu = '".$re_sp['thuonghieu']."' and sp.masp not in ('".$re_sp['masp']."')");
-				while($re_sp = mysql_fetch_assoc($sp_thuonghieu))
-				{
-					$ha = mysql_query("select duongdan from hinhanh where masp = '".$re_sp['masp']."' limit 0,1");
-					$re_ha = mysql_fetch_assoc($ha);
-			?>
-          	<a href='<?php echo $re_sp['tensp']?>'>
-           	<div class = 'pro-sml'>
-                <img src="image/mypham/<?php echo $re_ha['duongdan']?>"/>
-                <div>
-                	<p><?php echo $re_sp['tensp']?></p>
-                    <p>Màu: <?php echo $re_sp['mausac']?></p>
-                    <p class="text-highlight"><?php echo $re_sp['thuonghieu']?></p>
-                    <p class="product-price-home"><?php echo number_format($re_sp['giaban'])?> đ</p>
-                    <p><strike><?php if($re_sp['giadexuat'] == $re_sp['giaban'])  echo ""; else echo number_format($re_sp['giaban'])."đ"; ?></strike></p>
-                </div>
-            </div>
-            </a>
-            <?php
-				}
-			?>	
-            
-			
-            <div class='pro-xemthem'>
-            	<a href='#'>Xem thêm</a>
-            </div>
-        </div>
-        
-        <div class="list-pro">
-        	
-            <div class = 'list-item-title'>
-            	TOP SẢN PHẨM BÁN CHẠY
+            	SẢN PHẨM LIÊN QUAN
             </div>
   			
             <?php
@@ -348,28 +423,66 @@
 							where	sp.masp = ctsp.masp and ctsp.mactsp = cthd.mactsp and sp.trangthai = 1
 							group by sp.masp
 							order by sum(cthd.soluong) desc";*/
-				$sql = "	select	sp.masp, tensp, mausac, ctsp.giaban, ctsp.giadexuat, thuonghieu, sum(cthd.soluong) as 'tong'
-							from	sanpham sp, chitietsanpham ctsp, chitiethoadon cthd
-							where	sp.masp = ctsp.masp and ctsp.mactsp = cthd.mactsp and sp.trangthai = 1
-							group by ctsp.mactsp
-							order by sum(cthd.soluong) desc";
+				$sql = "	SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+							FROM
+							(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+								from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+								where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and tensp like '%".mysql_escape_string($re_sp['tensp'])."%' and ctsp.mactsp <> '$id'
+								group by ctsp.mactsp 
+								limit 0,10
+							)t1 left join
+							(
+								SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+								FROM	khuyenmai km, ctsp_km ctkm
+								where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+								group by km.makm
+							)t2 on t1.masp = t2.masp";
 				mysql_query("set names 'utf8'");
-				$banchay = mysql_query($sql);
-				while($re_banchay = mysql_fetch_assoc($banchay))
+				$sp_lq = mysql_query($sql);
+				while($re_lq = mysql_fetch_assoc($sp_lq))
 				{
-					$ha = mysql_query("select duongdan from hinhanh where masp = '".$re_banchay['masp']."' limit 0,1");
-					$re_ha = mysql_fetch_assoc($ha);
 			?>
             
            	<div class = 'pro-sml'>
-                <img src="image/mypham/<?php echo $re_ha['duongdan'] ?>"/>
-                <div>
-                	<p><?php echo $re_banchay['tensp'] ?></p>
-                    <p>Màu: <?php echo $re_banchay['mausac'] ?></p>
-                    <p class="text-highlight"><?php echo $re_banchay['thuonghieu'] ?></p>
-                    <p class="product-price-home"><?php echo number_format($re_banchay['giaban']) ?> đ</p>
-                    <p><strike><?php if($re_banchay['giadexuat'] == $re_banchay['giaban'])  echo ""; else echo number_format($re_banchay['giadexuat'])."đ"; ?></strike></p>
-                </div>
+                <img src="image/mypham/<?php echo $re_lq['duongdan'] ?>"/>
+                    <a href='product-detail.php?id=<?php echo $re_lq['mactsp'] ?>'>
+                    <div>
+                        <p><?php echo $re_lq['tensp'] ?></p>
+                        <p>Màu: <?php echo $re_lq['mausac'] ?></p>
+                        <p class="text-highlight"><?php echo $re_lq['thuonghieu'] ?></p>
+                        <p>
+                        	<?php
+								$giamgia = $giaban = 0; $check_qt = 0;
+								if($re_lq['makm'] == "")
+								{
+									$giaban = $re_lq['giaban'];
+								}
+								else
+								{
+									if($re_lq['chietkhau'] != 0)
+									{
+										$giamgia = $re_lq['chietkhau'];
+										$giaban = $re_lq['giaban'] - ($re_lq['giaban']*($giamgia/100));	
+									}
+									else if($re_lq['tiengiamgia'] != 0)
+									{
+										$giamgia = $re_lq['tiengiamgia'];
+										$giaban = $re_lq['giaban'] - $re_lq['tiengiamgia'];	
+									}
+									else if($re_lq['chietkhau'] == 0 && $re_lq['tiengiamgia'] == 0)
+									{
+										$check_qt = 1;
+										$giaban = $re_lq['giaban'];	
+									}
+													
+								}
+							?>
+                            <span class = 'product-price-home'><?php echo number_format($giaban) ?> đ</span>
+                            <strike><?php echo $giamgia == 0 ?  "" :  number_format($re_lq['giaban'])."đ" ?></strike>
+                        </p>
+                        
+                    </div>
+                    </a>
             </div>
             
             <?php
@@ -381,6 +494,84 @@
 		
         </div>
 	
+    	<div class="list-pro">
+        	
+            <div class = 'list-item-title'>
+            	SẢN PHẨM CÙNG THƯƠNG HIỆU
+            </div>
+            <?PHP
+				//$sp_thuonghieu = mysql_query("select masp, tensp, giaban, giadexuat, thuonghieu from sanpham where thuonghieu = '".$re_sp['thuonghieu']."' and masp not in ('".$re_sp['masp']."')");
+				//$sp_thuonghieu = mysql_query("select sp.masp, mactsp, tensp, mausac, ctsp.giaban, ctsp.giadexuat, thuonghieu from sanpham sp, chitietsanpham ctsp where sp.masp = ctsp.masp and thuonghieu = '".$re_sp['thuonghieu']."' and sp.masp not in ('".$re_sp['masp']."')");
+				$sp_thuonghieu = mysql_query("SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+											FROM
+											(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+												from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+												where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and thuonghieu = '".mysql_escape_string($re_sp['thuonghieu'])."' and ctsp.mactsp <> '$id'
+												group by ctsp.mactsp 
+												limit 0,10
+											)t1 left join
+											(
+												SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+												FROM	khuyenmai km, ctsp_km ctkm
+												where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+												group by km.makm
+											)t2 on t1.masp = t2.masp");
+				while($re_thuonghieu = mysql_fetch_assoc($sp_thuonghieu))
+				{
+			?>
+                <div class = 'pro-sml'>
+                    <img src="image/mypham/<?php echo $re_thuonghieu['duongdan'] ?>"/>
+                    <a href='product-detail.php?id=<?php echo $re_thuonghieu['mactsp'] ?>'>
+                    <div>
+                        <p><?php echo $re_thuonghieu['tensp'] ?></p>
+                        <p>Màu: <?php echo $re_thuonghieu['mausac'] ?></p>
+                        <p class="text-highlight"><?php echo $re_thuonghieu['thuonghieu'] ?></p>
+                        <p>
+                        	<?php
+								$giamgia = $giaban = 0; $check_qt = 0;
+								if($re_thuonghieu['makm'] == "")
+								{
+									$giaban = $re_thuonghieu['giaban'];
+								}
+								else
+								{
+									if($re_thuonghieu['chietkhau'] != 0)
+									{
+										$giamgia = $re_thuonghieu['chietkhau'];
+										$giaban = $re_thuonghieu['giaban'] - ($re_thuonghieu['giaban']*($giamgia/100));	
+									}
+									else if($re_thuonghieu['tiengiamgia'] != 0)
+									{
+										$giamgia = $re_thuonghieu['tiengiamgia'];
+										$giaban = $re_thuonghieu['giaban'] - $re_thuonghieu['tiengiamgia'];	
+									}
+									else if($re_thuonghieu['chietkhau'] == 0 && $re_thuonghieu['tiengiamgia'] == 0)
+									{
+										$check_qt = 1;
+										$giaban = $re_thuonghieu['giaban'];	
+									}
+													
+								}
+							?>
+                            <span class = 'product-price-home'><?php echo number_format($giaban) ?> đ</span>
+                            <strike><?php echo $giamgia == 0 ?  "" :  number_format($re_thuonghieu['giaban'])."đ" ?></strike>
+                        </p>
+                        
+                    </div>
+                    </a>
+                </div>
+            <?php
+				}
+			?>	
+            
+			
+            <div class='pro-xemthem'>
+            	<a href='#'>Xem thêm</a>
+            </div>
+        </div>
+        
+        
+	
 	</div>
 	
 	<div class = 'clear'></div>
@@ -388,4 +579,14 @@
     
 <?php
 	include_once('module/bottom.php');
+	//mysql_close($conn);
+?>
+
+<?php
+
+	function KhuyenMai()
+	{
+		
+	}
+
 ?>
