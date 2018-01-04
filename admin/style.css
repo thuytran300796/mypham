@@ -194,6 +194,11 @@ body
 	border-collapse: collapse; 
 }
 
+.tb-lietke a
+{
+	color: #f90;	
+}
+
 .tb-lietke tr
 {
 	 height: 30px;  border: solid 1px #ccc; 
@@ -893,7 +898,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 	 height: 30px; padding: 5px 10px; color: white; font-weight: bold; background: #088A68; border: none; border-radius: 3px;	
 }
 
-.sub:hover{cursor: pointer};
+.sub:hover{cursor: pointer; background: #099 };
 
 #khachhang table
 {
@@ -940,7 +945,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 /*---------LIỆT KÊ SẢN PHẨM-----------*/
 #sp-left, #km-left
 {
-	width: 20%; height: 500px; float: left;	
+	width: 20%; float: left;	
 }
 
 #sp-left div, #km-left div
@@ -949,9 +954,24 @@ float: right;		width: 25%;	 margin-right: 20px;
 	margin-bottom: 8%;  border: solid 1px #ccc; border-radius: 3px;
 }
 
-#sp-left input, #km-left input
+#sp-left input, #km-left input, #sp-left .cbb-sp
 {
 	margin: 4%;	
+}
+
+#sp-left .txt-sp, #km-left .txt-sp
+{
+	width: 210px;
+}
+
+#sp-left .sub, #km-left .sub
+{
+	width: 235px; background: #F90
+}
+
+#sp-left .cbb-sp
+{
+	width: 235px;	
 }
 
 #parent li
@@ -984,10 +1004,45 @@ float: right;		width: 25%;	 margin-right: 20px;
 	cursor: pointer;	
 }
 
+#sp-right table tr:nth-child(odd) {background: #F2F2F2}
+
+
 .ctsp-item
 {
 	width: 20%; line-height: 30px; float: left; text-align: center;
 }
+
+.lietke-sp
+{
+	width: 100%; font-size: 13px;
+}
+
+.lietke-sp a
+{
+	font-size: 12px;
+}
+
+.lietke-sp-th
+{
+	width: 100%; height: 30px; color: white; background:#0489B1; font-weight: bold;	 text-align: center; line-height: 30px;
+}
+
+.lietke-sp-th div
+{
+	float: left; text-align: center; border: solid 1px;
+}
+
+.lietke-sp-tr
+{
+	width: 100%;  border-bottom: solid 1px #ccc;  padding-top: 10px; cursor: pointer; 
+}
+
+.lietke-sp-td
+{
+	float: left;  padding: 4px; text-align: center;
+}
+
+
 
 /*------------------NHẬP KHO----------------------*/
 .quick-search
@@ -1025,7 +1080,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 {
 	color: #999;	
 	font-weight: bold;
- display: block; font-size: 13px;
+ display: block; font-size: 13px; 
 }
 
 .quick-result a div
@@ -1087,6 +1142,239 @@ float: right;		width: 25%;	 margin-right: 20px;
 }
 
 #tb-km tr:hover {cursor: pointer;}
+
+/*--------------- LIỆT KÊ GIỎ HÀNG-------------------*/
+
+#tb-listbill
+{
+	border-collapse: collapse;
+	text-align: center;
+}
+
+#tb-listbill th
+{
+	background: #E0F8F7;
+	color: #3CA937;
+	font-size: 15px;
+}
+
+#tb-listbill tr
+{
+	height: 40px;	
+}
+
+#tb-listbill tr td
+{
+	color: #000;	
+}
+
+#tb-listbill a
+{
+	color: #FF7B52;	
+	font-size: 13px; font-weight: bold;
+}
+
+#giohang .tb-lietke tr
+{
+	cursor: pointer;
+}
+
+#giohang .ctsp-item
+{
+	width: 12%;	
+}
+
+#hoadon
+{
+	width: 78%; float: right; 
+}
+
+#hoadon .tb-lietke, #giohang .tb-lietke
+{
+	font-size: 13px;	text-align: center; 
+}
+
+#hoadon .tb-lietke a , #giohang .tb-lietke a
+{
+	font-size: 13px;	text-align: center; 
+}
+
+#hoadon .tb-lietke th
+{
+	border: solid 1px;
+}
+
+#hoadon .tb-lietke tr
+{
+	cursor: pointer;
+}
+
+#hoadon .ctsp-item
+{
+	width: 13%;
+}
+
+.left
+{
+	text-align: left;	
+}
+
+.center
+{
+	text-align: center;	
+}
+
+.right
+{
+	text-align: right;	
+}
+
+.bold
+{
+	font-weight: bold;
+}
+
+#hd-left
+{
+	width: 20%; float: left;
+}
+
+/*------------------ TẠO HÓA ĐƠN------------------*/
+#taohd-left
+{
+	width: 72%;
+	border: solid 2px #F90; float: left;
+}
+
+#taohd-right
+{
+	width: 24%;
+	border: solid 2px #F90; float: right; padding: 10px;
+}
+
+#taohd-right table {padding: 50px;}
+
+#taohd-left .quick-search
+{
+	background: #EFFBF2; padding: 10px; width: 97.5%;	margin: 0;
+}
+
+#taohd-left .quick-result
+{
+	display: block;
+}
+
+.hd-sp
+{
+	width: 100%; margin-top: 10px; 
+}
+
+.hd-sp ul li
+{
+	width: 100%; height: 60px; border: solid 1px;
+}
+
+.product-km
+{
+	width: 100%; 
+}
+
+.product-km ul li
+{
+	float: left; width: 70px; height: 70px; border: solid 1px #ccc; margin-left: 10px; padding: 5px;
+}
+
+.product-km img
+{
+	width: 70px; height: 70px;		
+}
+
+.txt-soluong
+{
+	width: 60px; height: 30px;	 border-radius: 2px; border: solid 1px #CCCCCC;
+	text-align: center;
+}
+
+.btn-sub, .btn-plus
+{
+	width: 20%; height: 30px; border: none; border: solid 1px; border-radius: 2px;
+}
+
+.btn-sub:hover, .btn-plus:hover
+{
+	cursor: pointer;	
+}
+
+.hd-sp table tr
+{
+	border-bottom: solid 1px #ccc;
+}
+
+.hd-sp table td
+{
+	padding: 10px;
+}
+
+.hd-sp a
+{
+	color: #399;
+}
+
+#taohd-right .txt-sp
+{
+	width: 150px; text-align: right;
+}
+
+#taohd-right table td
+{
+	margin-bottom: 10px; padding: 5px;
+}
+
+#quatang
+{
+	width: 100%;margin-top: 5%; 
+}
+
+.quatang-item
+{
+	float: left; width: 22%;  margin-right: 3%; border: solid 1px #ccc; text-align: center; padding: 10px; 
+}
+
+.quatang-item img
+{
+	width: 120px; height: 140px;
+}
+
+.quatang-item p
+{
+	color: #088A68;	
+}
+
+.code
+{
+	display: none;	
+}
+
+#code-submit
+{
+	width: 80px; height: 40px; color: white; font-weight: bold;background:#F06; border: none; border-radius: 3px; padding: 5px;
+}
+
+
+#taohd-right .quick-search
+{
+	background: #EFFBF2; padding: 10px; width: 100%; margin-left: -12px; margin-top: -14px;
+}
+
+#taohd-right .quick-result
+{
+	display: block; width: 350px;
+}
+
+#taohd-right .quick-result a div
+{
+	float: left; padding-left: 10px; width: 160px;
+}
 
 /*-----------------------------------------------*/
 .bottom

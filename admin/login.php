@@ -91,7 +91,7 @@
                 <table width="100%" cellspacing="20px" style="margin-left: 18%">
                     <tr>
                         <td width="20%">Mã nhân viên: </td>
-                        <td><input type='text' class="txt-sp" name='manv' id='manv' value="<?php echo $manv; ?>"/></td>
+                        <td><input type='text' class="txt-sp" style="height: 40px;"  name='manv' id='manv' value="<?php echo $manv; ?>"/></td>
                     </tr>
                     <tr>
                     	<td></td>
@@ -105,7 +105,7 @@
                     </tr>
                     <tr>
                         <td width="20%">Mật khẩu: </td>
-                        <td><input type='password' class="txt-sp" name='matkhau' id='matkhau' value="<?php echo $matkhau; ?>"/></td>
+                        <td><input type='password' class="txt-sp" style="height: 40px;" name='matkhau' id='matkhau' value="<?php echo $matkhau; ?>"/></td>
                     </tr>
                     <tr>
                     	<td></td>

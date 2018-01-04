@@ -60,7 +60,7 @@
         
         	<p style = "color: #3CA937; font-weight: bold; font-size: 25px;">Đổi mật khẩu</p>
             
-            <table class = "info_account" cellspacing="20px" width="80%">
+            <table class = "info_account" cellspacing="20px" width="100%">
             	
                 <tr>
                 	<td width="25%" style = "font-weight: bold">Mật khẩu hiện tại:</td>

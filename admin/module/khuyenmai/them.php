@@ -3,6 +3,12 @@
 <script>
 
 	$(document).ready(function(e) {
+		
+		$('.quick-result').mouseleave(function()
+		{
+			$('.quick-result').hide();
+		});
+		
         check_qt = check_spad = 1;
 		$('#loaikm').change(function()
 		{

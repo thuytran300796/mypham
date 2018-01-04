@@ -784,7 +784,6 @@
     	
         <tr>
         	<th>Màu sắc</th>
-            
             <th>NSX</th>
             <th>HSD</th>
             <th>Số lượng</th>
@@ -800,16 +799,16 @@
 					//echo $key." ";
 		?>
         		<tr data-id='<?php echo $re_ctsp['mactsp'] ?>'>
-                    <td><?php echo $re_ctsp['mausac']==""?"Không":$re_ctsp['mausac'] ?></td>
-                    <td><?php echo $re_ctsp['ngaysx'] ?></td>
-                    <td><?php echo $re_ctsp['hansudung']?></td>
-                    <td><?php echo $re_ctsp['soluong'] ?></td>
-                    <td><?php echo number_format($re_ctsp['giaban']) ?></td>
+                    <td width='15%'><?php echo $re_ctsp['mausac']==""?"Không":$re_ctsp['mausac'] ?></td>
+                    <td width='20%'><?php echo $re_ctsp['ngaysx'] ?></td>
+                    <td width='20%'><?php echo $re_ctsp['hansudung']?></td>
+                    <td width='15%'><?php echo $re_ctsp['soluong'] ?></td>
+                    <td width='25%'><?php echo number_format($re_ctsp['giaban']) ?></td>
                     
-                    <td><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?> class='edit-ctsp'>Sửa</a></td>
-                    <td><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?>  class='del-ctsp'>Xóa</a></td>
+                    <td width='5%'><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?> class='edit-ctsp'>Sửa</a></td>
+                    <td width='5%'><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?>  class='del-ctsp'>Xóa</a></td>
                 </tr>
-                <div  class='phieunhap<?php echo $re_ctsp['mactsp'] ?>' style="display: none; background: #EFFBF2; width: 250%;   padding: 10px; ">
+                <div  class='phieunhap<?php echo $re_ctsp['mactsp'] ?>' style="display: none; background: #EFFBF2; width: 600%;   padding: 10px; ">
                 
                     <div style="width: 100%; height: 30px; line-height: 30px; font-weight: bold;">
                         <div class='ctsp-item'  >Mã phiếu</div>
@@ -897,5 +896,5 @@
 
 
 <div id='text'>
-	aaaaaaaaa
+	
 </div>

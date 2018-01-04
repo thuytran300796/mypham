@@ -47,7 +47,8 @@
 			$sdt = $re_kh['SoDienThoai'];
 			$gioitinh = $re_kh['GioiTinh'];
 			$ngaysinh = $re_kh['NgaySinh'];
-		
+			$diemtichluy = $re_kh['DiemTichLuy'];
+			$hinhdaidien = $re_kh['HinhDaiDien'];
 		}
 		else
 		{
@@ -67,11 +68,11 @@
 			$sdt = $_POST['sdt'];
 			$diachi = $_POST['diachi'];	
 			$ngaysinh = $_POST['ngaysinh'];
-			
+			$diemtichluy = $_POST['diemtichluy'];
 			if($_FILES['hinh']['size'] != 0)
 			{
 				$file_size = $_FILES["hinh"]["size"];
-				echo "size: ".$file_size;
+				//echo "size: ".$file_size;
 				if($file_size > 1024 * 1024 * 2)
 				{
 					echo "File được chọn phải nhỏ hơn 2MB </br>";
@@ -79,10 +80,11 @@
 				}
 				
 				$file_type = $_FILES["hinh"]["type"];
+				//echo "ko: ".basename($_FILES["hinh"]["name"]);
 				
 				if($file_type == "image/jpeg" || $file_type == "image/png")
 				{
-					$duongdan = "image/khachhang/".basename($_FILES["hinh"]["name"]);
+					$duongdan = "image/khachhang/";
 					move_uploaded_file($_FILES["hinh"]["tmp_name"], "$duongdan".$_FILES["hinh"]["name"]);
 				}
 				else
@@ -102,6 +104,7 @@
 				else
 					$kq = mysql_query("UPDATE KhachHang SET TenKH = N'$ten', DiaChi = N'$diachi', GioiTinh = $gioitinh, SoDienThoai = '$sdt', NgaySinh = '$ngaysinh'  WHERE MaKH = '$user'");	
 				$_SESSION['name'] = $ten;
+				$hinhdaidien = $_FILES["hinh"]["name"];
 				//header('location: account.php?id='.$id);
 				echo "<script> alert('Cập nhật thành công!'); </script>";	
 			}
@@ -115,12 +118,18 @@
         <ul>
         	<a href = "account.php?id=<?php echo $user ?>"><li>Thông tin tài khoản</li></a>
             <a href = "account.php?id=<?php echo $user ?>&type=doimk"><li>Đổi mật khẩu</li></a>
-        	<a href = "list-bill.php?id=<?php echo $user ?>"><li>Lịch sử đơn hàng</li></a>
+        	<a href = "list_bill.php?id=<?php echo $user ?>"><li>Lịch sử đơn hàng</li></a>
         </ul>
 
 </div>
 
 <div id = "acc-right">
+
+	<div id="avatar" >
+    <?php //echo $hinhdaidien ?>
+    	<img src="image/khachhang/<?php echo $hinhdaidien ?>"/>
+   		<p>Ảnh đại diện</p>
+    </div>
 
 <?php
 	if(!isset($_GET['type']))
@@ -130,7 +139,7 @@
     		
             <p style = "color: #3CA937; font-weight: bold; font-size: 25px;">Cập nhật thông tin tài khoản</p>
             
-            <table class = "info_account" cellspacing="20px" width="80%">
+            <table class = "info_account" cellspacing="20px" width="100%">
             
             	<tr>
                 	<td width="20%" style = "font-weight: bold;">Tên tài khoản:</td>
@@ -186,6 +195,11 @@
                 <tr>
                 	<td style = "font-weight: bold">Địa chỉ:</td>
                     <td><textarea name = "diachi" rows="5" cols="31" style = "font-size: 20px" placeholder="Nhập địa chỉ mà bạn muốn được giao hàng..."><?php echo $diachi ?></textarea><br /></td>
+                </tr>
+                
+                <tr>
+                	<td style = "font-weight: bold">Điểm tích lũy:</td>
+                    <td><input type = "text" readonly="readonly" name = "diemtichluy" value = "<?php echo $diemtichluy ?>"/></td>
                 </tr>
                 
                 <tr>

@@ -164,13 +164,13 @@
 </script>
 
 <form method="post">
-<div id="km-left" style="width: 22%; float: left; font-size: 13px;">
+<div id="km-left" style="width: 20%; float: left; font-size: 13px;">
 
 	<div>
     	<p style="background: #088A68; border-radius: 3px; font-size: 16px; color: white; font-weight: bold; padding: 5px 5px;">Tìm kiếm</p>
         <br />
-        <input type='text' name="keyword" value='<?php echo $keyword ?>' class="txt-sp" style="width: 50%" placeholder='Nhập mã khuyến mãi'/>
-        <input type='submit' name="search" class="sub" style="width: 20%" value="Tìm"/>
+        <input type='text' name="keyword" value='<?php echo $keyword ?>' class="txt-sp"  placeholder='Nhập mã khuyến mãi'/>
+        <input type='submit' name="search" class="sub" value="Tìm"/>
     </div>
 	
 
@@ -179,22 +179,22 @@
         <br />
         Ngày bắt đầu: <input name='ngaybd' value="<?php echo $ngaybd ?>" type='date' class="txt-sp"/><br />
         Ngày kết thúc: <input name='ngaykt' value="<?php echo $ngaykt ?>" type='date' class="txt-sp"/>
-        <input type='submit' name="loc" value="Lọc" class="sub" style="width: 80%"/>
+        <input type='submit' name="loc" value="Lọc" class="sub" />
     </div>
     <input type="hidden" name="quanly" value="khuyenmai"/>
     <input type="hidden" name="ac" value="lietke"/>
 </div>
 </form>
 
-<div style="width: 75%; float: right; font-size: 13px;">
+<div style="width: 77%; float: right; font-size: 13px;">
 
-	<table id='tb-km' width="100%" class="tb-lietke">
+	<table id='tb-km' width="100%" class="tb-lietke" >
     	
         <tr>
-        	<th width="62%">Hình thức khuyến mãi</th>
-            <th width="18%">Thời hạn</th>
-            <th width="5%">Sửa</th>
-            <th width="5%">Xóa</th>
+        	<th width="65%">Hình thức khuyến mãi</th>
+            <th width="15%">Thời hạn</th>
+            <th width="7%">Sửa</th>
+            <th width="7%">Xóa</th>
         </tr>
         
          <?php
@@ -257,7 +257,7 @@
 	            <p>Kết thúc: <?php echo date('d/m/Y', strtotime($re_km['ngaykt'])) ?></p>
             </td>
             <td><a href='admin.php?quanly=khuyenmai&ac=sua&makm=<?php echo $re_km['makm'] ?>' class="edit-km" data-makm="<?php echo $re_km['makm'] ?>">Sửa</a></td>
-            <td><a href='javascript:void(0)' class="del-km" data-makm="<?php echo $re_km['makm'] ?>">Xóa</a></td>
+            <td class="center"><a href='javascript:void(0)' class="del-km" data-makm="<?php echo $re_km['makm'] ?>">Xóa</a></td>
         </tr>
         <?php
 			if($re_km['chietkhau']==0 &&  $re_km['tiengiamgia']==0 && $re_km['giatrivoucher'] == 0)

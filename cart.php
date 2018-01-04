@@ -119,7 +119,7 @@
 		$string = implode(',', $arr_id);
 		echo "mactsp: ".$string;
 		mysql_query("set names 'utf8'");
-			//lấy giá cả, khuyến mãi
+		//lấy giá cả, khuyến mãi với đối tượng là các ctsp có trong giỏ hàng
 		$sp_km = mysql_query("select km.makm, km.mota, km.masp, ctsp.mactsp, ctsp.giaban, km.giatrivoucher, km.giatridonhang, km.chietkhau, km.tiengiamgia, ctkm.id, ctkm.ngaybd, ctkm.ngaykt, ctkm.mactsp as 'maqt'
 							from 	khuyenmai km, ctsp_km ctkm, sanpham sp, chitietsanpham ctsp
 							where 	km.makm = ctkm.MaKM and km.masp = sp.masp and ctsp.MaSP = sp.MaSP
@@ -162,6 +162,7 @@
 				$check_qt = 0;
 				foreach($list_km as $key_km => $value_km)
 				{
+					//gán mặc định 1 quà tặng khi khách chưa chọn quà
 					if($_SESSION['cart'][$key]['maqt'] == $list_km[$key_km]['maqt'])
 					{
 						$check_qt = 1;
@@ -176,8 +177,7 @@
 		else
 		{
 			foreach($_SESSION['cart'] as $key => $value)
-
-								$_SESSION['cart'][$key]['maqt'] = "";
+				$_SESSION['cart'][$key]['maqt'] = "";
 			
 		}
 		
@@ -313,7 +313,7 @@
                                 <?php
 										}
 								?>
-                                            <a href='cart.php?mactsp=<?php echo $key ?>&maqt=<?php echo $re_qt['mactsp'] ?>' class='choose-qt' data-maqt='<?php echo $re_qt['mactsp'] ?>'>
+                                            <a href='cart.php?mactsp=<?php echo $key ?>&maqt=<?php echo $re_qt['mactsp'] ?>' class='choose-qt'  data-maqt='<?php echo $re_qt['mactsp'] ?>'>
                                                 <img style='width: 70px; height: 70px;' src='image/mypham/<?php echo $re_qt['duongdan'] ?>'/>
                                             </a>
                                         </li>
@@ -471,10 +471,10 @@
 			{
 		?>
         	<li>
-            	<a href='product-detail.php?id=<?php echo $re_qt['maqt'] ?>'>
+            	<a href='product-detail.php?id=<?php echo $re_qt['mactsp'] ?>'>
 				<div class='quatang-item'>
                     	<img src="image/mypham/<?php echo $re_qt['duongdan'] ?>"/>
-                        <p><?php echo $re_qt['tensp'] ?></p>
+                        <p><?php echo $re_qt['tensp'].($re_qt['mausac'] != "" ? " - Màu sắc: ".$re_qt['mausac']."" :"") ?></p>
                	</div>
                 </a>
             </li>
@@ -522,9 +522,10 @@
 		
 		$price = $tongtien - $giamgia_hd;
 	}
+	echo "tổng: ".$price;
 	?>
-	<input type='hidden' id='price' value="<?php echo $price ?>"/> 
-    <input type='hidden' id='tiensp' value="<?php echo $tongtien ?>"/> 
+	<input type='hidden' id='price' value="<?php echo $price ?>"/> <!--tiền hóa đơn-->
+    <input type='hidden' id='tiensp' value="<?php echo $tongtien ?>"/> <!--tiền sp-->
 	<table width="100%" style="padding: 20px; margin: auto; border: solid 1px #ccc; border-radius: 3px">
  
     	<tr>

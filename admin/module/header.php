@@ -5,7 +5,7 @@
     		<!--cart, search, logo-->
             <div class = 'top' > 
             	
-                <a href='../home.php'>
+                <a href='admin.php?quanly=hoadon&ac=lk_hd'>
                 <div class = 'logo' >
                     <span style="color:#088A68; font-size: 36px; font-weight: bold;">AZURA.vn</span>
                 </div>
@@ -37,6 +37,12 @@
             <div id = 'category'> 
             
             	<ul class='menu'>
+                	<li><a href='admin.php?quanly=hoadon&ac=lietke'>BÁN HÀNG</a>
+                    	<ul>
+                        	<li><a href='admin.php?quanly=hoadon&ac=lk_hd'>Các hóa đơn đã xuất</a></li>
+                            <li><a href='admin.php?quanly=hoadon&ac=giohang'>Các giỏ hàng xử lý</a>
+                        </ul>
+                    </li>
                 	<li><a href='admin.php?quanly=sanpham'>HÀNG HÓA</a>
                     	<ul>
                         	<li><a href='#'>Trang điểm</a>
@@ -76,7 +82,6 @@
                     </li>
                     <li><a href='admin.php?quanly=nhacc&ac=them'>NHÀ CUNG CẤP</a></li>
                     <li><a href='admin.php?quanly=khuyenmai&ac=lietke'>KHUYẾN MÃI</a></li>
-                    <li><a href='#'>HÓA ĐƠN</a></li>
                     <li><a href='#'>BÁO CÁO, THỐNG KÊ</a></li>
                     <li><a href='admin.php?quanly=nhanvien&ac=lietke'>NHÂN VIÊN</a>
                     	<ul>

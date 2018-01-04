@@ -220,28 +220,7 @@
 		return 'GH'.++$number;
 	}
 	
-	function Tao_MaHD()
-	{
-		require('../config/config.php');
-		
-		$result = mysql_query('Select MaHD from HoaDon ');
-		
-		if(mysql_num_rows($result) == 0)
-			return 'HD1';
-			
-		$dong = mysql_fetch_assoc($result);
-		
-		$number = substr($dong['MaHD'], 2);
-		
-		while($dong = mysql_fetch_assoc($result))
-		{
-			$temp = substr($dong['MaHD'], 2);
-			if($number < $temp)
-				$number = $temp;
-		}
-		return 'HD'.++$number;
-	}
-	
+
 	function Tao_MaBL()
 	{
 		//require('');

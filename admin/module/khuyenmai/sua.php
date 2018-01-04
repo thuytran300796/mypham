@@ -87,6 +87,11 @@
 			return false;
 		});
 		
+		$('.quick-result').mouseleave(function()
+		{
+			$('.quick-result').hide();
+		});
+		
 		$('#loaiad').change(function()
 		{
 			Check_LoaiAD();

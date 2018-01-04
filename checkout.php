@@ -123,6 +123,7 @@
 			$_SESSION['cart'][$key]['maqt'] = "";
 	}
 	
+	//trường hợp thay đổi nội dung km, xóa bỏ 1 trong các quà tặng
 	foreach($_SESSION['cart'] as $key => $value)
 	{
 		$check_qt = 0;
@@ -201,7 +202,7 @@
 							{
 								$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - 1 WHERE MaCTSP = '".$list_km[$key_km]['maqt']."'");
 								
-								$kq = mysql_query("insert into chitietgiohang(magh, mactsp, soluong, makm) values('$id', '".$list_km[$key_km]['maqt']."', 1, '$makm')");
+								$kq = mysql_query("insert into chitietgiohang(magh, mactsp, soluong, makm, quatang) values('$id', '".$list_km[$key_km]['maqt']."', 1, '000', 1)");
 								break;
 							}
 								
@@ -212,7 +213,7 @@
 					
 					$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - ".$_SESSION['cart'][$key]['soluong']." WHERE MaCTSP = '$key'");
 					
-					$kq = mysql_query("UPDATE SanPham SET LuotMua = LuotMua + ".$_SESSION['cart'][$key]['soluong']." WHERE MaSP = '".$_SESSION['cart'][$key]['masp']."'");
+					//$kq = mysql_query("UPDATE SanPham SET LuotMua = LuotMua + ".$_SESSION['cart'][$key]['soluong']." WHERE MaSP = '".$_SESSION['cart'][$key]['masp']."'");
 					
 				}
 				

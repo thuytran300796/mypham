@@ -177,7 +177,7 @@
 			{
 				$check_qt = 1;
 				$giaban_i = $list[$i]['giaban'];	
-			}
+			}//echo "<br/>--------------<br/>";
 			for($j=$i+1; $j<count($list); $j++)
 			{
 				$giamgia = 0;
@@ -197,21 +197,24 @@
 					$check_qt = 1;
 					$giaban_j = $list[$j]['giaban'];	
 				}
+				
+				
 				//echo "<br/>".$giaban_i." - ".$giaban_j;
-				if($giaban_i > $giaban_j)
+				if($giaban_i < $giaban_j)
 				{
 					$temp[0] = $list[$i];
 					$list[$i] = $list[$j];
 					$list[$j] = $temp[0];	
+					$giaban_i = $giaban_j;
 					//echo " - Đổi";
 				}
 			}
-			$i = $i-1;
-			echo "--------------<br/>";
-			foreach($list as $key => $value)
-			{
-				echo $list[$key]['mactsp']. " - ".$list[$key]['giaban']."<br/>";
-			}
+			
+			//echo "<br/>Sắp xếp lại<br/>";
+			//foreach($list as $key => $value)
+			//{
+				//echo $list[$key]['mactsp']. " - ".$list[$key]['giaban']."<br/>";
+			//}
 		}
 	}
 	else
@@ -251,16 +254,17 @@
 					$giaban_j = $list[$j]['giaban'];	
 				}
 				
-				if($giaban_i < $giaban_j)
+				if($giaban_i > $giaban_j)
 				{
 					$temp[0] = $list[$i];
 					$list[$i] = $list[$j];
-					$list[$j] = $temp[0];	
+					$list[$j] = $temp[0];
+					$giaban_i = $giaban_j;	
 				}
 			}
 		}
 	}
-	/*
+	 
 	for($i=0; $i<count($list); $i++)
 	{
 		
@@ -308,7 +312,7 @@
         echo "</a>";
 			
 	}
-	*/
+	 
 	/*
 	
 	while($record = mysql_fetch_assoc($result))

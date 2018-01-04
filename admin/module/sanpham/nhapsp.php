@@ -30,6 +30,11 @@
 			return false;	
 		});
 		
+		$('.quick-result').mouseleave(function()
+		{
+			$('.quick-result').hide();
+		});
+		
     });
 
 </script>

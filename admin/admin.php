@@ -77,7 +77,7 @@
 					$('.code').slideToggle();	
 				});
 				
-				$('.tb-lietke tr:even, #sp-right table tr:even').css('background-color', '#F2F2F2');
+				$('.tb-lietke tr:even').css('background-color', '#F2F2F2');
 				
             });
 			
@@ -152,6 +152,21 @@
 			include_once('module/khuyenmai/main.php');
 		else if($temp == 'nhanvien')
 			include_once('module/nhanvien/main.php');
+		else if($temp == 'hoadon')
+			include_once('module/hoadon/main.php');
+	}
+	else
+	{
+	
+		mysql_query("SET NAMES 'utf8'");
+		$donhang = mysql_query("SELECT MaGH FROM GioHang WHERE TrangThai = 0");
+		if(mysql_num_rows($donhang) > 0)
+			echo "<p style = 'font-weight: bold; margin-left: 40%'>CÓ <a style = 'color: #FA2359;' href='admin.php?quanly=hoadon&ac=giohang'>".mysql_num_rows($donhang)." ĐƠN HÀNG</a> CẦN GIẢI QUYẾT</p>";	
+		else
+		{
+			echo "<br/><br/><p style = 'font-weight: bold; margin-left: 43%'>CHƯA CÓ ĐƠN HÀNG NÀO</p>";	
+		}
+		
 	}
 
 ?>

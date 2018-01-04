@@ -312,7 +312,10 @@
 			if($current_page == 1)
 			{
 				$page_start = 1;
-				$page_end = 5;	
+				if($total_page >= 5)
+					$page_end = 5;
+				else
+					$page_end = $total_page;	
 			}
 			else
 			{
@@ -345,12 +348,15 @@
 					echo "<li><a href='$url&page=".($current_page-1)."'> < </a></li>";
 				}
 				//echo $url;
+				if($total_page > 1)
+				{
 				for($i=$page_start; $i<=$page_end; $i++)
 				{
 					if($i == $current_page)
 						echo "<li><a style='color: #f90; font-weight: bold' href='$url&page=$i'>$i</a></li>";	
 					else
 						echo "<li><a href='$url&page=$i'>$i</a></li>";	
+				}
 				}
 				if($current_page != $page_end)
 				{

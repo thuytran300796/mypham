@@ -27,6 +27,8 @@ input[type='submit'], input[type='button']
 	cursor: pointer;	
 }
 
+textarea{font-size: 13px;}
+
 .phantrang ul li
 {
 	float: left; margin-right: 20px; width: 30px;
@@ -839,6 +841,16 @@ float: right;		width: 25%;	 margin-right: 20px;
 	border-radius: 3px;	
 }
 
+#avatar
+{
+	position: absolute; width: 140px; height: 230px; border: solid 1px #ccc; left: 85%; padding: 5px; text-align: center; font-weight: bold;
+}
+
+#avatar img
+{
+	width: 140px; height: 210px;	
+}
+
 #acc-left ul li
 {
 	height: 40px; padding-bottom: 4%; padding-left: 4%;
@@ -919,6 +931,100 @@ float: right;		width: 25%;	 margin-right: 20px;
 	font-size: 20px;	
 	height: 30px;
 }
+
+#tb-listbill
+{
+	border-collapse: collapse;
+	text-align: center;
+}
+
+#tb-listbill th
+{
+	background: #E0F8F7;
+	color: #3CA937;
+	font-size: 15px;
+}
+
+#tb-listbill tr
+{
+	height: 40px;	
+}
+
+#tb-listbill tr td
+{
+	color: #000;	
+}
+
+#tb-listbill a
+{
+	color: #FF7B52;	
+	font-size: 13px; font-weight: bold;
+}
+
+/*----------- BILL DETAIL --------------*/
+
+#bill-info
+{
+	width: 60%;
+	margin: auto; margin-bottom: 5%;
+	border: solid 3px #FF7B52;
+	border-radius: 3px;
+	color: #6B6767;
+	padding: 1%;
+	text-align: center;
+}
+
+#list-pro
+{
+	width: 80%;
+	margin:auto;
+	text-align: center;	
+}
+
+#bill-pro
+{
+	width: 100%;
+}
+
+#bill-pro-img
+{
+	width: 30%; float: left;
+}
+
+#bill-pro-img img
+{
+	width: 80px;
+	height: 80px;	
+}
+
+#bill-pro-info
+{
+	width: 68%;	float: left;
+	margin-top: 10%; text-align: left;
+}
+
+#bill-pro-info a
+{ 
+	color: black; font-size: 13px; font-weight: none;
+}
+
+.list-bill  {background: #FFF;}
+
+.list-bill th
+{
+	font-size: 15px; background: #0CC; color: white; border: none;
+}
+
+.list-bill td
+{
+	font-size: 13px; border: none;padding: 10px;	
+}
+
+.list-bill tr
+{
+	border: solid 1px #ccc;	
+}
+
 
 /*-----------------------------------------------*/
 .bottom
