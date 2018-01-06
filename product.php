@@ -26,7 +26,7 @@
 	}
 	$position = ($current_page - 1) * $display;
 	
-	$title = NULL; $sql= $madm = $type = $keyword = "";
+	$title = NULL; $sql= $madm = $type = $keyword = $danhmuc = "";
 	$sql = NULL;
 	$list_sp = array();
 	//$type = 'bt';
@@ -125,25 +125,22 @@
 		}
 		else if($type == 'khuyenmai')
 		{
-			$trang = mysql_query("	select	count(*) as 'sosp'
-								from	sanpham sp, chitietsanpham ctsp, khuyenmai km
-								where	sp.masp = ctsp.masp and km.masp = sp.masp and sp.trangthai = 1 and ctsp.trangthai = 1 and km.trangthai = 1 and km.masp<> '' and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT)");
-			
 			$sql = "SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
 					FROM
 					(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
 						from	sanpham sp, chitietsanpham ctsp, hinhanh ha
 						where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp
 						group by ctsp.mactsp
-						limit $position, $display
 					)t1,
 					(
 						SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
 						FROM	khuyenmai km, ctsp_km ctkm
 						where	km.makm = ctkm.MaKM and km.trangthai = 1 and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
 						group by km.makm
-					)t2 where t1.masp = t2.masp";
+					)t2 where t1.masp = t2.masp
+					limit $position, $display";
 			$title = "CÁC SẢN PHẨM ĐANG ÁP DỤNG KHUYẾN MÃI";
+			$trang = mysql_query($sql);
 		}
 	}
 	else if(isset($_GET['keyword']))
@@ -170,6 +167,47 @@
 					)t2 on t1.masp = t2.masp";
 		
 	}
+	else if(isset($_GET['dm']))
+	{
+		$danhmuc = $_GET['dm']; $string = "";
+		$list_dm = array('TD'=>array('ten'=>'Trang điểm', 'chuoi'=>"'PhanMat', 'KMAT', 'MASCARA', 'KMAY', 'SThoi', 'SKem', 'SonTint', 'SD', 'BB_CC', 'CKD', 'KemLot', 'PhanPhu', 'PhanMa', 'PhanNen', 'KemNen', 'HL_TaoKhoi'"),
+						'TDMA'=>array('ten' => 'Trang điểm mắt', 'chuoi'=>"'PhanMat', 'KMAT', 'MASCARA', 'KMAY'"),
+						'TDM'=>array('ten'=>'Trang điểm môi', 'chuoi'=>"'SThoi', 'SKem', 'SonTint', 'SD'"),
+						'TDFace'=>array('ten' => 'Trang điểm mặt', 'chuoi'=>"'BB_CC', 'CKD', 'KemLot', 'PhanPhu', 'PhanMa', 'PhanNen', 'KemNen', 'HL_TaoKhoi'"),
+						'CST'=>array('ten'=>'Chăm sóc tóc', 'chuoi'=>"'DGGau', 'DGRungToc', 'DGKho', 'DauXa'"),
+						'DauGoi'=>array('ten'=>'Dầu gội', 'chuoi'=>"'DGGau', 'DGRungToc', 'DGKho'"),
+						'CSD'=>array('ten'=>'Chăm sóc da', 'chuoi'=>"'SRM', 'KCN', 'XitKhoang', 'MatNa', 'KemDD'"),
+						'NH'=>array('ten'=>'Nước hóa', 'chuoi'=>"'NH'")
+						);	
+		mysql_query("set names 'utf8'");
+		foreach($list_dm as $key => $value)
+		{
+			if($key == $danhmuc)
+			{
+				$string = $list_dm[$key]['chuoi'];
+				$title = $list_dm[$key]['ten'];
+			}
+		}
+		//echo $string;
+		$trang = mysql_query("select	count(*) as 'sosp'
+								from	sanpham sp, chitietsanpham ctsp
+								where	sp.masp = ctsp.masp and sp.trangthai = 1 and ctsp.trangthai = 1 and madm in ($string)");
+		
+		$sql = "SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+					FROM
+					(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+						from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+						where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and madm in ($string)
+						group by ctsp.mactsp
+						limit $position, $display
+					)t1 left join
+					(
+						SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+						FROM	khuyenmai km, ctsp_km ctkm
+						where	km.makm = ctkm.MaKM and km.trangthai = 1 and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+						group by km.makm
+					)t2 on t1.masp = t2.masp";
+	}
 	else
 		$madm = "";	
 
@@ -180,58 +218,73 @@
 		$title = "CÓ ".mysql_num_rows($sp)." KẾT QUẢ TÌM KIẾM";
 	}
 	$re_trang = mysql_fetch_assoc($trang);
-	$total_page = ceil($re_trang['sosp']/$display);
+	$total_page = $type != "danhmuc" ? ceil(count($trang)/$display) : ceil($re_trang['sosp']/$display);
 	//echo "so trang:".$total_page;
 ?>
 
-
+<!--
 <div id="pro-left">
 	<span style="font-weight: bold">TRANG ĐIỂM</span>
     <ul>
-    	<li>
-        	<a href='#'>Trang điểm mắt</a>
-            <ul>
-            	<li>
-                    <a href='#'>Phấn mắt</a>
-                </li>
-                <li>
-                    <a href='#'>Kẻ mắt</a>
-                    <ul>
-                        <li>
-                            <a href='#'>Dạng nước</a>
-                        </li>
-                        <li>
-                            <a href='#'>Dạng gel</a>
-                        </li>
+    	<li data-id='TD'><a href="product.php?dm=TD">Trang điểm</a>
+        	<ul>
+            	<li data-id='TDMA'><a href='product.php?dm=TDMA'>Trang điểm mắt</a>
+            		<ul>
+                    	<li><a href='product.php?madm=PhanMat'>Phấn mắt</a></li>
+                        <li><a href='product.php?madm=KMAT'>Kẻ mắt</a></li>
+                        <li><a href='product.php?MASCARA'>Mascara</a></li>
+                        <li><a href='product.php?madm=KMAY'>Kẻ mày</a></li>
                     </ul>
                 </li>
-                <li>
-                    <a href='#'>Kẻ chân mày</a>
-                </li>
+                <li data-id='TDM'><a href='product.php?dm=TDM'>Trang điểm môi</a>
+                    <ul>
+                        <li><a href='product.php?madm=SThoi'>Son thỏi</a></li>
+                        <li><a href='product.php?madm=SKem'>Son kem</a></li>
+                        <li><a href='product.php?madm=SonTint'>Son tint</a></li>
+                        <li><a href='product.php?madm=SD'>Son dưỡng</a></li>
+                    </ul>
+                 </li>
+                 <li data-id='TDFace'><a href='product.php?dm=TDFace'>Trang điểm mặt</a>
+                    <ul>
+                        <li><a href='product.php?madm=BB_CC'>BB Cream - CC Cream</a></li>
+                        <li><a href='product.php?madm=CKD'>Che khuyết điểm</a></li>
+                        <li><a href='product.php?madm=KemLot'>Kem lót</a></li>
+                        <li><a href='product.php?madm=PhanPhu'>Phấn phủ</a></li>
+                        <li><a href='product.php?madm=PhanMa'>Má hồng</a></li>
+                        <li><a href='product.php?madm=PhanNen'>Phấn nền</a></li>
+                        <li><a href='product.php?madm=KemNen'>Kem nền</a></li>
+                        <li><a href='product.php?madm=HL_TaoKhoi'>High Light - Tạo khối</a></li>
+                   	</ul>
+                 </li>
             </ul>
         </li>
-        <li>
-        	<a href='#'>Trang điểm môi</a>
+		<li data-id='CST'><a href='product.php?dm=CST'>Chăm sóc tóc</a>
+        	<ul>
+            	<li data-id='DauGoi'><a href='product.php?dm=DauGoi'>Dầu gội</a>
+                	<ul>
+                    	<li><a href='product.php?madm=DGGau'>Dầu gội trị gàu</a></li>
+                        <li><a href='product.php?madm=DGRungToc'>Dầu gội trị rụng tóc</a></li>
+                    	<li><a href='product.php?madm=DGKho'>Dầu gội cho tóc khô</a></li>
+                	</ul>
+               	</li>
+                <li><a href='product.php?madm=DauXa'>Dầu xả</a></li>
+         	</ul>
+        </li>
+        <li data-id='CSD'><a href='product.php?dm=CSD'>Chăm sóc da</a>
             <ul>
-            	<li>
-                    <a href='#'>Son kem</a>
-                </li>
-                <li>
-                    <a href='#'>Son thỏi</a>
-                </li>
-                <li>
-                    <a href='#'>Son tint</a>
-                </li>
-            </ul>
+                <li><a href='product.php?madm=SRM'>Sữa rửa mặt</a></li>
+                <li><a href='product.php?madm=KCN'>Kem chống nắng</a></li>
+                <li><a href='product.php?madm=XitKhoang'>Xịt khoáng</a></li>
+                <li><a href='product.php?madm=MatNa'>Mặt nạ</a></li>
+                <li><a href='product.php?madm=KemDD'>Kem dưỡng da</a></li>
+           </ul>
         </li>
-        <li>
-        	<a href='#'>Trang điểm mặt</a>
-        </li>
+        <li><a href='product.php?madm=NH'>Nước hoa</a></li>
     </ul>
 </div>
+-->
 
-
-<div id="pro-right">
+<div id="pro-right" style="width: 100%; border: solid 1px #ccc;">
 	<div class="pro-orderby">
     	<span class="title" style='float: left; line-height: 40px;'><?php echo $title ?></span>
         <div style='float: right'>
@@ -240,15 +293,17 @@
             	<option value=''>------</option>
                 <option value='giam'>Giá giảm dần</option>
                 <option value='tang'>Giá tăng dần</option>
-                <option value='banchay'>Sản phẩm bán chạy nhất</option>
             </select>
          </div>
+         <div class="clear"></div>
          <input type='hidden' id='madm' value='<?php echo $madm ?>'/>
          <input type='hidden' id='type' value='<?php echo $type ?>'/>
          <input type='hidden' id='keyword' value='<?php echo $keyword ?>'/>
+         <input type='hidden' id='danhmuc' value='<?php echo $danhmuc ?>'/>
          <input type='hidden' id='position' value='<?php echo $position ?>'/>
      </div>   
-        <div class = 'list-item'>
+     <div class="clear"></div>
+     <div class = 'list-item'>
 
 		<?php
 			while($record = mysql_fetch_assoc($sp))
@@ -327,22 +382,31 @@
 				else
 				{
 					$page_start = 1;
-					$page_end = 5;	
+					$page_end =  $current_page + 2 > $total_page ? $total_page : $current_page + 2;
 				}
 			}
 			
 			$url = "product.php?";
-				//if($madm != "") $url .= "madm=".$madm;
-				//if($type != "") $url .= "madm=".$madm;
-				$url .= $madm != "" ? "madm=".$madm : "";
-				$url .= $type != "" || $type !='search' ? "type=".$type : "";
-				$url .= $keyword != "" ? "keyword=".$keyword : "";
+
+				if($madm != "")
+					$url.="madm=".$madm;
+				else if($danhmuc != "" )
+					$url.="dm=".$danhmuc;
+				else if($type != "" || $type !='search' )
+				{
+					$url.="type=".$type;
+				}
+				else if($keyword != "")
+					$url.= "keyword=".$keyword;
+	
 		?>
         
         <ul>
 
         		
         	<?php
+			if($total_page > 0)
+			{
 				if($current_page != 1)
 				{
 					echo "<li><a href='$url&page=".($current_page-1)."'> < </a></li>";
@@ -350,18 +414,19 @@
 				//echo $url;
 				if($total_page > 1)
 				{
-				for($i=$page_start; $i<=$page_end; $i++)
-				{
-					if($i == $current_page)
-						echo "<li><a style='color: #f90; font-weight: bold' href='$url&page=$i'>$i</a></li>";	
-					else
-						echo "<li><a href='$url&page=$i'>$i</a></li>";	
-				}
+					for($i=$page_start; $i<=$page_end; $i++)
+					{
+						if($i == $current_page)
+							echo "<li><a style='color: #f90; font-weight: bold' href='$url&page=$i'>$i</a></li>";	
+						else
+							echo "<li><a href='$url&page=$i'>$i</a></li>";	
+					}
 				}
 				if($current_page != $page_end)
 				{
 					echo "<li><a href='$url&page=".($current_page+1)."'> > </a></li>";
 				}
+			}
 			?>
         </ul>
         
@@ -382,10 +447,11 @@
 			type = $('#type').val(); //alert("type: "+type);
 			madm = $('#madm').val();
 			keyword = $('#keyword').val();
+			danhmuc = $('#danhmuc').val();
 			sapxep = $('#orderby').val();
 			position = $('#position').val();
 			
-			data = "type="+type+"&madm="+madm+"&keyword="+keyword+"&sapxep="+sapxep+"&position="+position;
+			data = "type="+type+"&madm="+madm+"&keyword="+keyword+"&danhmuc="+danhmuc+"&sapxep="+sapxep+"&position="+position;
 			
 			$.ajax
 			({

@@ -222,7 +222,7 @@
                     
                     <tr>
                     	<?php
-							if($re_sp['soluong'] == 0)
+							if($re_sp['soluong'] <= 0)
 								echo "<p style='font-size: 18px; font-weight: bold'>HẾT HÀNG</p>";
 							else
 								echo "<td colspan='2'><input id='btn-add-cart' name='them' id='them' type='submit' value='Thêm vào giỏ hàng'/></td>";
@@ -411,34 +411,38 @@
 
 	<div class = 'wrap-right-protail'>
     
-    	<div class="list-pro">
-        	
-            <div class = 'list-item-title'>
-            	SẢN PHẨM LIÊN QUAN
-            </div>
-  			
-            <?php
+    	<?php
 				/*$sql = "	select	sp.masp, tensp, sp.giaban, sp.giadexuat, thuonghieu, sum(cthd.soluong) as 'tong'
 							from	sanpham sp, chitietsanpham ctsp, chitiethoadon cthd
 							where	sp.masp = ctsp.masp and ctsp.mactsp = cthd.mactsp and sp.trangthai = 1
 							group by sp.masp
 							order by sum(cthd.soluong) desc";*/
-				$sql = "	SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
-							FROM
-							(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
-								from	sanpham sp, chitietsanpham ctsp, hinhanh ha
-								where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and tensp like '%".mysql_escape_string($re_sp['tensp'])."%' and ctsp.mactsp <> '$id'
-								group by ctsp.mactsp 
-								limit 0,10
-							)t1 left join
-							(
-								SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
-								FROM	khuyenmai km, ctsp_km ctkm
-								where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
-								group by km.makm
-							)t2 on t1.masp = t2.masp";
-				mysql_query("set names 'utf8'");
-				$sp_lq = mysql_query($sql);
+			$sql = "	SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+						FROM
+						(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+							from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+							where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and tensp like '%".mysql_escape_string($re_sp['tensp'])."%' and ctsp.mactsp <> '$id'
+							group by ctsp.mactsp 
+							limit 0,5
+						)t1 left join
+						(
+							SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+							FROM	khuyenmai km, ctsp_km ctkm
+							where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+							group by km.makm
+						)t2 on t1.masp = t2.masp";
+			mysql_query("set names 'utf8'");
+			$sp_lq = mysql_query($sql);
+			if(mysql_num_rows($sp_lq) > 0)
+			{
+		?>
+    
+    	<div class="list-pro">
+        	
+            <div class = 'list-item-title'>
+            	SẢN PHẨM LIÊN QUAN
+            </div>
+            <?php
 				while($re_lq = mysql_fetch_assoc($sp_lq))
 				{
 			?>
@@ -491,24 +495,20 @@
             <div class='pro-xemthem'>
             	<a href='#'>Xem thêm</a>
             </div>
-		
         </div>
-	
-    	<div class="list-pro">
-        	
-            <div class = 'list-item-title'>
-            	SẢN PHẨM CÙNG THƯƠNG HIỆU
-            </div>
-            <?PHP
+		<?php
+			}
+		?>
+    	 <?php
 				//$sp_thuonghieu = mysql_query("select masp, tensp, giaban, giadexuat, thuonghieu from sanpham where thuonghieu = '".$re_sp['thuonghieu']."' and masp not in ('".$re_sp['masp']."')");
 				//$sp_thuonghieu = mysql_query("select sp.masp, mactsp, tensp, mausac, ctsp.giaban, ctsp.giadexuat, thuonghieu from sanpham sp, chitietsanpham ctsp where sp.masp = ctsp.masp and thuonghieu = '".$re_sp['thuonghieu']."' and sp.masp not in ('".$re_sp['masp']."')");
 				$sp_thuonghieu = mysql_query("SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
 											FROM
 											(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
 												from	sanpham sp, chitietsanpham ctsp, hinhanh ha
-												where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and thuonghieu = '".mysql_escape_string($re_sp['thuonghieu'])."' and ctsp.mactsp <> '$id'
+												where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and thuonghieu = '".mysql_escape_string($re_sp['thuonghieu'])."' and sp.masp <> '".$re_sp['masp']."'
 												group by ctsp.mactsp 
-												limit 0,10
+												limit 0,5
 											)t1 left join
 											(
 												SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
@@ -516,6 +516,16 @@
 												where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
 												group by km.makm
 											)t2 on t1.masp = t2.masp");
+				if(mysql_num_rows($sp_thuonghieu) > 0)
+				{
+		?>
+    
+    	<div class="list-pro">
+        	
+            <div class = 'list-item-title'>
+            	SẢN PHẨM CÙNG THƯƠNG HIỆU
+            </div>
+           <?php
 				while($re_thuonghieu = mysql_fetch_assoc($sp_thuonghieu))
 				{
 			?>
@@ -569,10 +579,95 @@
             	<a href='#'>Xem thêm</a>
             </div>
         </div>
+        <?php
+				}
+		?>
         
+        <?php
+			$gia_goiy = $re_sp['giaban'] * (15/100);
+		   		$sq_goiy = mysql_query("SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+										FROM
+										(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+											from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+											where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp  and sp.masp <> '".$re_sp['masp']."' and( ctsp.giaban <= (".$re_sp['giaban']." + $gia_goiy)  and ctsp.giaban >= (".$re_sp['giaban']." - $gia_goiy))
+											group by ctsp.mactsp 
+											limit 0,5
+										)t1 left join
+										(
+											SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+											FROM	khuyenmai km, ctsp_km ctkm
+											where	km.makm = ctkm.MaKM and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+											group by km.makm
+										)t2 on t1.masp = t2.masp");
+			if(mysql_num_rows($sq_goiy))
+			{
+		?>
         
+        <div class="list-pro">
+        	
+            <div class = 'list-item-title'>
+            	GỢI Ý CHO BẠN
+            </div>
+           <?php
+		   		
+				while($re_goiy = mysql_fetch_assoc($sq_goiy))
+				{
+			?>
+                <div class = 'pro-sml'>
+                    <img src="image/mypham/<?php echo $re_goiy['duongdan'] ?>"/>
+                    <a href='product-detail.php?id=<?php echo $re_goiy['mactsp'] ?>'>
+                    <div>
+                        <p><?php echo $re_goiy['tensp'] ?></p>
+                        <p>Màu: <?php echo $re_goiy['mausac'] ?></p>
+                        <p class="text-highlight"><?php echo $re_goiy['thuonghieu'] ?></p>
+                        <p>
+                        	<?php
+								$giamgia = $giaban = 0; $check_qt = 0;
+								if($re_goiy['makm'] == "")
+								{
+									$giaban = $re_goiy['giaban'];
+								}
+								else
+								{
+									if($re_goiy['chietkhau'] != 0)
+									{
+										$giamgia = $re_goiy['chietkhau'];
+										$giaban = $re_goiy['giaban'] - ($re_goiy['giaban']*($giamgia/100));	
+									}
+									else if($re_goiy['tiengiamgia'] != 0)
+									{
+										$giamgia = $re_goiy['tiengiamgia'];
+										$giaban = $re_goiy['giaban'] - $re_goiy['tiengiamgia'];	
+									}
+									else if($re_goiy['chietkhau'] == 0 && $re_goiy['tiengiamgia'] == 0)
+									{
+										$check_qt = 1;
+										$giaban = $re_goiy['giaban'];	
+									}
+													
+								}
+							?>
+                            <span class = 'product-price-home'><?php echo number_format($giaban) ?> đ</span>
+                            <strike><?php echo $giamgia == 0 ?  "" :  number_format($re_goiy['giaban'])."đ" ?></strike>
+                        </p>
+                        
+                    </div>
+                    </a>
+                </div>
+            <?php
+				}
+			?>	
+            
+			
+            <div class='pro-xemthem'>
+            	<a href='#'>Xem thêm</a>
+            </div>
+        </div>
 	
 	</div>
+    <?php
+			}
+	?>
 	
 	<div class = 'clear'></div>
     

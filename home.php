@@ -114,7 +114,7 @@
                 	
                     <div class = 'list-item-title'>
                     	<div>HÀNG MỚI VỀ</div>
-                        <a href='#'>Xem thêm</a>
+                        <a href='product.php?type=hangmoi'>Xem thêm</a>
                     </div>
                     
                     <div class = 'list-item-product' data-id = 'km'>

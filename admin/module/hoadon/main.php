@@ -11,6 +11,8 @@
 			require('module/hoadon/hoadon.php');
 		else if($ac == 'taohd')
 			require('module/hoadon/taohd.php');
+		else if($ac == 'xuat')
+			require('module/hoadon/xuatbill.php');
 		
 	}
 

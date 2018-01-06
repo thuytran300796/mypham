@@ -363,6 +363,29 @@
 </script>
 
 <?php
+	function Tao_PN()
+	{
+		$phieunhap = mysql_query('select MaPhieu from PhieuNhap');
+		
+		if(mysql_num_rows($phieunhap) == 0)
+			return 'PN1';
+		
+		$re_pn = mysql_fetch_assoc($phieunhap);
+		$number = substr($re_pn['MaPhieu'], 2);
+				
+		while($re_pn = mysql_fetch_assoc($phieunhap))
+		{
+			$temp = substr($re_pn['MaPhieu'], 2);
+			if($number < $temp)
+				$number = $temp;
+		}
+		
+		return 'PN'.++$number;
+					
+	}
+?>
+
+<?php
 	//unset($_SESSION['list-ctsp']);
 	//unset($_FILES['file']);
 	$loi = array();
@@ -481,6 +504,10 @@
 			if(!$sp)
 				echo mysql_error();
 				
+			$mapn = Tao_PN();
+			mysql_query("set names 'utf8'");
+			$nhapkho = mysql_query("insert into phieunhap(maphieu, ngaynhap, manv) values('$mapn', '$date', '".$_SESSION['user']."')");
+				
 			foreach($_SESSION['list-ctsp'] as $key => $value)
 			{
 				$mactsp = mysql_query("select count(mactsp) as 'number' from chitietsanpham");
@@ -490,28 +517,10 @@
 				$ctsp = mysql_query("insert into chitietsanpham(masp, mactsp, mausac, ngaysx, hansudung, soluong, giaban, trangthai) values('$masp', '$mactsp', '".$_SESSION['list-ctsp'][$key]['mausac']."', '".$_SESSION['list-ctsp'][$key]['ngaysx']."', '".$_SESSION['list-ctsp'][$key]['hsd']."', ".$_SESSION['list-ctsp'][$key]['soluong'].", ".$_SESSION['list-ctsp'][$key]['giaban'].", 1)");	
 				
 				/*--------------INSERT BẢNG NHẬP KHO--------------*/
-				$phieunhap = mysql_query('select MaPhieu from PhieuNhap');
-		
-				if(mysql_num_rows($phieunhap) == 0)
-					$mapn = 'PN1';
-				else
-				{
-					$re_pn = mysql_fetch_assoc($phieunhap);
-					$number = substr($re_pn['MaPhieu'], 4);
-				
-					while($re_pn = mysql_fetch_assoc($phieunhap))
-					{
-						$temp = substr($re_pn['MaPhieu'], 2);
-						if($number < $temp)
-							$number = $temp;
-					}
-					$mapn = 'PN'.++$number;
-				}
-				
+							
 				mysql_query("set names 'utf8'");
-				$nhapkho = mysql_query("insert into phieunhap values('$mapn','$date', '$mactsp', ".$_SESSION['list-ctsp'][$key]['soluong'].", ".$_SESSION['list-ctsp'][$key]['gianhap'].")");
-				if(!$nhapkho)
-					echo mysql_error();
+				$nhapkho = mysql_query("insert into chitietphieunhap values('$mapn','$mactsp', ".$_SESSION['list-ctsp'][$key]['soluong'].", ".$_SESSION['list-ctsp'][$key]['gianhap'].")");
+				
 			}
 			unset($_SESSION['list-ctsp']);
 			
@@ -546,7 +555,7 @@
 			
 			unset($_FILES['file']);
 			echo "<script>alert('Thêm sản phẩm thành công');</script>";
-			header('admin.php?quanly=sanpham');
+			header('location: admin.php?quanly=sanpham');
 		}
 	}
 	/*
@@ -652,7 +661,15 @@
         <tr>
             <td>Mô tả: </td>
             <td><textarea name="mota" class="txt-sp"><?php echo $mota ?></textarea></td>
-           
+           	<script type="text/javascript">
+            	CKEDITOR.replace('mota',
+				{
+					filebrowserBrowseUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/ckfinder.html',
+    				filebrowserImageBrowseUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/ckfinder.html?type=Images',
+    				filebrowserUploadUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+					filebrowserImageUploadUrl:'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images'
+				});
+            </script>
         </tr>
         
         <!--

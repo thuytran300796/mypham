@@ -6,8 +6,10 @@
 	$sapxep = $_POST['sapxep'];
 	$type = $_POST['type'];
 	$madm = $_POST['madm'];
+	$danhmuc = $_POST['danhmuc'];
 	$keyword = $_POST['keyword'];
 	$position = $_POST['position'];
+	$display = 12;
 	if($type != "")
 	{
 		if($type=='banchay')
@@ -32,7 +34,7 @@
 						group by km.makm
 					)t2 on t1.masp = t2.masp";	
 			*/
-			$limit = "  limit $position,12
+			$limit = "  limit $position, $display
 					)t1 left join
 					(
 						SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
@@ -61,7 +63,7 @@
 						where	km.makm = ctkm.MaKM and km.trangthai = 1 and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
 						group by km.makm
 					)t2 on t1.masp = t2.masp";*/
-			$limit = " limit $position,12
+			$limit = " limit $position,$display
 					)t1 left join
 					(
 						SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
@@ -82,14 +84,14 @@
 			
 			//$orderby = $sapxep == 'giam' ?  " order by ctsp.giaban desc " : " order by ctsp.giaban asc ";
 			$orderby = "  ";			
-			$limit = " limit $position,12
+			$limit = " 
 					)t1,
 					(
 						SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
 						FROM	khuyenmai km, ctsp_km ctkm
 						where	km.makm = ctkm.MaKM and km.trangthai = 1 and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
 						group by km.makm
-					)t2 where t1.masp = t2.masp ";
+					)t2 where t1.masp = t2.masp limit $position,$display ";
 			$sql = $select.$orderby.$limit;		
 		}
 		else if($type=='search')
@@ -102,7 +104,7 @@
 					group by ctsp.mactsp ";
 			//$orderby = $sapxep == 'giam' ?  " order by ctsp.giaban desc " : " order by ctsp.giaban asc ";		
 			$orderby = "  ";		
-			$limit = " limit $position,12
+			$limit = " limit $position,$display
 					)t1 left join
 					(
 						SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
@@ -123,7 +125,7 @@
 					group by ctsp.mactsp ";
 		//$orderby = $sapxep == 'giam' ?  " order by ctsp.giaban desc " : " order by ctsp.giaban asc ";			
 		$orderby = "  ";	
-		$limit = " limit $position,12
+		$limit = " limit $position,$display
 				)t1 left join
 				(
 					SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
@@ -133,6 +135,43 @@
 					)t2 on t1.masp = t2.masp";
 					
 		$sql = $select.$orderby.$limit;	
+	}
+	else  if($danhmuc != "")
+	{
+		$string = "";
+		$list_dm = array('TD'=>"'PhanMat', 'KMAT', 'MASCARA', 'KMAY', 'SThoi', 'SKem', 'SonTint', 'SD', 'BB_CC', 'CKD', 'KemLot', 'PhanPhu', 'PhanMa', 'PhanNen', 'KemNen', 'HL_TaoKhoi'",
+						'TDMA'=>"'PhanMat', 'KMAT', 'MASCARA', 'KMAY'",
+						'TDM'=>"'SThoi', 'SKem', 'SonTint', 'SD'",
+						'TDFace'=>"'BB_CC', 'CKD', 'KemLot', 'PhanPhu', 'PhanMa', 'PhanNen', 'KemNen', 'HL_TaoKhoi'",
+						'CST'=>"'DGGau', 'DGRungToc', 'DGKho', 'DauXa'",
+						'DauGoi'=>"'DGGau', 'DGRungToc', 'DGKho'",
+						'CSD'=>"'SRM', 'KCN', 'XitKhoang', 'MatNa', 'KemDD'",
+						'NH'=>"NH",
+						);	
+		mysql_query("set names 'utf8'");
+		foreach($list_dm as $key => $value)
+		{
+			if($key == $danhmuc)
+				$string = $value;
+		}
+		$select = "SELECT t1.masp, t1.mactsp, t1.tensp, t1.duongdan, t1.giaban, t1.thuonghieu, t1.mausac, t2.makm, t2.chietkhau, t2.tiengiamgia
+				FROM
+				(	select	sp.masp, ctsp.mactsp, tensp, duongdan, ctsp.giaban, thuonghieu, ctsp.mausac
+					from	sanpham sp, chitietsanpham ctsp, hinhanh ha
+					where 	ctsp.trangthai = 1 and sp.trangthai = 1  and sp.masp = ctsp.masp and sp.masp = ha.masp and sp.madm in ($string)
+					group by ctsp.mactsp ";
+		//$orderby = $sapxep == 'giam' ?  " order by ctsp.giaban desc " : " order by ctsp.giaban asc ";			
+		$orderby = "  ";	
+		$limit = " limit $position,$display
+				)t1 left join
+				(
+					SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.masp
+					FROM	khuyenmai km, ctsp_km ctkm
+					where	km.makm = ctkm.MaKM and km.trangthai = 1 and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp <> ''
+					group by km.makm
+					)t2 on t1.masp = t2.masp";
+					
+		$sql = $select.$orderby.$limit;		
 	}
 
 	//echo $sql;
@@ -264,6 +303,7 @@
 			}
 		}
 	}
+	
 	 
 	for($i=0; $i<count($list); $i++)
 	{

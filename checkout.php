@@ -39,6 +39,12 @@
 	$loi = array();
 	$ten = $diachi = $sdt = $ngaygiao = $loi['ten'] = $loi['diachi'] = $loi['sdt'] = NULL;
 	$check_dn = 1;
+	
+if(isset($_SESSION['cart']))
+{	
+	
+	echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
+	
 	if(!isset($_SESSION['user']))
 	{
 		echo "<p class='title' style='margin-left: 23%; color: #f90;'>Vui lòng <a href='login.php?url=$url' style='color: blue; font-size: 20px;'>đăng nhập</a> để có thể nhận nhiều ưu đãi từ Azura Shop!</p><br><br>";
@@ -84,7 +90,7 @@
 		$arr_id[] = "'$key'";
 	}
 	$string = implode(',', $arr_id);
-	echo "mactsp: ".$string;
+	//echo "mactsp: ".$string;
 	mysql_query("set names 'utf8'");
 			//lấy giá cả, khuyến mãi
 	$sp_km = mysql_query("select km.makm, km.mota, km.masp, ctsp.mactsp, ctsp.giaban, km.giatrivoucher, km.giatridonhang, km.chietkhau, km.tiengiamgia, ctkm.id, ctkm.ngaybd, ctkm.ngaykt, ctkm.mactsp as 'maqt'
@@ -92,7 +98,7 @@
 						where 	km.makm = ctkm.MaKM and km.masp = sp.masp and ctsp.MaSP = sp.MaSP
 							and ctsp.MaCTSP in ($string) and km.trangthai = 1 
 							and ('$date' >= ctkm.ngaybd and '$date' <= ctkm.ngaykt)");
-	echo "slkm: ".mysql_num_rows($sp_km);
+	//echo "slkm: ".mysql_num_rows($sp_km);
 	$dem = 0;
 	$list_km = array();
 	if(mysql_num_rows($sp_km) > 0)
@@ -112,32 +118,42 @@
 			$list_km[$dem]['ngaykt'] = $re_sp['ngaykt'];
 			$list_km[$dem]['maqt'] = $re_sp['maqt'];
 			$dem++;	
-			
-	
+		}
+		
+		//trường hợp thay đổi nội dung km, xóa bỏ 1 trong các quà tặng
+		foreach($_SESSION['cart'] as $key => $value)
+		{
+			$check_qt = 0;
+			foreach($list_km as $key_km => $value_km)
+			{
+				if(($_SESSION['cart'][$key]['maqt'] == $list_km[$key_km]['maqt'] && $key == $list_km[$key_km]['mactsp']) || $key == 'QT000')
+				{
+					$check_qt = 1;
+					break;
+				}
+			}
+			if(!$check_qt)
+			{
+				$_SESSION['cart'][$key]['maqt'] = "";
+			}
+		}
+		if(isset($_SESSION['voucher']))
+		{
+			unset($_SESSION['voucher']);
+			echo "<script>alert('Voucher sẽ không được áp dụng khi cửa hàng có chương trình khuyến mãi');</script>";	
 		}
 	}
 	//trường hợp ko có quà tặng
 	else
 	{
+			//trường hợp khi hết km thì sẽ xóa quà tặng đc chọn khỏi session['cart']
 		foreach($_SESSION['cart'] as $key => $value)
-			$_SESSION['cart'][$key]['maqt'] = "";
+			if($key != 'QT000')
+				$_SESSION['cart'][$key]['maqt'] = "";
+			
 	}
 	
-	//trường hợp thay đổi nội dung km, xóa bỏ 1 trong các quà tặng
-	foreach($_SESSION['cart'] as $key => $value)
-	{
-		$check_qt = 0;
-		foreach($list_km as $key_km => $value_km)
-		{
-			if($_SESSION['cart'][$key]['maqt'] == $list_km[$key_km]['maqt'])
-			{
-				$check_qt = 1;
-				break;
-			}
-		}
-		if(!$check_qt)
-			$_SESSION['cart'][$key]['maqt'] = "";
-	}
+	
 
 ?>
 
@@ -194,22 +210,34 @@
 					$makm = "000";
 					foreach($list_km as $key_km => $value_km)
 					{
+						//khỏi ktra ngày hợp lệ nữa vì lúc nó bấm đặt hàng là đã tính km cho nó r
 						if($list_km[$key_km]['mactsp'] == $key)
 						{
 							$makm = $list_km[$key_km]['makm'];
+							//$makm = $_SESSION['cart'][$key]['makm'] == "" ? '000' : $_SESSION['cart'][$key]['makm'];
 							//add quà tặng với giá bán = 0
 							if($list_km[$key_km]['maqt'] == $_SESSION['cart'][$key]['maqt'] && $list_km[$key_km]['maqt'] != "")
 							{
-								$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - 1 WHERE MaCTSP = '".$list_km[$key_km]['maqt']."'");
+								$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - ".$_SESSION['cart'][$key]['soluong']." WHERE MaCTSP = '".$list_km[$key_km]['maqt']."'");
 								
-								$kq = mysql_query("insert into chitietgiohang(magh, mactsp, soluong, makm, quatang) values('$id', '".$list_km[$key_km]['maqt']."', 1, '000', 1)");
+								$kq = mysql_query("insert into chitietgiohang(magh, mactsp, soluong, makm, quatang) values('$id', '".$list_km[$key_km]['maqt']."', ".$_SESSION['cart'][$key]['soluong'].", '000', 1)");
 								break;
 							}
 								
 						}
 					}
 					
-					$kq = mysql_query("insert into chitietgiohang(magh, mactsp, soluong, makm) values('$id', '$key', ".$_SESSION['cart'][$key]['soluong'].", '$makm')");
+					if($key == 'QT000')
+					{
+						$mactsp =  $_SESSION['cart'][$key]['maqt'] ;
+						$status = 1;						
+					}
+					else
+					{
+						$mactsp =  $key ;
+						$status = 0;	
+					}
+					$kq = mysql_query("insert into chitietgiohang(magh, mactsp, soluong, makm, quatang) values('$id', '$mactsp', ".$_SESSION['cart'][$key]['soluong'].", '$makm', $status)");
 					
 					$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - ".$_SESSION['cart'][$key]['soluong']." WHERE MaCTSP = '$key'");
 					
@@ -260,11 +288,13 @@ if($check_dn == 1)
                 </li>
                 <br />
                 
-                <?php
-				$tongtien = 0; $giamgia = $chietkhau = 0;
-					foreach($_SESSION['cart'] as $key => $value)
-					{
-				?>
+        <?php
+			$tongtien = 0; $giamgia = $chietkhau = 0;
+			foreach($_SESSION['cart'] as $key => $value)
+			{
+				if($key != 'QT000')
+				{
+		?>
             	<li>
                 	<div class='cart-item'>
                     	<img src="image/mypham/<?php echo $_SESSION['cart'][$key]['hinhanh'] ?>"/>
@@ -298,9 +328,9 @@ if($check_dn == 1)
 							}
 						
 							
-							if($_SESSION['cart'][$key]['maqt'] != "")
-							{
-								$maqt = $_SESSION['cart'][$key]['maqt'];
+						if($_SESSION['cart'][$key]['maqt'] != "")
+						{
+							$maqt = $_SESSION['cart'][$key]['maqt'];
 						?>
                         <div class='product-km' style="width: 58%; float: right;">
                         	Quà tặng kèm:
@@ -360,10 +390,11 @@ if($check_dn == 1)
   
                     <div class="clear"></div>
                 </li>
-                <?php
+        <?php
 						$tongtien += ($giaban * $_SESSION['cart'][$key]['soluong']);
-					}
-				?>
+				}
+			}
+		?>
                 <!--
                 <li>
                 
@@ -398,8 +429,22 @@ if($check_dn == 1)
 								where 	km.makm = ctkm.MaKM  and  ctsp.MaCTSP = ctkm.mactsp and km.trangthai = 1 
 									and ('$date' >= ctkm.ngaybd and '$date' <= ctkm.ngaykt)
 									and km.masp = ''");
+									
+		//nếu ko có khuyến mãi
+		if(mysql_num_rows($khuyenmai) == 0)
+		{
+			if(isset($_SESSION['cart']['QT000'])) unset($_SESSION['cart']['QT000']);
+		}
+		else
+		{
+			if(isset($_SESSION['voucher']))
+			{
+				unset($_SESSION['voucher']);
+				echo "<script>alert('Voucher đã bị hủy vì cửa hàng đang áp dụng chương trình khuyến mãi')</script>";	
+			}
+		}
 			
-		$arr_qt = array();
+		$arr_qt = array();  $check_qt_hd = 0;
 		while($re_km = mysql_fetch_assoc($khuyenmai))
 		{
 			if($tongtien >= $re_km['giatridonhang'])
@@ -419,9 +464,14 @@ if($check_dn == 1)
 					$chietkhau_hd = 0;
 				}
 			}
+			if(isset($_SESSION['cart']['QT000']))
+				if($_SESSION['cart']['QT000']['maqt'] == $re_km['maqt'])
+					$check_qt_hd = 1;
 		}
-		$string_qt = count($arr_qt) > 0 ? implode(',', $arr_qt) : "''"; 
-
+		if($check_qt_hd == 0) unset($_SESSION['cart']['QT000']); //nếu mã qt ko khớp thì xóa QT000 để xuống dưới nó gán lại mặc định
+		//$string_qt = count($arr_qt) > 0 ? implode(',', $arr_qt) : "''"; 
+		$string_qt = isset($_SESSION['cart']['QT000']) ? $_SESSION['cart']['QT000']['maqt'] : ""; 
+		echo "string qt: ".$string_qt;
 	?>
      
     <p class="title" style="text-align: left;">
@@ -430,27 +480,31 @@ if($check_dn == 1)
 		//quà tặng kèm cho hóa đơn
 			
 			mysql_query("set names 'utf8'");
-			$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt) group by sp.masp");
-			if(mysql_num_rows($quatang) > 0)
+			//$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt) group by sp.masp");
+			$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp = '$string_qt' group by sp.masp");
+			$re_qt_hd = mysql_fetch_assoc($quatang_hd);
+			if(mysql_num_rows($quatang_hd) > 0)
 			{
 				echo "<p class='title'>QUÀ TẶNG KÈM</p><br />";
         		echo "<ul>";	
 			}
-
-			while($re_qt = mysql_fetch_assoc($quatang))
+			if(isset($_SESSION['cart']['QT000']))
 			{
 		?>
         	<li>
-            	<a href='product-detail.php?id=<?php echo $re_qt['maqt'] ?>'>
-				<div class='quatang-item'>
-                    	<img src="image/mypham/<?php echo $re_qt['duongdan'] ?>"/>
-                        <p><?php echo $re_qt['tensp'] ?></p>
+               	<div class='quatang-item'>
+                	<a href='javascript:void(0)' data-qthd='<?php echo $re_qt_hd['mactsp'] ?>'>
+                    	<img src="image/mypham/<?php echo $re_qt_hd['duongdan'] ?>"/>
+                        <p><?php echo $re_qt_hd['tensp'].($re_qt_hd['mausac'] != "" ? " - Màu sắc: ".$re_qt_hd['mausac']."" :"") ?></p>
+                	</a>
                	</div>
-                </a>
+                
             </li>
         <?php
+				
 			}
 		?>
+        	<div class="clear"></div>
         </ul>
     <?php
 	echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
@@ -560,7 +614,8 @@ if($check_dn == 1)
 
 <div class="clear"></div>
 <?php
-}
+	}
+}//end isset $_SESSION['cart']
 ?>
 </form>
 

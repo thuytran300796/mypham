@@ -35,6 +35,22 @@
 					}
 					else
 					{
+						$arr = array();
+						foreach($_SESSION['cart_ad'] as $key=>$value)
+						{
+							$arr[] = "'".$_SESSION['cart_ad'][$key]['masp']."'";
+						}
+						$string = implode(',', $arr); 
+						$khuyenmai_sp =  mysql_query("select km.makm, km.mota, ctsp.giaban, km.giatrivoucher, km.giatridonhang, km.chietkhau, km.tiengiamgia, ctkm.id, ctkm.ngaybd, ctkm.ngaykt, ctkm.mactsp as 'maqt'
+												from 	khuyenmai km, ctsp_km ctkm, chitietsanpham ctsp
+												where 	km.makm = ctkm.MaKM  and  ctsp.MaCTSP = ctkm.mactsp and km.trangthai = 1 
+													and ('$date' >= ctkm.ngaybd and '$date' <= ctkm.ngaykt)
+													and km.masp in ($string)");
+						if(mysql_num_rows($khuyenmai_sp) > 0)
+							$check_sp = 1; //ko đc sd
+						else
+							$check_sp = 0; //nếu đc sd voucher thì tìm tiếp đến loại km cho hóa đơn
+
 						$tienhd = $_POST['tienhd'];
 						$chietkhau_hd = $giamgia_hd = 0;
 						//kiểm tra coi có khuyến mãi nào ko? nếu có thì ko dc xài voucher
@@ -43,45 +59,37 @@
 												where 	km.makm = ctkm.MaKM  and  ctsp.MaCTSP = ctkm.mactsp and km.trangthai = 1 
 													and ('$date' >= ctkm.ngaybd and '$date' <= ctkm.ngaykt)
 													and km.masp = ''");
-						$check = 1; //đc sd voucher
+						$check_hd = 1; //ko đc sd voucher
 						//nếu có km
 						if(mysql_num_rows($khuyenmai) > 0)
 						{
 							while($re_km = mysql_fetch_assoc($khuyenmai))
 							{
-								$check = 0;
+								$check_hd = 0;
 								if($re_km['chietkhau'] != "0" || $re_km['tiengiamgia'] != "0")
 								{
 									//nếu đơn hàng hiện tại thỏa điều kiện áp dụng km thì sẽ ko đc sd voucher
 									if($tienhd >= $re_km['giatridonhang'])
 									{
-										//echo json_encode(array("maphieu"=>"", "giatri"=>"","error"=>"Voucher sẽ không được sử dụng khi có đang có chương trình khuyến mãi!"));	
-										$check = 1;
+											//echo json_encode(array("maphieu"=>"", "giatri"=>"","error"=>"Voucher sẽ không được sử dụng khi có đang có chương trình khuyến mãi!"));	
+										$check_hd = 1;
 									}
 								}
 								else if($re_km['maqt'] != "")
 								{
 									//echo json_encode(array("maphieu"=>"", "giatri"=>"","error"=>"Voucher sẽ không được sử dụng khi có đang có chương trình khuyến mãi!"));
-									$check = 1;
+									if($tienhd >= $re_km['giatridonhang'])
+									{
+										$check_hd = 1;
+									}
 								}	
 							}
-							if($check)
-								echo json_encode(array("maphieu"=>"", "giatri"=>"","error"=>"Voucher sẽ không được sử dụng khi có đang có chương trình khuyến mãi!"));
-							else
-							{
-								$_SESSION['voucher_ad'][$maphieu]['giatri'] = $dong['giatri'];	
-								$_SESSION['voucher_ad'][$maphieu]['ngaybd'] = $dong['ngaybd'];
-								$_SESSION['voucher_ad'][$maphieu]['ngaykt'] = $dong['ngaykt'];
-								$tonggiam = 0;
-								foreach($_SESSION['voucher_ad'] as $key => $value)
-									$tonggiam += (float)$_SESSION['voucher_ad'][$key]['giatri'];
-								//$tamtinh = $tienhd - $tonggiam < 0 ? 0 : $tienhd - $tonggiam;
-								$tamtinh = $tienhd - $dong['giatri'] < 0 ? 0 : $tienhd - $dong['giatri'];
-								//$_SESSION['voucher_ad'][$maphieu]['giamgia'] = $dong['giatri'];	
-								echo json_encode(array("maphieu"=>"$maphieu", "giatri"=>"$dong[giatri]", "tonggiam"=>"$tonggiam", "tamtinh"=>"$tamtinh"));
-							}
 						}
-						//nếu ko có km
+							else
+								$check_hd = 0;
+								
+						if($check_sp == 1 || $check_hd==1)
+							echo json_encode(array("maphieu"=>"", "giatri"=>"","error"=>"Voucher sẽ không được sử dụng khi có đang có chương trình khuyến mãi!"));
 						else
 						{
 							$_SESSION['voucher_ad'][$maphieu]['giatri'] = $dong['giatri'];	
@@ -90,9 +98,9 @@
 							$tonggiam = 0;
 							foreach($_SESSION['voucher_ad'] as $key => $value)
 								$tonggiam += (float)$_SESSION['voucher_ad'][$key]['giatri'];
-							//$tamtinh = $tienhd - $tonggiam < 0 ? 0 : $tienhd - $tonggiam;
+								//$tamtinh = $tienhd - $tonggiam < 0 ? 0 : $tienhd - $tonggiam;
 							$tamtinh = $tienhd - $dong['giatri'] < 0 ? 0 : $tienhd - $dong['giatri'];
-							//$_SESSION['voucher_ad'][$maphieu]['giamgia'] = $dong['giatri'];	
+								//$_SESSION['voucher_ad'][$maphieu]['giamgia'] = $dong['giatri'];	
 							echo json_encode(array("maphieu"=>"$maphieu", "giatri"=>"$dong[giatri]", "tonggiam"=>"$tonggiam", "tamtinh"=>"$tamtinh"));
 						}
 					}

@@ -427,8 +427,8 @@
 		
 		if(isset($_FILES['file']['name']) && $_FILES['file']['name'][0] != "")
 		{
-			echo count($_FILES['file']['name']);
-			echo "<br/>".$_FILES['file']['name'][0];
+			echo "số: ".count($_FILES['file']['name']);
+			echo "<br/>File:".$_FILES['file']['name'][0];
 			foreach($_FILES['file']['name'] as $i => $value)
 			{
 				$list_ext = array('jpeg', 'jpg', 'png', 'PNG', 'gif', 'bmp');
@@ -442,6 +442,8 @@
 				}
 			}
 		}
+		else
+			unset($_FILES['file']);
 			
 		$mancc = $_POST['mancc']; $madm = $_POST['madm'];
 		
@@ -454,34 +456,38 @@
 				echo mysql_error();
 			//$sp = mysql_query("insert into sanpham(masp, tensp, donvitinh, trongluong, thuonghieu, quycachdonggoi, mota, thue, mancc, madm, luotmua, trangthai) values('$masp', '$tensp', '$dvt', '$trongluong', '$thuonghieu', '$quycach', '$mota', $thue, '$mancc', '$madm', 0, 1) ");	
 			
-			
-			foreach($_FILES['file']['name'] as $i => $value)
+			//nếu tồn tại mới thêm hình
+			if(isset($_FILES['file']))
 			{
-				$name = $_FILES['file']['name'][$i];
-				$temp = $_FILES['file']['tmp_name'][$i];
-				$url = "../image/mypham/".basename($name);
-				move_uploaded_file($temp, $url);
-				
-				$ha = mysql_query("select maha from hinhanh");
-				if(mysql_num_rows($ha) == 0)
-					$maha =  'HA1';
-				else
+				foreach($_FILES['file']['name'] as $i => $value)
 				{
-					$re_ha = mysql_fetch_assoc($ha);
-					$number = substr($re_ha['maha'], 2);
-				
-					while($dong = mysql_fetch_assoc($ha))
+					echo "sao vọ dy";
+					$name = $_FILES['file']['name'][$i];
+					$temp = $_FILES['file']['tmp_name'][$i];
+					$url = "../image/mypham/".basename($name);
+					move_uploaded_file($temp, $url);
+					
+					$ha = mysql_query("select maha from hinhanh");
+					if(mysql_num_rows($ha) == 0)
+						$maha =  'HA1';
+					else
 					{
-						$temp = substr($dong['maha'], 2);
-						if($number < $temp)
-							$number = $temp;
-					}
-					$maha = 'HA'.++$number;
-				}				
-
-				$kq = mysql_query("INSERT INTO HinhAnh VALUES('$maha', '$name', '$masp')");
-				if(!$kq)
-					echo mysql_error()."<br/>";
+						$re_ha = mysql_fetch_assoc($ha);
+						$number = substr($re_ha['maha'], 2);
+					
+						while($dong = mysql_fetch_assoc($ha))
+						{
+							$temp = substr($dong['maha'], 2);
+							if($number < $temp)
+								$number = $temp;
+						}
+						$maha = 'HA'.++$number;
+					}				
+	
+					$kq = mysql_query("INSERT INTO HinhAnh VALUES('$maha', '$name', '$masp')");
+					if(!$kq)
+						echo mysql_error()."<br/>";
+				}
 			}
 			
 			unset($_FILES['file']);
@@ -606,9 +612,16 @@
         <tr>
             <td>Mô tả: </td>
             <td><textarea name="mota" class="txt-sp"><?php echo $mota ?></textarea></td>
-           
         </tr>
-        
+        <script type="text/javascript">
+            	CKEDITOR.replace('mota',
+				{
+					filebrowserBrowseUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/ckfinder.html',
+    				filebrowserImageBrowseUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/ckfinder.html?type=Images',
+    				filebrowserUploadUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+					filebrowserImageUploadUrl:'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images'
+				});
+        </script>
         <!--
         <tr>
             <td>Phân loại theo màu sắc: </td>
@@ -726,9 +739,9 @@
 	
 	mysql_query("set names 'utf8'");
 	
-	$ctsp = mysql_query("select ctsp.mactsp, ctsp.mausac, ctsp.ngaysx, ctsp.hansudung, ctsp.soluong, ctsp.giaban
-						from chitietsanpham ctsp
-						where  ctsp.trangthai = 1 and ctsp.masp = '$masp'");
+	$ctsp = mysql_query("select ctsp.mactsp, ctsp.mausac, ctsp.ngaysx, ctsp.hansudung, ctsp.soluong, ctsp.giaban, ctpn.gianhap, ctpn.MaPhieu
+						from 	chitietsanpham ctsp, chitietphieunhap ctpn
+						where  ctsp.trangthai = 1 and ctsp.masp= '$masp' and ctsp.mactsp = ctpn.mactsp");
 ?>
 
 <div id='ctsp' style="width: 46%; height: 100%; float: right;">
@@ -780,16 +793,17 @@
     	
     </table>
     
-    <table class='tb-lietke'>
+    <table width="100%" class='tb-lietke'>
     	
         <tr>
-        	<th>Màu sắc</th>
-            <th>NSX</th>
-            <th>HSD</th>
-            <th>Số lượng</th>
-            <th>Giá bán</th>
-            <th>Sửa</th>
-            <th>Xóa</th>
+        	<th width='15%'>Màu sắc</th>
+            <th width='16%'>NSX</th>
+            <th width='16%'>HSD</th>
+            <th width='10%'>SL</th>
+            <th width='15%'>Giá nhập</th>
+            <th width='15%'>Giá bán</th>
+            <th width='5%'>Sửa</th>
+            <th width='5%'>Xóa</th>
         </tr>
         
         <?php
@@ -799,14 +813,15 @@
 					//echo $key." ";
 		?>
         		<tr data-id='<?php echo $re_ctsp['mactsp'] ?>'>
-                    <td width='15%'><?php echo $re_ctsp['mausac']==""?"Không":$re_ctsp['mausac'] ?></td>
-                    <td width='20%'><?php echo $re_ctsp['ngaysx'] ?></td>
-                    <td width='20%'><?php echo $re_ctsp['hansudung']?></td>
-                    <td width='15%'><?php echo $re_ctsp['soluong'] ?></td>
-                    <td width='25%'><?php echo number_format($re_ctsp['giaban']) ?></td>
+                    <td><?php echo $re_ctsp['mausac']==""?"Không":$re_ctsp['mausac'] ?></td>
+                    <td><?php echo $re_ctsp['ngaysx'] ?></td>
+                    <td><?php echo $re_ctsp['hansudung']?></td>
+                    <td align="center"><?php echo $re_ctsp['soluong'] ?></td>
+                    <td align="right"><?php echo number_format($re_ctsp['gianhap']) ?></td>
+                    <td align="right"><?php echo number_format($re_ctsp['giaban']) ?></td>
                     
-                    <td width='5%'><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?> class='edit-ctsp'>Sửa</a></td>
-                    <td width='5%'><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?>  class='del-ctsp'>Xóa</a></td>
+                    <td align="center"><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?> class='edit-ctsp'>Sửa</a></td>
+                    <td align="center"><a href='javascript:void(0)' data-id=<?php echo $re_ctsp['mactsp'] ?>  class='del-ctsp'>Xóa</a></td>
                 </tr>
                 <div  class='phieunhap<?php echo $re_ctsp['mactsp'] ?>' style="display: none; background: #EFFBF2; width: 600%;   padding: 10px; ">
                 
@@ -820,14 +835,17 @@
                     
                     <?php
 						mysql_query("set names 'utf8'");
-						$phieunhap = mysql_query("select mactsp, maphieu, ngaynhap, soluong, gianhap from phieunhap where mactsp = '".$re_ctsp['mactsp']."'");
+						$phieunhap = mysql_query("select ctpn.soluong, ctpn.gianhap, pn.maphieu, pn.ngaynhap
+						from 	chitietsanpham ctsp, chitietphieunhap ctpn, phieunhap pn
+						where  ctsp.trangthai = 1 and ctsp.mactsp= '".$re_ctsp['mactsp']."' and ctsp.mactsp = ctpn.mactsp and pn.MaPhieu = ctpn.MaPhieu");
+						//echo "dòng: ".mysql_num_rows($phieunhap);
                         while($re_pn = mysql_fetch_assoc($phieunhap))
                         {
 
                     ?>
                     <div style="border-bottom: solid 1px #ccc; width: 100%">
                         <div class='ctsp-item'><a href='#'><?php echo $re_pn['maphieu'] ?></a></div>
-                        <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($re_pn['ngaynhap'])) ?></div>
+                        <div class='ctsp-item' style="text-align: left;"><?php echo date('H:i:s d/m/Y', strtotime($re_pn['ngaynhap'])) ?></div>
                         <div class='ctsp-item' style="text-align: left;"><?php echo $re_pn['soluong'] ?></div>
                         <div class='ctsp-item'><?php echo $re_pn['gianhap'] ?></div>
                     </div>

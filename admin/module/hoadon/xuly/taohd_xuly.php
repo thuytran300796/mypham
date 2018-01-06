@@ -6,7 +6,35 @@ if(isset($_POST['ac']))
 {
 	$ac = $_POST['ac'];
 	
-	if($ac == 'get_sp')
+	if($ac == 'search')
+	{
+		$keyword = mysql_escape_string($_POST['keyword']);
+		mysql_query("set names 'utf8'");
+		$kq = mysql_query("select ctsp.mactsp, sp.masp, sp.tensp, ctsp.mausac, ctsp.ngaysx, ctsp.hansudung, thuonghieu, tenncc, duongdan, ctsp.giaban
+							from sanpham sp, chitietsanpham ctsp, nhacungcap ncc, hinhanh ha
+							where sp.masp = ctsp.masp and ncc.mancc = sp.mancc and sp.masp = ha.masp and sp.trangthai = 1 and ctsp.trangthai = 1
+							and (tensp LIKE '%$keyword%' or sp.masp LIKE '%$keyword%' or ctsp.mactsp LIKE '%$keyword%')
+							group by ctsp.mactsp");
+				
+		while($re_kq = mysql_fetch_assoc($kq))
+		{
+			echo "<li>";
+			echo 	"<a href='javascript:void(0)' data-id='".$re_kq['mactsp']."'>";
+			echo 		"<img src='../image/mypham/".$re_kq['duongdan']."'/>";
+			echo 		"<div style='background: none'>";
+			echo 			"<p>".$re_kq['tensp']."</p>";
+			echo 			"<p>Màu sắc: ".$re_kq['mausac']."</p>";
+			echo 			"<p>Date: ".date('d/m/Y', strtotime($re_kq['ngaysx']))." - ".date('d/m/Y', strtotime($re_kq['hansudung']))."</p>";
+			echo 			"<p>Thương hiệu: ".$re_kq['thuonghieu']."</p>";
+			echo			"<p>Nhà cung cấp: ".$re_kq['tenncc']."</p>";
+			echo			"<p>Giá bán: ".$re_kq['giaban']."</p>";
+			echo 		"</div>";
+			echo 	"</a>";
+			echo "</li>";
+			echo "<div class='clear' style='background: none'></div>";
+		}	
+	}
+	else if($ac == 'get_sp')
 	{
 		$id = isset($_POST['id']) ? $_POST['id'] : "";
 		echo $id;

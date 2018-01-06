@@ -206,7 +206,7 @@
         <div style='width: 100%; height: 50px; margin: 3% auto 1%; '>
         	<form method='post'>
         	<div style=" width: 92%; float: left; text-align: right">
-            	<input type='text' class='txt-sp' value='<?php echo $keyword ?>' name = 'keyword' style="width: 300px"/>
+            	<input type='text' class='txt-sp' value='<?php echo $keyword ?>' name = 'keyword' style="width: 300px" placeholder="Nhập tên hoặc mã nhân viên..."/>
                 <input type='submit' class='sub' name='search' value='Tìm'/>
             </div>
             </form>   

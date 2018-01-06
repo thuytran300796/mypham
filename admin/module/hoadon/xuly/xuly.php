@@ -18,7 +18,7 @@
 				$mahd = $_POST['keyword'];
 			else
 				$mahd = "";
-			$sql = " and hd.mahd = '$mahd' ";
+			$sql = " and hd.mahd LIKE '%$mahd%' ";
 		}
 		else
 		{
@@ -34,16 +34,16 @@
 			
 		mysql_query("set names 'utf8'");
 		$hoadon = mysql_query("
-								select		hd.mahd, ngayxuat, hotennguoinhan, sdt, diachi, phivanchuyen, thue, hd.trangthai, km.makm, km.chietkhau, km.tiengiamgia, km.giatridonhang
+								select		hd.mahd, ngayxuat, hotennguoinhan, sdt, diachi, phivanchuyen, hd.chietkhau as 'ckhd', thue, hd.trangthai, km.makm, km.chietkhau, km.tiengiamgia, km.giatridonhang
 								from		hoadon hd, khuyenmai km
 								where		hd.makm = km.makm".$sql."
 								group by 	km.makm
 							");
 			
 		mysql_query("set names 'utf8'");
-		$cthd = mysql_query("select t1.mahd, t1.mactsp, t1.tensp, t1.mausac, t1.ngaysx, t1.hansudung, t1.soluong, t1.giaban, t2.makm, t2.chietkhau, t2.tiengiamgia
+		$cthd = mysql_query("select t1.mahd, t1.mactsp, t1.tensp, t1.mausac, t1.ngaysx, t1.hansudung, t1.soluong, t1.giaban, t2.makm, t2.chietkhau, t2.tiengiamgia, t1.quatang, t1.thue
 							from
-							(	select	cthd.mahd, cthd.mactsp, tensp, ctsp.mausac, ctsp.ngaysx, ctsp.hansudung, cthd.soluong, ctsp.giaban, cthd.makm
+							(	select	cthd.mahd, cthd.mactsp, tensp, ctsp.mausac, ctsp.ngaysx, ctsp.hansudung, cthd.soluong, ctsp.giaban, cthd.makm, sp.thue, cthd.quatang
 								from	chitiethoadon cthd, chitietsanpham ctsp, hoadon hd, sanpham sp
 								where	cthd.mactsp = ctsp.mactsp and hd.mahd = cthd.mahd and sp.masp = ctsp.masp".$sql."
 							)t1 left join
@@ -72,6 +72,7 @@
 			$list_ctgh[$dem]['makm'] = $re_cthd['makm'];
 			$list_ctgh[$dem]['chietkhau'] = $re_cthd['chietkhau'];
 			$list_ctgh[$dem]['tiengiamgia'] = $re_cthd['tiengiamgia'];
+			$list_ctgh[$dem]['quatang'] = $re_cthd['quatang'];
 			$dem++;	
 			$arr[] = "'".$re_cthd['mahd']."'";
 		}
@@ -87,8 +88,7 @@
 			$list_voucher[$dem]['giatri'] = $re_voucher['giatri'];
 			$dem++;
 		}
-
-			
+	/*		
 	echo "<table width='100%' class='tb-lietke' >";
     
     echo "<tr>";
@@ -101,7 +101,25 @@
     echo 	"<th width='8%'>Trạng thái</th>";
     echo 	"<th width='5%'>Hủy</th>";
     echo "</tr>";
-        
+    */
+
+	?>
+    
+    <div class='lietke-sp'>
+    
+    	<div class = 'lietke-sp-th'>
+        	<div style='width: 8%'>Mã HĐ</div>
+            <div style='width: 11%'>Ngày xuất</div>
+            <div style='width:17%'>Tên KH</div>
+            <div style='width:25%'>Địa chỉ giao hàng</div>
+            <div style='width:10%'>SĐT</div>
+            <div style='width:11%'>Tổng tiền</div>
+            <div style='width:8%'>Trạng thái</div>
+            <div style='width:5%'>Hủy</div>
+        </div>
+        <div class="clear"></div>
+    
+    <?php
 
 	while($re_hd = mysql_fetch_assoc($hoadon))
 	{
@@ -109,12 +127,12 @@
 
 		echo "<tr data-id='2".$re_hd['mahd']."'>";
 	?>
-            <td><?php echo $re_hd['mahd'] ?></td>
-            <td><?php echo date('d-m-Y', strtotime($re_hd['ngayxuat'])) ?></td>
-            <td><?php echo $re_hd['hotennguoinhan'] ?></td>
-            <td><?php echo $re_hd['diachi'] ?></td>
-            <td><?php echo $re_hd['sdt'] ?></td>
-            <td>
+           <div class= 'lietke-sp-tr' data-id='<?php echo $re_hd['mahd'] ?>'>
+        	<div class='lietke-sp-td' style='width: 7.5%;  text-align: left;'><?php echo $re_hd['mahd'] ?></div>
+            <div class='lietke-sp-td' style='width: 10%; text-align: left;'><?php echo date('d-m-Y', strtotime($re_hd['ngayxuat'])) ?></div>
+            <div class='lietke-sp-td' style='width: 17%; text-align: left;'><?php echo $re_hd['hotennguoinhan'] ?></div>
+            <div class='lietke-sp-td' style='width: 24%; text-align: left;' ><?php echo $re_hd['diachi'] ?></div>
+            <div class='lietke-sp-td' style='width: 9%; text-align: center;'><?php echo $re_hd['sdt'] ?></div>
             	
         <?php
 			$thanhtien = $tongtien = 0;
@@ -133,38 +151,42 @@
 					$item[$k]['hsd'] = $list_ctgh[$i]['hsd'];
 					$item[$k]['giaban'] = $list_ctgh[$i]['giaban'];
 					$item[$k]['soluong'] = $list_ctgh[$i]['soluong'];
-					if($list_ctgh[$i]['makm'] != "")
+					$item[$k]['quatang'] = $list_ctgh[$i]['quatang'];
+					$item[$k]['giamgia'] = 0;
+					if($list_ctgh[$i]['quatang'] != 1)
 					{
-						if($list_ctgh[$i]['chietkhau'] != 0)
+						if($list_ctgh[$i]['makm'] != "")
 						{
-							$giamgia = $list_ctgh[$i]['chietkhau'];
-							$tien = $list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100));
-							$thanhtien += ($list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100))) * $list_ctgh[$i]['soluong'];
-							$item[$k]['giamgia'] = $giamgia." %";
+							if($list_ctgh[$i]['chietkhau'] != 0)
+							{
+								$giamgia = $list_ctgh[$i]['chietkhau'];
+								$tien = $list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100));
+								$thanhtien += ($list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100))) * $list_ctgh[$i]['soluong'];
+								$item[$k]['giamgia'] = $giamgia." %";
+							}
+							else if($list_ctgh[$i]['tiengiamgia'] != 0)
+							{
+								$giamgia = $list_ctgh[$i]['tiengiamgia'];
+								$tien = $list_ctgh[$i]['giaban'] - $giamgia;
+								$thanhtien += ($list_ctgh[$i]['giaban'] - $giamgia)* $list_ctgh[$i]['soluong'];
+								$item[$k]['giamgia'] = $giamgia." đ";
+							}
+							//khi ko có km
+							else
+							{
+								$tien = $list_ctgh[$i]['giaban'] - $giamgia;
+								$thanhtien += ($list_ctgh[$i]['giaban'])* $list_ctgh[$i]['soluong'];
+								$item[$k]['giamgia'] = "Quà tặng";
+							}
 						}
-						else if($list_ctgh[$i]['tiengiamgia'] != 0)
-						{
-							$giamgia = $list_ctgh[$i]['tiengiamgia'];
-							$tien = $list_ctgh[$i]['giaban'] - $giamgia;
-							$thanhtien += ($list_ctgh[$i]['giaban'] - $giamgia)* $list_ctgh[$i]['soluong'];
-							$item[$k]['giamgia'] = $giamgia." đ";
-						}
-						//khi ko có km
 						else
 						{
+							
 							$tien = $list_ctgh[$i]['giaban'] - $giamgia;
 							$thanhtien += ($list_ctgh[$i]['giaban'])* $list_ctgh[$i]['soluong'];
-							$item[$k]['giamgia'] = "Quà tặng";
+							$item[$k]['giamgia'] = 0;
 						}
 					}
-					else
-					{
-						
-						$tien = $list_ctgh[$i]['giaban'] - $giamgia;
-						$thanhtien += ($list_ctgh[$i]['giaban'])* $list_ctgh[$i]['soluong'];
-						$item[$k]['giamgia'] = 0;
-					}
-					//echo $re_hd['mahd']." - ".$list_ctgh[$i]['mactsp']." - ".$tien."</br>";
 				}
 				
 			}
@@ -215,19 +237,21 @@
 			}
 			
 			//công thêm phí vc, thuế, chiết khấu
-			$thue = ( $re_hd['thue'] / 100) * $tongtien;
+			//$thue = ( $re_hd['thue'] / 100) * $tongtien;
 			$chietkhau = ($re_hd['chietkhau']/100) * $tongtien;
-			$tongtien += $thue + $re_hd['phivanchuyen'] - $chietkhau;
-			echo number_format($tongtien)." đ";
+			$tongtien -=   $chietkhau; //chietkhau là tiền giảm giá hóa đơn của km
+			$ckhd = $tongtien*($re_hd['ckhd']/100);
+			$tongtien = $tongtien - $ckhd + $re_hd['phivanchuyen'];
+			//echo number_format($tongtien)." đ";
 		?>        
             	
-            </td>
-            <td><?php echo $re_hd['trangthai'] == 0 ? "Đã hủy" : "Đã xuất" ?></td>
-            <!--<td><a href='#'>Xem</a></td>-->
-            <td><a href='#'>Hủy</a></td>
-        </tr>
+            <div class='lietke-sp-td' style='width: 11%; text-align: right;'><?php echo number_format($tongtien) ?> đ</div>
+            <div class='lietke-sp-td' style='width: 8%; text-align: center;'><?php echo $re_hd['trangthai'] == 1 ? "Đã xuất" : "Hủy"?></div>
+            <div class='lietke-sp-td' style='width: 4%; text-align: left;'><a href='#'>Hủy</a></div>
+            <div class="clear"></div>
+        </div>
         
-        <div  class='ctsp2<?php echo $re_hd['mahd'] ?>' style="background: #EFFBF2; display: none; width: 1090%;   padding: 10px; ">
+        <div  class='ctsp<?php echo $re_hd['mahd'] ?>' style="background: #EFFBF2; display: none; width: 98%;   padding: 10px; ">
                 
                 <div style="width: 100%; height: 30px; line-height: 30px;">
                 	<div class='ctsp-item' 	style='font-weight: bold; width: 25%' >Tên SP</div>
@@ -246,12 +270,12 @@
 					
 				?>
                 <div style="border-bottom: solid 1px #ccc; width: 100%">
-                	<div class='ctsp-item' style="text-align: left; width: 25%"><?php echo $item[$key]['tensp'] ?></div>
+                	<div class='ctsp-item' style="text-align: left; width: 25%"><?php echo $item[$key]['quatang'] == 0 ? $item[$key]['tensp'] : ($item[$key]['tensp']. " (Quà tặng)")?></div>
                 	<div class='ctsp-item'><?php echo $item[$key]['mausac']==""?"Không":$item[$key]['mausac'] ?></div>
                     <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($item[$key]['ngaysx'])) ?></div>
                     <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($item[$key]['hsd'])) ?></div>
                     <div class='ctsp-item' style=" width: 5%"><?php echo $item[$key]['soluong'] ?></div>
-                    <div class='ctsp-item'><?php echo number_format($item[$key]['giaban']) ?> đ</div>
+                    <div class='ctsp-item'><?php echo $item[$key]['quatang'] == 0 ? number_format($item[$key]['giaban']) : 0 ?> đ</div>
                     <div class='ctsp-item'><?php echo $item[$key]['giamgia'] ?></div>
                 </div>
                 <div class="clear"></div>
@@ -268,12 +292,11 @@
 						echo $re_hd['chietkhau']."% (-".number_format($chietkhau)." đ)";
 				?>
                 </div>
-                <div style='border-top: solid 1px #ccc; width: 100%; height: 30px; line-height: 30px; text-align: right'><span class='bold'>VAT:</span> <?php echo $re_hd['thue'] ?> % ( <?php echo number_format($thue) ?> đ)</div>
+                <div style='border-top: solid 1px #ccc; width: 100%; height: 30px; line-height: 30px; text-align: right'><span class='bold'>VAT:</span> <?php echo number_format($re_hd['thue']) ?> đ</div>
                 <div style='border-top: solid 1px #ccc; width: 100%; height: 30px; line-height: 30px; text-align: right'><span class='bold'>Phí vận chuyển:</span> <?php echo number_format($re_hd['phivanchuyen']) ?> đ</div>
                 <div class="clear"></div>
-        </div> <!-- end ctsp -->    	
+        </div> <!-- end ctsp -->      	
 <?php
 	}
 ?>
-    
-    	</table>
+</div>

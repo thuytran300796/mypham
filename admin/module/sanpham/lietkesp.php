@@ -12,9 +12,9 @@
 						where sp.masp = ctsp.masp and ncc.mancc = sp.mancc and sp.trangthai = 1 and ctsp.TrangThai = 1
 						group by sp.masp");
 	
-	$ctsp = mysql_query("select sp.masp, ctsp.mactsp, mausac, ctsp.ngaysx, ctsp.hansudung, ctsp.soluong, ctsp.giaban
-						from sanpham sp, chitietsanpham ctsp
-						where sp.masp = ctsp.masp and ctsp.trangthai = 1 and sp.trangthai = 1");
+	$ctsp = mysql_query("select sp.masp, ctsp.mactsp, mausac, ctsp.ngaysx, ctsp.hansudung, ctsp.soluong, ctsp.giaban, ctpn.gianhap
+						from sanpham sp, chitietsanpham ctsp, chitietphieunhap ctpn
+						where sp.masp = ctsp.masp and ctpn.mactsp = ctsp.mactsp and ctsp.trangthai = 1 and sp.trangthai = 1 group by ctsp.mactsp");
 	
 	$arr_ctsp = array();
 	
@@ -26,6 +26,7 @@
 		$arr_ctsp[$re_ctsp['mactsp']]['hansudung'] = $re_ctsp['hansudung'];
 		$arr_ctsp[$re_ctsp['mactsp']]['soluong'] = $re_ctsp['soluong'];
 		$arr_ctsp[$re_ctsp['mactsp']]['giaban'] = $re_ctsp['giaban'];
+		$arr_ctsp[$re_ctsp['mactsp']]['gianhap'] = $re_ctsp['gianhap'];
 	}
 	
 	//echo "<pre>"; print_r($arr_ctsp); echo "</pre>";
@@ -259,9 +260,9 @@
 		{
 	?>
         <div class= 'lietke-sp-tr' data-id='<?php echo $re_sp['masp'] ?>'>
-        	<div class='lietke-sp-td' style='width: 17%'><?php echo $re_sp['masp'] ?></div>
-            <div class='lietke-sp-td' style='width: 34%'><?php echo $re_sp['tensp'] ?></div>
-            <div class='lietke-sp-td' style='width: 21%'><?php echo $re_sp['tenncc'] ?></div>
+        	<div class='lietke-sp-td' style='width: 17%;  text-align: left;'><?php echo $re_sp['masp'] ?></div>
+            <div class='lietke-sp-td' style='width: 35%; text-align: left;'><?php echo $re_sp['tensp'] ?></div>
+            <div class='lietke-sp-td' style='width: 21%; text-align: left;'><?php echo $re_sp['tenncc'] ?></div>
             <div class='lietke-sp-td' style='width: 11%; text-align: center;' ><?php echo $re_sp['sl'] ?></div>
             <div class='lietke-sp-td' style='width: 5%; text-align: center;'><a  href='admin.php?quanly=sanpham&ac=suasp&masp=<?php echo $re_sp['masp'] ?>'>Sửa</a></div>
             <div class='lietke-sp-td' style='width: 5%; text-align: center;'><a href='#'>Xóa</a></div>
@@ -271,10 +272,11 @@
         <div  class='ctsp<?php echo $re_sp['masp'] ?>' style="display: none; background: #EFFBF2; width: 98%;   padding: 10px; ">
                 
                 <div style="width: 100%; height: 30px; line-height: 30px;">
-                	<div class='ctsp-item' style="font-weight: bold" >Màu sắc</div>
+                	<div class='ctsp-item' 	style="font-weight: bold" >Màu sắc</div>
                     <div class='ctsp-item'  style="font-weight: bold; text-align: left;" >Ngày sản xuất</div>
                     <div class='ctsp-item'  style="font-weight: bold; text-align: left;" >Hạn sử dụng</div>
                     <div class='ctsp-item'  style="font-weight: bold;text-align: center;" >Số lượng</div>
+                    <div class='ctsp-item'  style="font-weight: bold;text-align: center;" >Giá nhập</div>
                     <div class='ctsp-item'  style="font-weight: bold;text-align: center;" >Giá bán</div>
                 </div>
                 <div class="clear"></div>
@@ -291,6 +293,7 @@
                     <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($arr_ctsp[$key]['ngaysx'])) ?></div>
                     <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($arr_ctsp[$key]['hansudung'])) ?></div>
                     <div class='ctsp-item'><?php echo $arr_ctsp[$key]['soluong'] ?></div>
+                    <div class='ctsp-item'><?php echo number_format($arr_ctsp[$key]['gianhap']) ?> đ</div>
                     <div class='ctsp-item'><?php echo number_format($arr_ctsp[$key]['giaban']) ?> đ</div>
                 </div>
                 <div class="clear"></div>

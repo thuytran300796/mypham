@@ -196,7 +196,7 @@ body
 
 .tb-lietke a
 {
-	color: #f90;	
+	color: #09C;	
 }
 
 .tb-lietke tr
@@ -942,6 +942,16 @@ float: right;		width: 25%;	 margin-right: 20px;
 	display: none; 
 }
 
+#ctsp table td
+{
+	font-size: 13px;	
+}
+
+#ctsp .ctsp-item
+{
+	width: 25%;	
+}
+
 /*---------LIỆT KÊ SẢN PHẨM-----------*/
 #sp-left, #km-left
 {
@@ -1009,7 +1019,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 .ctsp-item
 {
-	width: 20%; line-height: 30px; float: left; text-align: center;
+	width: 16%; line-height: 30px; float: left; text-align: center;
 }
 
 .lietke-sp
@@ -1041,13 +1051,16 @@ float: right;		width: 25%;	 margin-right: 20px;
 {
 	float: left;  padding: 4px; text-align: center;
 }
-
+.lietke-sp-td a
+{
+	color: #09C; font-size: 13px;
+}
 
 
 /*------------------NHẬP KHO----------------------*/
 .quick-search
 {
-	position: relative; margin: 0px 0px 50px 30px;	
+	position: relative; margin: 10px 0px 50px 10px;	
 }
 
 .quick-result
@@ -1078,7 +1091,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 .quick-result a
 {
-	color: #999;	
+	color: #000;	
 	font-weight: bold;
  display: block; font-size: 13px; 
 }
@@ -1087,6 +1100,75 @@ float: right;		width: 25%;	 margin-right: 20px;
 {
 	float: left; padding-left: 10px; width: 290px;
 }
+
+#pn-left .quick-result li {height: 120px;}
+
+#pn-left
+{
+	width: 74%; border-radius: 3px; border: solid 1px #099; float: left; background: #EFFBF2;
+}
+
+#pn-left table td
+{
+	border-bottom: solid 1px #ccc;	padding: 10px; border-top: solid 1px #ccc;	
+}
+
+#pn-right
+{
+	width: 24%;  border-radius: 3px; border: solid 1px #099; float: right; background: #EFFBF2;
+}
+
+#pn-right table td
+{
+	padding: 10px;	
+}
+
+#pop-sp .txt-sp
+{
+	width: 150px;
+}
+
+#pop-sp .quick-search
+{
+	margin-bottom:0;
+}
+
+#pop-sp 
+{
+	width: 40%;  border: solid 1px; position: absolute; top: 15%; left: 30%;background: #f1f1f1;  margin: auto;  display: none;
+}
+
+#pop-sp  h3
+{
+	color: 	white; font-weight: bold;
+	padding-left: 13px; float: left;
+}
+
+#pop-sp  table input[type='submit'], .popup table input[type='button'], #left-ncc table input[type='submit']
+{
+	height:30px;
+	background:#088A68; color: white;
+	font-weight:bold;
+	padding:0 10px;
+	margin:12px 10px 0 0;
+	border:0; border-radius:3px;
+	box-shadow: inset 0 0 1px #333; width: 100px;
+}
+
+
+#pop-sp  table input[type='submit']:hover, #left-ncc table input[type='submit']:hover { background: #066 ; color: white; cursor:pointer; }
+
+#pop-sp  table
+{
+	padding: 30px 50px 20px;
+}
+
+#pop-sp  table td
+{
+	padding: 5px;	
+}
+
+
 
 /*------------------KHUYẾN MÃI--------------------*/
 
@@ -1264,6 +1346,12 @@ float: right;		width: 25%;	 margin-right: 20px;
 	display: block;
 }
 
+#taohd-left .quick-result li
+{
+	height: 120px; color: #000;
+}
+
+
 .hd-sp
 {
 	width: 100%; margin-top: 10px; 
@@ -1376,8 +1464,71 @@ float: right;		width: 25%;	 margin-right: 20px;
 	float: left; padding-left: 10px; width: 160px;
 }
 
+/*------------------XUẤT HÓA ĐƠN-----------------*/
+#bill-info
+{
+	width: 60%;
+	margin: auto; margin-bottom: 5%;
+	border: solid 3px #FF7B52;
+	border-radius: 3px;
+	color: #6B6767;
+	padding: 1%;
+	text-align: center;
+}
+
+#list-pro
+{
+	width: 80%;
+	margin:auto;
+	text-align: center;	
+}
+
+#bill-pro
+{
+	width: 100%;
+}
+
+#bill-pro-img
+{
+	width: 30%; float: left;
+}
+
+#bill-pro-img img
+{
+	width: 80px;
+	height: 80px;	
+}
+
+#bill-pro-info
+{
+	width: 68%;	float: left;
+	margin-top: 10%; text-align: left;
+}
+
+#bill-pro-info a
+{ 
+	color: black; font-size: 13px; font-weight: none;
+}
+
+.list-bill  {background: #FFF;}
+
+.list-bill th
+{
+	font-size: 15px; background: #0CC; color: white; border: none; height: 30px;
+}
+
+.list-bill td
+{
+	font-size: 13px; border: none;padding: 10px;	
+}
+
+.list-bill tr
+{
+	border: solid 1px #ccc;	
+}
+
 /*-----------------------------------------------*/
 .bottom
 {
-	width: 100%; height: 70px; background: #088A68; 
+	width: 100%; height: 70px; background: #088A68;  margin-top: 5%;
 }

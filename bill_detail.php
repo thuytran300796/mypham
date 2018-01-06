@@ -272,7 +272,7 @@
             
             <tr>
             	<td colspan="4" style = "text-align: right; font-weight: bold;">Tạm tính:
-                	<p><i>(Chưa bao gồm phí vận chuyển và thuế VAT)</i></p>
+                	<p><i>(Chưa bao gồm phí vận chuyển)</i></p>
                 </td>
                 <td style = "font-size: 22px; color: #090; font-weight: bold; text-align: right"><?php echo number_format($tamtinh - $giamgia - $tienvoucher) ?> đ</td>
             </tr>

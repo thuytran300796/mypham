@@ -20,7 +20,7 @@
 					({
 						url: "js/xuly/cart_xuly.php",
 						type: "post",
-						data: "ctsp=" + ctsp + "&soluongmoi=" + soluong,
+						data: "ac=soluong&ctsp=" + ctsp + "&soluongmoi=" + soluong,
 						async: true,
 						success:function(kq)
 						{
@@ -41,7 +41,7 @@
 					({
 						url: "js/xuly/cart_xuly.php",
 						type: "post",
-						data: "ctsp=" + ctsp + "&soluongmoi=" + soluong,
+						data: "ac=soluong&ctsp=" + ctsp + "&soluongmoi=" + soluong,
 						async: true,
 						success:function(kq)
 						{
@@ -53,6 +53,42 @@
 					//return false;	
 				});
 				
+				$('#quatang').delegate('li a', 'click', function()
+				{
+					maqt_hd = $(this).attr('data-qthd'); alert(maqt_hd);
+					$.ajax
+					({
+						url: "js/xuly/cart_xuly.php",
+						data: "ac=chonqt_hd&maqt_hd="+maqt_hd,
+						type: "post",
+						async: true,
+						success:function(kq)
+						{
+							$('#quatang .quatang-item').css('border', 'none');
+							$("a[data-qthd='"+maqt_hd+"']").closest(".quatang-item").css('border', 'solid 2px #0CC');
+						}
+					});	
+				});
+				
+				$('.product-km').delegate('.choose-qt', 'click', function()
+				{
+					maqt = $(this).attr('data-maqt');	
+					mactsp = $(this).attr('data-mactsp');	
+					//alert('ctsp: '+mactsp+' - maqt: '+maqt);
+					$.ajax
+					({
+						url: "js/xuly/cart_xuly.php",
+						data: "ac=chonqt_sp&maqt="+maqt+"&mactsp="+mactsp,
+						type: "post",
+						async: true,
+						success:function(kq)
+						{
+							//alert(kq);
+							$('.product-km li').css('border', 'solid 1px #ccc');
+							$("a[data-maqt='"+maqt+"']").closest("li").css('border', 'solid 2px #0CC');
+						}
+					});	
+				});
 
             });
 			
@@ -89,7 +125,7 @@
 			$_SESSION['cart'][$ctsp]['hinhanh'] = $_POST['hinhanh'];
 			$_SESSION['cart'][$ctsp]['masp'] = $_POST['masp'];
 			$_SESSION['cart'][$ctsp]['tensp'] = $_POST['tensp'];
-			$_SESSION['cart'][$ctsp]['maqt'] = $_POST['maqt'];  
+			$_SESSION['cart'][$ctsp]['maqt'] = $_POST['maqt']; 
 			//mysql_query("set names 'utf8'");
 			//$mausac = mysql_query("select mausac, giaban, giadexuat from chitietsanpham where mactsp = '$ctsp' and soluong > 0");
 			//$re_mausac = mysql_fetch_assoc($mausac);
@@ -117,7 +153,7 @@
 			$arr_id[] = "'$key'";
 		}
 		$string = implode(',', $arr_id);
-		echo "mactsp: ".$string;
+		//echo "mactsp: ".$string;
 		mysql_query("set names 'utf8'");
 		//lấy giá cả, khuyến mãi với đối tượng là các ctsp có trong giỏ hàng
 		$sp_km = mysql_query("select km.makm, km.mota, km.masp, ctsp.mactsp, ctsp.giaban, km.giatrivoucher, km.giatridonhang, km.chietkhau, km.tiengiamgia, ctkm.id, ctkm.ngaybd, ctkm.ngaykt, ctkm.mactsp as 'maqt'
@@ -125,7 +161,7 @@
 							where 	km.makm = ctkm.MaKM and km.masp = sp.masp and ctsp.MaSP = sp.MaSP
 								and ctsp.MaCTSP in ($string) and km.trangthai = 1 
 								and ('$date' >= ctkm.ngaybd and '$date' <= ctkm.ngaykt)");
-		echo "slkm: ".mysql_num_rows($sp_km);
+		//echo "slkm: ".mysql_num_rows($sp_km);
 		$dem = 0;
 		if(mysql_num_rows($sp_km) > 0)
 		{
@@ -155,7 +191,7 @@
 								$_SESSION['cart'][$_GET['mactsp']]['maqt'] = $_GET['maqt'];
 						}
 					}
-					
+			
 			}
 			foreach($_SESSION['cart'] as $key => $value)
 			{
@@ -163,21 +199,38 @@
 				foreach($list_km as $key_km => $value_km)
 				{
 					//gán mặc định 1 quà tặng khi khách chưa chọn quà
-					if($_SESSION['cart'][$key]['maqt'] == $list_km[$key_km]['maqt'])
+					//if($_SESSION['cart'][$key]['maqt'] == $list_km[$key_km]['maqt']  || $key == 'QT000')
+					/*nghĩa là mã qt trong cart phải nằm trong danh sách quà có khuyến mãi và mã sp mua trùng với mã sp trong km 
+						Ví dụ: mua SP1 sẽ được tặng quà X hoặc Y
+						$key == $list_qt[$key_km]['mactsp'] => trong cart phải xuất hiện SP1 và quà đc chọn phải nằm troong X hoặc Y
+						nếu $key = 'QT000': QT000 là quà tặng cho hóa đơn
+					*/
+					if(($_SESSION['cart'][$key]['maqt'] == $list_km[$key_km]['maqt'] && $key == $list_km[$key_km]['mactsp']) || $key == 'QT000')
 					{
 						$check_qt = 1;
 						break;
 					}
 				}
 				if(!$check_qt)
+				{
 					$_SESSION['cart'][$key]['maqt'] = "";
+				}
 			}
-
+			//nếu có km thì ko áp dụng voucher
+			if(isset($_SESSION['voucher']))
+			{
+				unset($_SESSION['voucher']);
+				echo "<script>alert('Voucher sẽ không được áp dụng khi cửa hàng có chương trình khuyến mãi');</script>";	
+			}
 		}
 		else
 		{
+			//trường hợp khi hết km thì sẽ xóa quà tặng đc chọn khỏi session['cart']
 			foreach($_SESSION['cart'] as $key => $value)
-				$_SESSION['cart'][$key]['maqt'] = "";
+				if($key != 'QT000')
+				{
+					$_SESSION['cart'][$key]['maqt'] = "";
+				}
 			
 		}
 		
@@ -247,7 +300,9 @@
                 </li>
                 <?php
 				$tongtien = 0;
-					foreach($_SESSION['cart'] as $key => $value)
+				foreach($_SESSION['cart'] as $key => $value)
+				{
+					if($key != 'QT000')
 					{
 						$thanhtien = 0;  
 				?>
@@ -313,7 +368,8 @@
                                 <?php
 										}
 								?>
-                                            <a href='cart.php?mactsp=<?php echo $key ?>&maqt=<?php echo $re_qt['mactsp'] ?>' class='choose-qt'  data-maqt='<?php echo $re_qt['mactsp'] ?>'>
+                                            <!--<a href='cart.php?mactsp=<?php echo $key ?>&maqt=<?php echo $re_qt['mactsp'] ?>' class='choose-qt'  data-maqt='<?php echo $re_qt['mactsp'] ?>'>-->
+                                            <a href='javascript:void(0)' class='choose-qt' data-mactsp = '<?php echo $key ?>' data-maqt='<?php echo $re_qt['mactsp'] ?>'>
                                                 <img style='width: 70px; height: 70px;' src='image/mypham/<?php echo $re_qt['duongdan'] ?>'/>
                                             </a>
                                         </li>
@@ -384,9 +440,10 @@
                 	
                     <div class="clear"></div>
                 </li>
-                <?php
+           <?php
 					}
-				?>
+				}
+			?>
                 <!--
                 <li>
                 
@@ -428,8 +485,21 @@
 								where 	km.makm = ctkm.MaKM  and  ctsp.MaCTSP = ctkm.mactsp and km.trangthai = 1 
 									and ('$date' >= ctkm.ngaybd and '$date' <= ctkm.ngaykt)
 									and km.masp = ''");
-			
-		$arr_qt = array();
+		//nếu ko có khuyến mãi
+		if(mysql_num_rows($khuyenmai) == 0)
+		{
+			if(isset($_SESSION['cart']['QT000'])) unset($_SESSION['cart']['QT000']);
+		}
+		else
+		{
+			if(isset($_SESSION['voucher']))
+			{
+				unset($_SESSION['voucher']);
+				echo "<script>alert('Voucher đã bị hủy vì cửa hàng đang áp dụng chương trình khuyến mãi')</script>";	
+			}
+		}
+		
+		$arr_qt = array(); $check_qt_hd = 0; //check_qt_hd để xem mã qt của hóa đơn có nằm trong danh sách quà tặng ko
 		while($re_km = mysql_fetch_assoc($khuyenmai))
 		{
 			if($tongtien >= $re_km['giatridonhang'])
@@ -449,7 +519,11 @@
 					$chietkhau_hd = 0;
 				}
 			}
+			if(isset($_SESSION['cart']['QT000']))
+				if($_SESSION['cart']['QT000']['maqt'] == $re_km['maqt'])
+					$check_qt_hd = 1;
 		}
+		if($check_qt_hd == 0) unset($_SESSION['cart']['QT000']); //nếu mã qt ko khớp thì xóa QT000 để xuống dưới nó gán lại mặc định
 		$string_qt = count($arr_qt) > 0 ? implode(',', $arr_qt) : "''"; 
 
 	?>
@@ -460,29 +534,61 @@
 		//quà tặng kèm cho hóa đơn
 			
 			mysql_query("set names 'utf8'");
-			$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt) group by sp.masp");
-			if(mysql_num_rows($quatang) > 0)
+			$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt) group by sp.masp");
+			if(mysql_num_rows($quatang_hd) > 0)
 			{
 				echo "<p class='title'>QUÀ TẶNG KÈM</p><br />";
         		echo "<ul>";	
 			}
+			
 
-			while($re_qt = mysql_fetch_assoc($quatang))
+			while($re_qt_hd = mysql_fetch_assoc($quatang_hd))
 			{
 		?>
         	<li>
-            	<a href='product-detail.php?id=<?php echo $re_qt['mactsp'] ?>'>
-				<div class='quatang-item'>
-                    	<img src="image/mypham/<?php echo $re_qt['duongdan'] ?>"/>
-                        <p><?php echo $re_qt['tensp'].($re_qt['mausac'] != "" ? " - Màu sắc: ".$re_qt['mausac']."" :"") ?></p>
+            	<?php
+				//nếu tồn tại session['cart'] thì
+				if(isset($_SESSION['cart']))
+				{
+					if(array_key_exists('QT000', $_SESSION['cart']))
+					{
+						
+						if($_SESSION['cart']['QT000']['maqt'] == $re_qt_hd['mactsp']) 
+							echo "<div class='quatang-item' style='border: solid 2px #0cc'>";	
+						else
+							echo "<div class='quatang-item'>";	
+					}
+					//gán mặc định
+					else
+					{
+						$_SESSION['cart']['QT000']['soluong'] = 1;
+						$_SESSION['cart']['QT000']['giaban'] = 0;
+						$_SESSION['cart']['QT000']['makm'] = '000';
+						$_SESSION['cart']['QT000']['maqt'] = $re_qt_hd['mactsp'];
+						$_SESSION['cart']['QT000']['chietkhau'] = 0;
+						$_SESSION['cart']['QT000']['tiengiamgia'] = 0;
+						echo "<div class='quatang-item'  style='border: solid 2px #0cc'>";	
+					}
+				}
+				else
+				{
+					echo "<div class='quatang-item'>";
+					
+				}
+				?>
+                	<a href='javascript:void(0)' data-qthd='<?php echo $re_qt_hd['mactsp'] ?>'>
+                    	<img src="image/mypham/<?php echo $re_qt_hd['duongdan'] ?>"/>
+                        <p><?php echo $re_qt_hd['tensp'].($re_qt_hd['mausac'] != "" ? " - Màu sắc: ".$re_qt_hd['mausac']."" :"") ?></p>
+                	</a>
                	</div>
-                </a>
+                
             </li>
         <?php
 			}
 		?>
         </ul>
     </div>
+    <div class="clear"></div>
 <?php
 	echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
 	echo "<pre>"; print_r($list_km); echo "</pre>";	

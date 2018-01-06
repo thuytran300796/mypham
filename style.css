@@ -723,7 +723,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 /*------------------PRODUCT---------------------*/
 #pro-left
 {
-	width: 16%; height: 500px; 	float: left;
+	width: 16%; float: left;
 }
 
 #pro-left ul
@@ -753,12 +753,12 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 .pro-orderby
 {
-	width: 98%; height: 40px; background: #F2F2F2;	padding: 5px; margin-bottom: 20px;
+	width: 99%; height: 40px; background: #F2F2F2;	padding: 5px; margin-bottom: 20px;
 }
 
 .pro-orderby select
 {
-	width: 65%; height: 40px; background: white; border-radius: 3px;
+	width: 150px; height: 40px; background: white; border-radius: 3px;
 }
 
 .list-item .product-home

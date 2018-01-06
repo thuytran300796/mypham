@@ -5,7 +5,7 @@
    	<head>
     	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <script src="../js/jquery-1.12.4.js"></script>
-        
+        <script type="text/javascript" src="library/ckeditor/ckeditor.js"></script>
         <link type="text/css" rel='stylesheet' href="style.css"/>
     	<title>Trang quản trị</title>
         <script>

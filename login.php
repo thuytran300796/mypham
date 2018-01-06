@@ -275,7 +275,7 @@
         <input class = "sign-input" type = "text" name = "sdt" value = "<?php echo $sdt ?>"/><br />
         
         <label>Địa chỉ:</label><br />
-        <textarea name = "diachi" rows="5" cols="31" style = "font-size: 20px" placeholder="Nhập địa chỉ mà bạn muốn được giao hàng..."><?php echo $diachi ?></textarea><br /><br />
+        <textarea name = "diachi" rows="5" cols="21" style = "font-size: 15px; padding: 10px" placeholder="Nhập địa chỉ mà bạn muốn được giao hàng..."><?php echo $diachi ?></textarea><br /><br />
         
         
         <input type = "submit" class = "btn-login" value = "ĐĂNG KÝ" name = "signin"/>

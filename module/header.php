@@ -142,9 +142,9 @@
             	<ul class='menu'>
                 	<li><a href='#'>DANH MỤC</a>
                     	<ul>
-                        	<li><a href="product.php?madm=TD">Trang điểm</a>
+                        	<li><a href="product.php?dm=TD">Trang điểm</a>
                             	<ul>
-                                	<li><a href='product.php?madm=TDMA'>Trang điểm mắt</a>
+                                	<li><a href='product.php?dm=TDMA'>Trang điểm mắt</a>
                                     	<ul>
                                             <li><a href='product.php?madm=PhanMat'>Phấn mắt</a></li>
                                             <li><a href='product.php?madm=KMAT'>Kẻ mắt</a></li>
@@ -152,7 +152,7 @@
                                             <li><a href='product.php?madm=KMAY'>Kẻ mày</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href='product.php?madm=TDM'>Trang điểm môi</a>
+                                    <li><a href='product.php?dm=TDM'>Trang điểm môi</a>
                                     	<ul>
                                             <li><a href='product.php?madm=SThoi'>Son thỏi</a></li>
                                             <li><a href='product.php?madm=SKem'>Son kem</a></li>
@@ -160,7 +160,7 @@
                                             <li><a href='product.php?madm=SD'>Son dưỡng</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href='product.php?madm=TDFace'>Trang điểm mặt</a>
+                                    <li><a href='product.php?dm=TDFace'>Trang điểm mặt</a>
                                     	<ul>
                                             <li><a href='product.php?madm=BB_CC'>BB Cream - CC Cream</a></li>
                                             <li><a href='product.php?madm=CKD'>Che khuyết điểm</a></li>
@@ -174,9 +174,9 @@
                                     </li>
                                 </ul>
                             </li>
-							<li><a href='product.php?madm=CST'>Chăm sóc tóc</a>
+							<li><a href='product.php?dm=CST'>Chăm sóc tóc</a>
                             	<ul>
-                                	<li><a href='product.php?madm=DauGoi'>Dầu gội</a>
+                                	<li><a href='product.php?dm=DauGoi'>Dầu gội</a>
                                     	<ul>
                                             <li><a href='product.php?madm=DGGau'>Dầu gội trị gàu</a></li>
                                             <li><a href='product.php?madm=DGRungToc'>Dầu gội trị rụng tóc</a></li>
@@ -186,7 +186,7 @@
                                     <li><a href='product.php?madm=DauXa'>Dầu xả</a></li>
                                 </ul>
                             </li>
-                            <li><a href='product.php?madm=CSD'>Chăm sóc da</a>
+                            <li><a href='product.php?dm=CSD'>Chăm sóc da</a>
                             	<ul>
                                 	<li><a href='product.php?madm=SRM'>Sữa rửa mặt</a></li>
                                     <li><a href='product.php?madm=KCN'>Kem chống nắng</a></li>

@@ -1,14 +1,42 @@
 <script>
 
 	$(document).ready(function(e) {
+		/*
         $('#giohang .tb-lietke').delegate('tr', 'click', function()
 		{
-			id = $(this).attr('data-id'); //alert(id);
-			//alert(id);
-			//$(this).after($('.ctsp'+id).hide());
+			id = $(this).attr('data-id'); 
 			$(this).after($('.ctsp'+id).slideToggle());
-
 		});
+		*/
+		
+		$('#giohang .lietke-sp').delegate('.lietke-sp-tr', 'click', function()
+		{
+			id = $(this).attr('data-id'); 
+			$(this).after($('.ctsp'+id).slideToggle());
+		});
+		
+		$('#giohang .lietke-sp').delegate('.huy', 'click', function()
+		{
+				
+			if(confirm("Bạn có chắc chắn muốn hủy?"))
+			{
+				id = $(this).attr('data-id'); $('.ctsp'+id).hide();
+				$.ajax
+				({
+					url: "module/hoadon/xuly/giohang_xuly.php",
+					data: "ac=huy&id="+id,
+					type: "post",
+					async: true,
+					success:function(kq)
+					{
+						$("a[data-id='"+id+"']").closest('.lietke-sp-tr').hide();	
+					}
+				});		
+				return false;
+			}
+		});
+		
+		
     });
 
 </script>
@@ -24,9 +52,9 @@
 							");
 	
 	mysql_query("set names 'utf8'");
-	$ctgh = mysql_query("select t1.magh, t1.mactsp, t1.tensp, t1.mausac, t1.ngaysx, t1.hansudung, t1.soluong, t1.giaban, t2.makm, t2.chietkhau, t2.tiengiamgia
+	$ctgh = mysql_query("select t1.magh, t1.mactsp, t1.tensp, t1.mausac, t1.ngaysx, t1.hansudung, t1.soluong, t1.giaban, t2.makm, t2.chietkhau, t2.tiengiamgia, t1.quatang
 						from
-						(	select	ctgh.magh, ctgh.mactsp, tensp, ctsp.mausac, ctsp.ngaysx, ctsp.hansudung, ctgh.soluong, ctsp.giaban, ctgh.makm
+						(	select	ctgh.magh, ctgh.mactsp, tensp, ctsp.mausac, ctsp.ngaysx, ctsp.hansudung, ctgh.soluong, ctsp.giaban, ctgh.makm, ctgh.quatang
 							from	chitietgiohang ctgh, chitietsanpham ctsp, giohang gh, sanpham sp
 							where	ctgh.mactsp = ctsp.mactsp and gh.magh = ctgh.magh and sp.masp = ctsp.masp and gh.trangthai = 0
 						)t1 left join
@@ -54,11 +82,12 @@
 		$list_ctgh[$dem]['makm'] = $re_ctgh['makm'];
 		$list_ctgh[$dem]['chietkhau'] = $re_ctgh['chietkhau'];
 		$list_ctgh[$dem]['tiengiamgia'] = $re_ctgh['tiengiamgia'];
+		$list_ctgh[$dem]['quatang'] = $re_ctgh['quatang'];
 		$dem++;	
 		$arr[] = "'".$re_ctgh['magh']."'";
 	}
 	//echo "<pre>"; print_r($list_ctgh); echo "</pre>";
-	$string = implode(',', $arr);
+	$string = count($arr) > 0 ? implode(',', $arr) : "''"; 
 	$voucher = mysql_query("select magh, gh.maphieu, giatri from pmh_gh gh, phieumuahang pmh where gh.maphieu = pmh.maphieu and gh.magh in ($string)");
 	$list_voucher = array();
 	$dem = 0;
@@ -76,36 +105,36 @@
 
 <p class='title'>DANH SÁCH CÁC GIỎ HÀNG CHƯA XUẤT HÓA ĐƠN</p><br />
 
-<table width="100%" class="tb-lietke" >
+	<div class='lietke-sp'>
     
-    	<tr>
-            <th width="7%">Mã GH</th>
-            <th width="7%">Ngày đặt</th>
-            <th width="15%">Tên KH</th>
-            <th width="18%">Địa chỉ giao hàng</th>
-            <th width="9%">SĐT</th>
-            <th width="7">Tổng tiền</th>
-            <th width="7%">Ngày giao</th>
-            <th width="10%">Trạng thái</th>
-            <th width="8%">Xem chi tiết</th>
-            <th width="5%">Xuất</th>
-            <th width="5%">Hủy</th>
-        </tr>
+    	<div class = 'lietke-sp-th'>
+        	<div style='width: 7%'>Mã GH</div>
+            <div style='width:7%'>Ngày đặt</div>
+            <div style='width:15%'>Tên KH</div>
+            <div style='width:18%'>Địa chỉ giao hàng</div>
+            <div style='width:9%'>SĐT</div>
+            <div style='width:7%'>Tổng tiền</div>
+            <div style='width:7%'>Ngày giao</div>
+            <div style='width:10%'>Trạng thái</div>
+            <div style='width:8%'>Xem</div>
+            <div style='width:5%'>Xuất</div>
+            <div style='width:5%'>Hủy</div>
+        </div>
+        <div class="clear"></div>
         
-<?php
+	<?php
 	while($re_gh = mysql_fetch_assoc($giohang))
 	{
 		$item = array();
-?>
-		<tr data-id=<?php echo $re_gh['magh'] ?>>
-            <td><?php echo $re_gh['magh'] ?></td>
-            <td ><?php echo date('d-m-Y', strtotime($re_gh['ngaydat'])) ?></td>
-            <td><?php echo $re_gh['hotennguoinhan'] ?></td>
-            <td><?php echo $re_gh['diachi'] ?></td>
-            <td  ><?php echo $re_gh['sdt'] ?></td>
-            <td  >
-            	
-        <?php
+    ?>
+    	<div class= 'lietke-sp-tr' data-id='<?php echo $re_gh['magh'] ?>'>
+        	<div class='lietke-sp-td' style='width: 7%;  text-align: left;'><?php echo $re_gh['magh'] ?></div>
+            <div class='lietke-sp-td' style='width: 7%; text-align: left;'><?php echo date('d-m-Y', strtotime($re_gh['ngaydat'])) ?></div>
+            <div class='lietke-sp-td' style='width: 14%; text-align: left;'><?php echo $re_gh['hotennguoinhan'] ?></div>
+            <div class='lietke-sp-td' style='width: 17%; text-align: left;' ><?php echo $re_gh['diachi'] ?></div>
+            <div class='lietke-sp-td' style='width: 9%; text-align: center;'><?php echo $re_gh['sdt'] ?></div>
+            
+            <?php
 			$thanhtien = $tongtien = 0;
 			
 			for($i=0; $i<count($list_ctgh); $i++)
@@ -122,44 +151,47 @@
 					$item[$k]['hsd'] = $list_ctgh[$i]['hsd'];
 					$item[$k]['giaban'] = $list_ctgh[$i]['giaban'];
 					$item[$k]['soluong'] = $list_ctgh[$i]['soluong'];
-					if($list_ctgh[$i]['makm'] != "")
+					$item[$k]['quatang'] = $list_ctgh[$i]['quatang'];
+					$item[$k]['giamgia'] = 0;
+					if($list_ctgh[$i]['quatang'] != 1)
 					{
-						if($list_ctgh[$i]['chietkhau'] != 0)
+						if($list_ctgh[$i]['makm'] != "")
 						{
-							$giamgia = $list_ctgh[$i]['chietkhau'];
-							$tien = $list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100));
-							$thanhtien += ($list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100))) * $list_ctgh[$i]['soluong'];
-							$item[$k]['giamgia'] = $giamgia." %";
+							if($list_ctgh[$i]['chietkhau'] != 0)
+							{
+								$giamgia = $list_ctgh[$i]['chietkhau'];
+								$tien = $list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100));
+								$thanhtien += ($list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100))) * $list_ctgh[$i]['soluong'];
+								$item[$k]['giamgia'] = $giamgia." %"; 
+							}
+							else if($list_ctgh[$i]['tiengiamgia'] != 0)
+							{
+								$giamgia = $list_ctgh[$i]['tiengiamgia'];
+								$tien = $list_ctgh[$i]['giaban'] - $giamgia;
+								$thanhtien += ($list_ctgh[$i]['giaban'] - $giamgia)* $list_ctgh[$i]['soluong'];
+								$item[$k]['giamgia'] = $giamgia." đ";
+							}
+							//khi ko có km
+							else
+							{
+								$tien = $list_ctgh[$i]['giaban'] - $giamgia;
+								$thanhtien += ($list_ctgh[$i]['giaban'])* $list_ctgh[$i]['soluong'];
+								$item[$k]['giamgia'] = "Quà tặng";
+							}
 						}
-						else if($list_ctgh[$i]['tiengiamgia'] != 0)
-						{
-							$giamgia = $list_ctgh[$i]['tiengiamgia'];
-							$tien = $list_ctgh[$i]['giaban'] - $giamgia;
-							$thanhtien += ($list_ctgh[$i]['giaban'] - $giamgia)* $list_ctgh[$i]['soluong'];
-							$item[$k]['giamgia'] = $giamgia." đ";
-						}
-						//khi ko có km
 						else
 						{
 							$tien = $list_ctgh[$i]['giaban'] - $giamgia;
 							$thanhtien += ($list_ctgh[$i]['giaban'])* $list_ctgh[$i]['soluong'];
-							$item[$k]['giamgia'] = "Quà tặng";
+							$item[$k]['giamgia'] = 0;
 						}
 					}
-					else
-					{
-						$tien = $list_ctgh[$i]['giaban'] - $giamgia;
-						$thanhtien += ($list_ctgh[$i]['giaban'])* $list_ctgh[$i]['soluong'];
-						$item[$k]['giamgia'] = 0;
-					}
-					//echo $re_gh['magh']." - ".$list_ctgh[$i]['mactsp']." - ".$tien."</br>";
-					//echo $thanhtien;
 				}
 				
 			}
 			
 			
-			$ngaydat = date('Y-m-d', strtotime($re_ctgh['ngaydat']));
+			$ngaydat = date('Y-m-d', strtotime($re_gh['ngaydat'])); 
 			mysql_query("set names 'utf8'");
 			$km_hd = mysql_query("select	km.makm, km.chietkhau, km.tiengiamgia, km.giatridonhang, ctkm.ngaybd, ctkm.ngaykt
 								from	khuyenmai km, ctsp_km ctkm
@@ -199,6 +231,7 @@
 			{
 				$tongtien = $thanhtien;	
 			}
+			
 			$tien_voucher = 0;
 			for($j = 0; $j<count($list_voucher); $j++)
 			{
@@ -208,21 +241,22 @@
 					$tien_voucher += $list_voucher[$j]['giatri'];	
 				}
 			}
-			echo number_format($tongtien)." đ";
-		?>        
-            	
-            </td>
-            <td><?php echo date('d-m-Y', strtotime($re_gh['ngaygiao'])) ?> </td>
-            <td ><?php echo $re_gh['trangthai'] == 0 ? "Đã hủy" : $re_gh['trangthai'] == 1 ? "Chưa xuất" : "Đã xuất hóa đơn" ?></td>
-            <td ><a href='#'>Xem</a></td>
-            <td ><a href='#'>Xuất</a></td>
-            <td ><a href='#'>Hủy</a></td>
-        </tr>
+			//echo number_format($tongtien)." đ";
+		?>      
+            
+            <div class='lietke-sp-td' style='width: 6%; text-align: right;'><?php echo number_format($tongtien) ?> đ</div>
+            <div class='lietke-sp-td' style='width: 7%; text-align: center;'><?php echo date('d-m-Y', strtotime($re_gh['ngaygiao'])) ?></div>
+            <div class='lietke-sp-td' style='width: 9%; text-align: center;'>Chưa xuất</div>
+            <div class='lietke-sp-td' style='width: 8%; text-align: center;'><a href='#'>Xem</a></div>
+            <div class='lietke-sp-td' style='width: 4%; text-align: center;'><a href='admin.php?quanly=hoadon&ac=xuat&id=<?php echo $re_gh['magh'] ?>'>Xuất</a></div>
+            <div class='lietke-sp-td' style='width: 4%; text-align: center;'><a href='javascript:void(0)' class='huy' data-id='<?php echo $re_gh['magh'] ?>'>Hủy</a></div>
+            <div class="clear"></div>
+        </div>
         
-        <div  class='ctsp<?php echo $re_gh['magh'] ?>' style="background: #EFFBF2; display: none; width: 1345%;   padding: 10px; ">
+        <div  class='ctsp<?php echo $re_gh['magh'] ?>' data-id='<?php echo $re_gh['magh'] ?>' style="background: #EFFBF2; display: none; width: 98%;   padding: 10px; ">
                 
                 <div style="width: 100%; height: 30px; line-height: 30px;">
-                	<div class='ctsp-item' 	style="font-weight: bold; width: 25%" >Tên SP</div>
+                	<div class='ctsp-item' 	style="font-weight: bold; width: 25%; " >Tên SP</div>
                 	<div class='ctsp-item' 	style="font-weight: bold;" >Màu sắc</div>
                     <div class='ctsp-item'  style="font-weight: bold; text-align: left;" >Ngày sản xuất</div>
                     <div class='ctsp-item'  style="font-weight: bold; text-align: left;" >Hạn sử dụng</div>
@@ -235,30 +269,59 @@
                 <?php
 					foreach($item as $key => $value)
 					{
-					
+						
 				?>
                 <div style="border-bottom: solid 1px #ccc; width: 100%">
-                	<div class='ctsp-item' style="text-align: left; width: 25%"><?php echo $item[$key]['tensp'] ?></div>
+                	<div class='ctsp-item' style="text-align: left; width: 25%;"><?php echo $item[$key]['quatang'] == 0 ? $item[$key]['tensp'] : ($item[$key]['tensp']. " (Quà tặng)")?></div>
                 	<div class='ctsp-item'><?php echo $item[$key]['mausac']==""?"Không":$item[$key]['mausac'] ?></div>
                     <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($item[$key]['ngaysx'])) ?></div>
                     <div class='ctsp-item' style="text-align: left;"><?php echo date('d/m/Y', strtotime($item[$key]['hsd'])) ?></div>
                     <div class='ctsp-item'><?php echo $item[$key]['soluong'] ?></div>
-                    <div class='ctsp-item'><?php echo number_format($item[$key]['giaban']) ?> đ</div>
+                    <div class='ctsp-item'>
+					<?php
+                    	if($item[$key]['quatang'] == 1)
+							echo 0;
+						else
+						{	echo number_format($item[$key]['giaban']);
+						}
+					?>đ</div>
                     <div class='ctsp-item'><?php echo $item[$key]['giamgia'] ?></div>
                 </div>
                 <div class="clear"></div>
                 <?php
 					}
-					echo number_format($giam_hd) > 0 ? "<div style='border-top: solid 1px #ccc; width: 100%; text-align: right'>Giảm giá: ".number_format($giamgia)."".$check_km == 1 ? ". %." : ". đ."."</div>" : "";
+					if($giam_hd > 0)
+						echo $check_km==1 ? "<div style='border-top: solid 1px #ccc; width: 100%; text-align: right'>Giảm KM: ".number_format($giam_hd)." ( -".$item[$key]['giamgia'].")</div>" : "<div style='border-top: solid 1px #ccc; width: 100%; text-align: right'>Giảm KM: ".number_format($giam_hd)." đ</div>";
+	
 					echo number_format($tien_voucher) > 0 ? "<div style='border-top: solid 1px #ccc; width: 100%; text-align: right'>Phiếu mua hàng: ".number_format($tien_voucher)." đ</div>" : "";
 				?>
                  
-                
+               
                 <div class="clear"></div>
         </div> <!-- end ctsp -->    	
 <?php
-	}
+	} //end while
 ?>
-    
-    </table>
+    </div>
+    <!--</table>-->
 </div>
+
+
+<!--
+
+<table width="100%" class="tb-lietke" >
+    
+    	<tr>
+            <th width="7%">Mã GH</th>
+            <th width="7%">Ngày đặt</th>
+            <th width="15%">Tên KH</th>
+            <th width="18%">Địa chỉ giao hàng</th>
+            <th width="9%">SĐT</th>
+            <th width="7">Tổng tiền</th>
+            <th width="7%">Ngày giao</th>
+            <th width="10%">Trạng thái</th>
+            <th width="8%">Xem chi tiết</th>
+            <th width="5%">Xuất</th>
+            <th width="5%">Hủy</th>
+        </tr>
+        
