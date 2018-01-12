@@ -9,7 +9,7 @@
 	$danhmuc = $_POST['danhmuc'];
 	$keyword = $_POST['keyword'];
 	$position = $_POST['position'];
-	$display = 12;
+	$display = 10;
 	if($type != "")
 	{
 		if($type=='banchay')

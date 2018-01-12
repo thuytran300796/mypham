@@ -22,7 +22,7 @@
 	$loi = array();
 		$loi['manv'] = $loi['matkhau'] = "";
 	if(isset($_POST['ok']))
-	{echo "e";
+	{
 		$manv = mysql_escape_string($_POST['manv']); $matkhau = mysql_escape_string($_POST['matkhau']);
 		$check = 1;
 		if($manv == "")
@@ -40,6 +40,7 @@
 		if($check == 1)
 		{
 			mysql_query("set names 'utf8'");
+			$matkhau = md5($matkhau);
 			$result = mysql_query("select manv, tennv, trangthai from nhanvien where BINARY manv='$manv' and BINARY matkhau = '$matkhau'");
 			
 			if(mysql_num_rows($result) == 0)
@@ -91,7 +92,7 @@
                 <table width="100%" cellspacing="20px" style="margin-left: 18%">
                     <tr>
                         <td width="20%">Mã nhân viên: </td>
-                        <td><input type='text' class="txt-sp" style="height: 40px;"  name='manv' id='manv' value="<?php echo $manv; ?>"/></td>
+                        <td><input type='text' class="txt-sp" style="height: 40px;"  name='manv' id='manv' value=""/></td>
                     </tr>
                     <tr>
                     	<td></td>
@@ -105,7 +106,7 @@
                     </tr>
                     <tr>
                         <td width="20%">Mật khẩu: </td>
-                        <td><input type='password' class="txt-sp" style="height: 40px;" name='matkhau' id='matkhau' value="<?php echo $matkhau; ?>"/></td>
+                        <td><input type='password' class="txt-sp" style="height: 40px;" name='matkhau' id='matkhau' value=""/></td>
                     </tr>
                     <tr>
                     	<td></td>

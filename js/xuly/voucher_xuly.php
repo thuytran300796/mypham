@@ -65,7 +65,8 @@
 						{
 							while($re_km = mysql_fetch_assoc($khuyenmai))
 							{
-								$check_hd = 0;
+								//$check_hd = 0;
+								/*
 								if($re_km['chietkhau'] != "0" || $re_km['tiengiamgia'] != "0")
 								{
 									//nếu đơn hàng hiện tại thỏa điều kiện áp dụng km thì sẽ ko đc sd voucher
@@ -82,15 +83,24 @@
 									{
 										$check_hd = 1;
 									}
-								}	
+								}	*/
+								if($re_km['giatridonhang'] <= $tienhd)
+									$check_hd = 1;
+								else 
+									$check_hd = 0;
+								
 							}
 						}
-							else
-								$check_hd = 0;
+						else
+							$check_hd = 0;
 								
 						if($check_sp == 1 || $check_hd==1)
-							echo json_encode(array("maphieu"=>"", "giatri"=>"","error"=>"Voucher sẽ không được sử dụng khi có đang có chương trình khuyến mãi!"));
-						else
+						{
+							echo  json_encode(array("maphieu"=>"", "giatri"=>"","error"=>"Voucher sẽ không được sử dụng khi có đang có chương trình khuyến mãi!"));					
+							//echo "zo7";
+						}
+						// ko km trên sp trong giỏ hàng và hóa đơn thì mới xài đc vocher
+						else if($check_sp == 0 && $check_hd==0)
 						{
 							$_SESSION['voucher'][$maphieu]['giatri'] = $dong['giatri'];	
 							$_SESSION['voucher'][$maphieu]['ngaybd'] = $dong['ngaybd'];

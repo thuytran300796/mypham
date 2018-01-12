@@ -68,6 +68,8 @@
 		$phivanchuyen = $_POST['phivanchuyen'];
 		$thue = $_POST['thue'];
 		$makm = $_POST['makm'];
+		$tongcong = $_POST['tongcong'];
+		
 		
 		$mahd = Tao_MaHD(); $user = isset($_SESSION['user']) ? $_SESSION['user'] : "";
 		date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -77,11 +79,17 @@
 		$hd = mysql_query("insert into hoadon(mahd, manv, ngayxuat, makh, makm, chietkhau, phivanchuyen, thue, hotennguoinhan, sdt, diachi, trangthai) values('$mahd', '$user', '$ngayxuat', '".$re_gh['makh']."', '$makm', $chietkhau, $phivanchuyen, $thue, '".$re_gh['hotennguoinhan']."','".$re_gh['sdt']."', '".$re_gh['diachi']."', 1)");
 		if(!$hd) echo mysql_error()."<br/>";
 		
+		if($re_gh['makh'] != "")
+		{
+			$diem = ((int)($tongcong / 100000))*10;
+			$hd = mysql_query("update khachhang set diemtichluy = diemtichluy + $diem where makh = '".$re_gh['makh']."'");
+		}
+		
 		while($re_ctgh = mysql_fetch_assoc($ctgh))
 		{
 			mysql_query("set names 'utf8'");
-			
-			$cthd = mysql_query("insert into chitiethoadon(mahd, mactsp, soluong, makm, quatang) values('$mahd','".$re_ctgh['mactsp']."', ".$re_ctgh['soluong'].", '".$re_ctgh['makm']."', ".$re_ctgh['quatang'].")");
+			$makm_ctgh = $re_ctgh['makm'] == "" ? "000" : $re_ctgh['makm'];
+			$cthd = mysql_query("insert into chitiethoadon(mahd, mactsp, soluong, makm, quatang) values('$mahd','".$re_ctgh['mactsp']."', ".$re_ctgh['soluong'].", '$makm_ctgh', ".$re_ctgh['quatang'].")");
 			
 			if(!$cthd)  echo mysql_error()."<br/>";
 		}
@@ -90,6 +98,23 @@
 		while($re_voucher = mysql_fetch_assoc($voucher))
 		{
 			$kq = mysql_query("insert into pmh_hd values('".$re_voucher['maphieu']."', '$mahd')");
+		}
+		header('location: admin.php?quanly=hoadon&ac=giohang');
+	}
+	if(isset($_POST['id']) && isset($_POST['huy']))
+	{
+		$id = isset($_POST['id']) ? $_POST['id'] : "";
+		$tien = $_POST['tien']; $makh = $_POST['makh'];
+		$kq = mysql_query("update giohang set trangthai = 2 where magh = '$id'");	
+		$kq = mysql_query("select magh, mactsp, soluong from chitietgiohang where magh = '$id'");
+		while($re_kq = mysql_fetch_assoc($kq))
+		{
+			$result = mysql_query("update chitietsanpham set soluong = soluong + ".$re_kq['soluong']." where mactsp = '".$re_kq['mactsp']."'");
+		}
+		if($makh != "")
+		{
+			$diem = ((int)($tien / 100000))*10;
+			$kq = mysql_query("update khachhang set diemtichluy = diemtichluy - $diem where makh = '$makh'"); 	
 		}
 	}
 						
@@ -144,7 +169,8 @@
 			chietkhau = parseInt($('#chietkhau').val() == "" ? 0 : $('#chietkhau').val()); //alert(chietkhau);
 			phivanchuyen = parseInt($('#phivanchuyen').val() == "" ? 0 :  $('#phivanchuyen').val());
 			tongcong = parseInt(tiensp - giamgia - voucher);
-			tongcong = parseInt(tongcong - tongcong * (chietkhau/100) + phivanchuyen);
+			//tongcong = parseInt(tongcong - tongcong * (chietkhau/100) + phivanchuyen);
+			tongcong = parseInt(tongcong - chietkhau + phivanchuyen);
 			$('#tongcong').val(tongcong);
 		});
 		
@@ -160,282 +186,286 @@
 
 </script>
 
-<div id = "bill-info">
-    
-    	<p style = "color: #3CA937; font-weight: bold; font-size: 25px;">THÔNG TIN GIAO HÀNG</p>
-    
-		<table cellspacing="20px" style = "text-align: left">
-        	<tr>
-            	<td style = "font-weight: bold">Ngày đặt</td>
-                <td><?php echo date('H:m:s d-m-Y', strtotime($re_gh['ngaydat'])) ?></td>
-            </tr>
-            
-            <tr>
-            	<td style = "font-weight: bold">Họ tên: </td>
-                <td><?php echo $re_gh['hotennguoinhan'] ?></td>
-            </tr>
-            
-            <tr>
-            	<td style = "font-weight: bold">Địa chỉ: </td>
-                <td><?php echo $re_gh['diachi'] ?></td>
-            </tr>
-            
-            <tr>
-            	<td style = "font-weight: bold">Số điện thoại: </td>
-                <td><?php echo $re_gh['sdt'] ?></td>
-            </tr>
-            
-            <tr>
-            	<td style = "font-weight: bold">Ngày giao: </td>
-                <td><?php echo date('d-m-Y', strtotime($re_gh['ngaygiao'])) ?></td>
-            </tr>
+<style type='text/css' media="print">
+	#category, #btn-xuat, #btn-huy, .top, .bottom
+	{
+		display: none;
+	}
+	
+</style>
 
-        </table>
-    
-</div>
-
-<form method="post">
-<div id = "list-pro">
-    
-    	<p style = "color: #3CA937; font-weight: bold; font-size: 25px;">CHI TIẾT ĐƠN HÀNG</p>
+<div id = 'in' >
+    <div id = "bill-info">
         
+            <p style = "color: #3CA937; font-weight: bold; font-size: 25px;">THÔNG TIN GIAO HÀNG</p>
         
+            <table cellspacing="20px" style = "text-align: left">
+                <tr>
+                    <td style = "font-weight: bold">Ngày đặt</td>
+                    <td><?php echo date('H:m:s d-m-Y', strtotime($re_gh['ngaydat'])) ?></td>
+                </tr>
+                
+                <tr>
+                    <td style = "font-weight: bold">Họ tên: </td>
+                    <td><?php echo $re_gh['hotennguoinhan'] ?></td>
+                </tr>
+                
+                <tr>
+                    <td style = "font-weight: bold">Địa chỉ: </td>
+                    <td><?php echo $re_gh['diachi'] ?></td>
+                </tr>
+                
+                <tr>
+                    <td style = "font-weight: bold">Số điện thoại: </td>
+                    <td><?php echo $re_gh['sdt'] ?></td>
+                </tr>
+                
+                <tr>
+                    <td style = "font-weight: bold">Ngày giao: </td>
+                    <td><?php echo date('d-m-Y', strtotime($re_gh['ngaygiao'])) ?></td>
+                </tr>
     
-    	<table class = "list-bill" border="1">
-        	
-            <tr>
-            	<th width="20%">Mã SP</th>
-                <th width="40%">Thông tin sản phẩm</th>
-                <th width="10%">Số lượng</th>
-                <th width="15%">Giá bán</th>
-                <th width="15%">Thành tiền</th>
-            </tr>
+            </table>
+        
+    </div>
+    
+    <form method="post">
+    <div id = "list-pro">
+        
+            <p style = "color: #3CA937; font-weight: bold; font-size: 25px;">CHI TIẾT ĐƠN HÀNG</p>
             
-         <?php
-		 	$tongtien = $tamtinh = $tienvoucher = $thue= 0;
-		 	for($i=0; $i<count($list_ctgh); $i++)
-			{
-				$thanhtien = $giaban = 0;
-		 ?>
             
-            <tr>
-            
-            	<td style = "color: #3CA937; font-weight: bold; text-align: left; padding-left: 10px;"><?php echo $list_ctgh[$i]['mactsp'] ?></td>
-            	<td>
+        
+            <table class = "list-bill">
                 
-                	<div id = "bill-pro">
-                    
-                    	<div id = "bill-pro-img">
-                        
-                        	<img src = "../image/mypham/<?php echo $list_ctgh[$i]['duongdan'] ?>"/>
-                        
-                        </div>
-                        
-                        <div id = "bill-pro-info">
-                            <a href='product-detail.php?id=<?php echo $list_ctgh[$i]['mactsp'] ?>'>
-                                <p ><?php echo $list_ctgh[$i]['quatang'] == 0 ? $list_ctgh[$i]['tensp'] : $list_ctgh[$i]['tensp']." (Quà tặng)" ?></p>
-                               	<?php  echo $list_ctgh[$i]['mausac'] != "" ? "<p>Màu sắc: ".$list_ctgh[$i]['mausac']."</p>" :  "" ?>
-                            </a>
-                        </div>
-                    	<div class = "clear"></div>
-                    </div>
-                    
+                <tr>
+                    <th width="20%">Mã SP</th>
+                    <th width="40%">Thông tin sản phẩm</th>
+                    <th width="12%">Số lượng</th>
+                    <th width="15%">Giá bán</th>
+                    <th width="13%">Thành tiền</th>
+                </tr>
                 
+             <?php
+                $tongtien = $tamtinh = $tienvoucher = $thue= 0;
+                for($i=0; $i<count($list_ctgh); $i++)
+                {
+                    $thanhtien = $giaban = 0;
+             ?>
+                
+                <tr>
+                
+                    <td style = "color: #3CA937; font-weight: bold; text-align: left; padding-left: 10px;"><?php echo $list_ctgh[$i]['mactsp'] ?></td>
+                    <td>
                     
-                </td>
-                <td><?php echo $list_ctgh[$i]['soluong'] ?></td>
-                <td >
-				<?php
-				
-					if($list_ctgh[$i]['quatang'] == 0)
-					{
-						if($list_ctgh[$i]['makm'] != "")
-						{
-							
-							if($list_ctgh[$i]['chietkhau'] != 0)
-							{
-								$giamgia = $list_ctgh[$i]['chietkhau'];
-								$giaban = $list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100)) ;
-								$thanhtien += $giaban * $list_ctgh[$i]['soluong'];
-							}
-							else if($list_ctgh[$i]['tiengiamgia'] != 0)
-							{
-								$giamgia = $list_ctgh[$i]['tiengiamgia'];
-								$giaban = $list_ctgh[$i]['giaban'] - $giamgia;
-								$thanhtien += $giaban* $list_ctgh[$i]['soluong'];
-							}
-							else
-							{
-								$giaban = $list_ctgh[$i]['giaban'];
-								$thanhtien += $giaban* $list_ctgh[$i]['soluong'];
-							}
-						}
-						else
-						{
-							$giaban = $list_ctgh[$i]['giaban'];
-							$thanhtien += $giaban* $list_ctgh[$i]['soluong'];
-						}
-						$thue += (($giaban/((100+$list_ctgh[$i]['thue'])/$list_ctgh[$i]['thue'])) * $list_ctgh[$i]['soluong']);
-						$tamtinh += $thanhtien;
-					}
-					echo number_format($giaban);
-				?> 
-                 
-                 đ</td>
-                <td style="text-align: right"><?php echo number_format($thanhtien); ?> đ</td>
-            </tr>
-            
-       <?php
-			}
-		?>
+                                <a href='product-detail.php?id=<?php echo $list_ctgh[$i]['mactsp'] ?>'>
+                                    <p ><?php echo $list_ctgh[$i]['quatang'] == 0 ? $list_ctgh[$i]['tensp'] : $list_ctgh[$i]['tensp']." (Quà tặng)" ?></p>
+                                    <?php  echo $list_ctgh[$i]['mausac'] != "" ? "<p>Màu sắc: ".$list_ctgh[$i]['mausac']."</p>" :  "" ?>
+                                </a>
      
-            <tr>
-            	<td colspan="4" style = "text-align: right; font-weight: bold;">Tiền sản phẩm:</td>
-                <td style="text-align: right"><input id='tiensp'  style='text-align:right' name='tiensp' type='text' readonly="readonly" class='txt-sp' value="<?php echo $tamtinh ?>" /></td></td>
-            </tr>
-            
-            <tr>
-            	<td colspan="4" style = "text-align: right; font-weight: bold;">Giảm giá:</td>
-                <td style="text-align: right">
+                        
+                    </td>
+                    <td><?php echo $list_ctgh[$i]['soluong'] ?></td>
+                    <td >
+                    <?php
+                    
+                        if($list_ctgh[$i]['quatang'] == 0)
+                        {
+                            if($list_ctgh[$i]['makm'] != "")
+                            {
+                                
+                                if($list_ctgh[$i]['chietkhau'] != 0)
+                                {
+                                    $giamgia = $list_ctgh[$i]['chietkhau'];
+                                    $giaban = $list_ctgh[$i]['giaban'] - ($list_ctgh[$i]['giaban'] * ($giamgia/100)) ;
+                                    $thanhtien += $giaban * $list_ctgh[$i]['soluong'];
+                                }
+                                else if($list_ctgh[$i]['tiengiamgia'] != 0)
+                                {
+                                    $giamgia = $list_ctgh[$i]['tiengiamgia'];
+                                    $giaban = $list_ctgh[$i]['giaban'] - $giamgia;
+                                    $thanhtien += $giaban* $list_ctgh[$i]['soluong'];
+                                }
+                                else
+                                {
+                                    $giaban = $list_ctgh[$i]['giaban'];
+                                    $thanhtien += $giaban* $list_ctgh[$i]['soluong'];
+                                }
+                            }
+                            else
+                            {
+                                $giaban = $list_ctgh[$i]['giaban'];
+                                $thanhtien += $giaban* $list_ctgh[$i]['soluong'];
+                            }
+                            $thue += (($giaban/((100+$list_ctgh[$i]['thue'])/$list_ctgh[$i]['thue'])) * $list_ctgh[$i]['soluong']);
+                            $tamtinh += $thanhtien;
+                        }
+                        echo number_format($giaban);
+                    ?> 
+                     
+                     đ</td>
+                    <td style="text-align: right"><?php echo number_format($thanhtien); ?> đ</td>
+                </tr>
                 
-            <?php
-				$makm = "000";
-				while($re_km = mysql_fetch_assoc($km_hd))
-				{
-					if($re_km['chietkhau'] != "0")
-					{
-						//echo "ck";
-						if($re_km['giatridonhang'] != 0)
-						{
-							if($tamtinh >= $re_km['giatridonhang'])
-							{
-								$giamgia = 	$tamtinh * ($re_km['chietkhau']/100); $makm = $re_km['makm'];
-							}
-							else
-							{
-								$giamgia =  0;
-							}
-						}
-						else
-						{
-							$giamgia = $tamtinh * ($re_km['chietkhau']/100); $makm = $re_km['makm'];
-						}
-						break;
-					}
-					else if($re_km['tiengiamgia'] != "0")
-					{
-						//echo "tien";
-						if($re_km['giatridonhang'] != 0)
-						{
-							if($tamtinh >= $re_km['giatridonhang'])
-							{
-								$giamgia = $re_km['tiengiamgia'];
-								$makm = $re_km['makm'];
-							}
-							else
-								$giamgia = 0;
-						}
-							
-						else
-						{
-							$giamgia = $re_km['tiengiamgia']; $makm = $re_km['makm'];
-						}
-						break;
-					}
-					else if($re_km['tiengiamgia'] == "0" && $re_km['chietkhau'] == "0")
-					{
-						$giamgia = 0;	
-						$makm = $re_km['makm'];
-					}
-					//if($makm != '000')
-						//break;
-				}
-									
-				//echo "số km: ".mysql_num_rows($km_hd);
-				/*
-				while($re_km = mysql_fetch_assoc($km_hd))
-				{
-				
-					if($re_km['chietkhau'] != "0")
-					{
-						if($re_km['giatridonhang'] != 0)
-							$giamgia = $tamtinh >= $re_km['giatridonhang'] ? ($tamtinh * ($re_km['chietkhau']/100)) : 0;
-						else
-							$giamgia = $tamtinh * ($re_km['chietkhau']/100);
-					}
-					else if($re_km['tiengiamgia'] != "0")
-					{
-						if($re_km['giatridonhang'] != 0)
-							$giamgia = $tamtinh >= $re_km['giatridonhang'] ? $re_km['tiengiamgia'] : 0;
-						else
-							$giamgia = $re_km['tiengiamgia'];
-					}
-					else
-					{
-						$giamgia = 0;	
-					}
-				}
-				*/
-				for($j = 0; $j<count($list_voucher); $j++)
-				{
-					if($re_gh['magh'] == $list_voucher[$j]['magh'])
-					{
-						$tienvoucher += $list_voucher[$j]['giatri'];	
-					}
-				}
-				//echo number_format($giamgia);
-			?>
+           <?php
+                }
+            ?>
+         
+                <tr>
+                    <td colspan="4" style = "text-align: right; font-weight: bold;">Tiền sản phẩm:</td>
+                    <td style="text-align: right"><input id='tiensp'  style='text-align:right' name='tiensp' type='text' readonly="readonly" class='txt-sp' value="<?php echo $tamtinh ?>" /></td></td>
+                </tr>
                 
-                <input id='giamgia'  style='text-align:right' name='giamgia' type='text' readonly="readonly" class='txt-sp' value="<?php echo (int)$giamgia ?>" /></td>
-            </tr>
-            
-            <tr>
-            	<td colspan="4" style = "text-align: right; font-weight: bold;">Voucher áp dụng:</td>
-                <td style="text-align: right"><input id='voucher'  style='text-align:right' name='voucher' type='text' readonly="readonly" class='txt-sp' value="<?php echo $tienvoucher ?>" /></td>
-            </tr>
-            
-            <tr>
-            	<td colspan="4" style = "text-align: right; font-weight: bold">Thuế VAT: </td>
-                <td><input id='thue'  style='text-align:right' name='thue' type='text' readonly="readonly" class='txt-sp' value="<?php echo (int)$thue ?>" /></td>
-            </tr>
-            
-            <tr>
-            	<td colspan="4" style = "text-align: right; font-weight: bold">Chiết khấu: </td>
-                <td><input id='chietkhau'  style='text-align:right' name='chietkhau' type='text' class='txt-sp' value="<?php echo $chietkhau ?>" /></td>
-            </tr>
-            
-            <tr>
-            	<td colspan="4" style = "text-align: right; font-weight: bold">Phí vận chuyển: </td>
-                <td><input id='phivanchuyen' style='text-align:right' name='phivanchuyen' type='text' class='txt-sp' value="<?php echo number_format($phivanchuyen) ?>" /></td>
-            </tr>
-            
-            <tr>
-            	<td colspan="4" style = "text-align: right; font-weight: bold;">Tổng cộng: </td>
-                <!--<td style = "font-size: 22px; color: #090; font-weight: bold; text-align: right"><?php echo number_format($tamtinh - $giamgia - $tienvoucher) ?> đ</td>-->
-                <td >
-                	<input style = "font-size: 22px; font-weight: bold; text-align: right" id='tongcong'  style='text-align:right' name='tongcong' type='text' readonly="readonly" class='txt-sp' value="<?php echo $tamtinh - $giamgia - $tienvoucher ?>" />
-                </td>
-            </tr>
-            
-            <tr>
-            	<td colspan="5" style = "text-align: right;">
-                	<?php
-						if(!isset($_GET['huy']))
-							echo "<input style='float: right' type='submit' name='xuat' value='Xuất hóa đơn' class='sub'/>";
-						else
-							echo "<input style='float: right' type='submit' name='huy' value='Hủy hóa đơn' class='sub'/>";
-					?>
-                	
-                </td>
-            </tr>
-            
-            <input type='hidden' name='id' value = '<?php echo $id ?>'/>
-           	<input type='hidden' name='makm' value = '<?php echo $makm ?>'/>
-        </table>
-</div>
+                <tr>
+                    <td colspan="4" style = "text-align: right; font-weight: bold;">Giảm giá:</td>
+                    <td style="text-align: right">
+                    
+                <?php
+                    $makm = "000";
+                    while($re_km = mysql_fetch_assoc($km_hd))
+                    {
+                        if($re_km['chietkhau'] != "0")
+                        {
+                            //echo "ck";
+                            if($re_km['giatridonhang'] != 0)
+                            {
+                                if($tamtinh >= $re_km['giatridonhang'])
+                                {
+                                    $giamgia = 	$tamtinh * ($re_km['chietkhau']/100); $makm = $re_km['makm'];
+                                }
+                                else
+                                {
+                                    $giamgia =  0;
+                                }
+                            }
+                            else
+                            {
+                                $giamgia = $tamtinh * ($re_km['chietkhau']/100); $makm = $re_km['makm'];
+                            }
+                            break;
+                        }
+                        else if($re_km['tiengiamgia'] != "0")
+                        {
+                            //echo "tien";
+                            if($re_km['giatridonhang'] != 0)
+                            {
+                                if($tamtinh >= $re_km['giatridonhang'])
+                                {
+                                    $giamgia = $re_km['tiengiamgia'];
+                                    $makm = $re_km['makm'];
+                                }
+                                else
+                                    $giamgia = 0;
+                            }
+                                
+                            else
+                            {
+                                $giamgia = $re_km['tiengiamgia']; $makm = $re_km['makm'];
+                            }
+                            break;
+                        }
+                        else if($re_km['tiengiamgia'] == "0" && $re_km['chietkhau'] == "0")
+                        {
+                            $giamgia = 0;	
+                            $makm = $re_km['makm'];
+                        }
+                        //if($makm != '000')
+                            //break;
+                    }
+                                        
+                    //echo "số km: ".mysql_num_rows($km_hd);
+                    /*
+                    while($re_km = mysql_fetch_assoc($km_hd))
+                    {
+                    
+                        if($re_km['chietkhau'] != "0")
+                        {
+                            if($re_km['giatridonhang'] != 0)
+                                $giamgia = $tamtinh >= $re_km['giatridonhang'] ? ($tamtinh * ($re_km['chietkhau']/100)) : 0;
+                            else
+                                $giamgia = $tamtinh * ($re_km['chietkhau']/100);
+                        }
+                        else if($re_km['tiengiamgia'] != "0")
+                        {
+                            if($re_km['giatridonhang'] != 0)
+                                $giamgia = $tamtinh >= $re_km['giatridonhang'] ? $re_km['tiengiamgia'] : 0;
+                            else
+                                $giamgia = $re_km['tiengiamgia'];
+                        }
+                        else
+                        {
+                            $giamgia = 0;	
+                        }
+                    }
+                    */
+                    for($j = 0; $j<count($list_voucher); $j++)
+                    {
+                        if($re_gh['magh'] == $list_voucher[$j]['magh'])
+                        {
+                            $tienvoucher += $list_voucher[$j]['giatri'];	
+                        }
+                    }
+                    //echo number_format($giamgia);
+                ?>
+                    
+                    <input id='giamgia'  style='text-align:right' name='giamgia' type='text' readonly="readonly" class='txt-sp' value="<?php echo (int)$giamgia ?>" /></td>
+                </tr>
+                
+                <tr>
+                    <td colspan="4" style = "text-align: right; font-weight: bold;">Voucher áp dụng:</td>
+                    <td style="text-align: right"><input id='voucher'  style='text-align:right' name='voucher' type='text' readonly="readonly" class='txt-sp' value="<?php echo $tienvoucher ?>" /></td>
+                </tr>
+                
+                <tr>
+                    <td colspan="4" style = "text-align: right; font-weight: bold">Thuế VAT: </td>
+                    <td><input id='thue'  style='text-align:right' name='thue' type='text' readonly="readonly" class='txt-sp' value="<?php echo (int)$thue ?>" /></td>
+                </tr>
+                
+                <tr>
+                    <td colspan="4" style = "text-align: right; font-weight: bold">Chiết khấu: </td>
+                    <td><input id='chietkhau'  style='text-align:right' name='chietkhau' type='text' class='txt-sp' value="<?php echo $chietkhau ?>" /></td>
+                </tr>
+                
+                <tr>
+                    <td colspan="4" style = "text-align: right; font-weight: bold">Phí vận chuyển: </td>
+                    <td><input id='phivanchuyen' style='text-align:right' name='phivanchuyen' type='text' class='txt-sp' value="<?php echo number_format($phivanchuyen) ?>" /></td>
+                </tr>
+                
+                <tr>
+                    <td colspan="4" style = "text-align: right; font-weight: bold;">Tổng cộng: </td>
+                    <!--<td style = "font-size: 22px; color: #090; font-weight: bold; text-align: right"><?php echo number_format($tamtinh - $giamgia - $tienvoucher) ?> đ</td>-->
+                    <td >
+                        <input style = "font-size: 22px; font-weight: bold; text-align: right" id='tongcong'  style='text-align:right' name='tongcong' type='text' readonly="readonly" class='txt-sp' value="<?php echo $tamtinh - $giamgia - $tienvoucher ?>" />
+                    </td>
+                </tr>
+                
+                <tr>
+                	<td colspan="4">
+                    	<?php
+							if($re_gh['trangthai'] != 2)
+                                echo "<input style='float: right' type='submit' name='huy' id='btn-huy' onclick='return ConfirmDel();'  value='Hủy hóa đơn' class='sub'/>";
+						?>
+                    </td>
+                    <td style = "text-align: right;">
+                        <?php
+                            if($re_gh['trangthai'] == 0)
+                                echo "<input style='float: right' type='submit' name='xuat' id='btn-xuat' value='Xuất hóa đơn' onclick='window.print()' class='sub'/>";
+                            
+                        ?>
+                        
+                    </td>
+     
+                </tr>
+                
+                <input type='hidden' name='id' value = '<?php echo $id ?>'/>
+                <input type='hidden' name='makm' value = '<?php echo $makm ?>'/>
+                <input type='hidden' name='makh' value="<?php echo $re_gh['makh'] ?>"/>
+                <input type='hidden' name='tien' value = '<?php echo $tamtinh - $giamgia - $tienvoucher ?>'/>
+            </table>
+    </div>
 </form>
 <div class="clear"></div>
-
+</div>
 
 
 

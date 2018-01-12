@@ -223,15 +223,17 @@
 	<table width="100%" class='tb-lietke' border="1">
     	
         <tr>
-        	<th width="10%">Mã NV</th>
-            <th width="17%">Tên nhân viên</th>
+        	<th width="8%">Mã NV</th>
+            <th width="14%">Tên nhân viên</th>
             <th width="7%">Giới tính</th>
-            <th width="10%">Ngày sinh</th>
-            <th width="10%">CMND</th>
-            <th width="20%">Địa chỉ</th>
-            <th width="10%">SĐT</th>
+            <th width="8%">Ngày sinh</th>
+            <th width="8%">CMND</th>
+            <th width="18%">Địa chỉ</th>
+            <th width="9%">SĐT</th>
+            <th width="6%">Lương</th>
+            <th width="10%">Cấp lại mật khẩu</th>
             <th width="5%">Sửa</th>
-            <th width="8%">Vô hiệu hóa</th>
+            <th width="5%">Xóa</th>
         </tr>
         
 	<?php
@@ -241,13 +243,15 @@
         <tr>
       		<td><?php echo $re_nv['manv'] ?></td>  
             <td><?php echo $re_nv['tennv'] ?></td>  
-            <td><?php echo ($re_nv['gioitinh'] == 0 ? "Nữ" : "Nam")  ?></td>  
-            <td><?php echo $re_nv['ngaysinh'] ?></td>  
-            <td><?php echo $re_nv['cmnd'] ?></td>  
+            <td align="center"><?php echo ($re_nv['gioitinh'] == 0 ? "Nữ" : "Nam")  ?></td>  
+            <td align="center"><?php echo date('d-m-Y', strtotime($re_nv['ngaysinh'])) ?></td>  
+            <td align="center"><?php echo $re_nv['cmnd'] ?></td>  
             <td><?php echo $re_nv['diachi'] ?></td>  
-            <td><?php echo $re_nv['sodienthoai'] ?></td>  
+            <td align="center"><?php echo $re_nv['sodienthoai'] ?></td>  
+            <td align="center"><a href='admin.php?quanly=nhanvien&ac=tinhluong&manv=<?php echo $re_nv['manv'] ?>'>Lương</a></td>
+            <td align="center"><a href='admin.php?quanly=nhanvien&ac=reset&manv=<?php echo $re_nv['manv'] ?>'>Cấp lại</a></td>
             <td align="center"><a href="javascript:void(0)" class="edit" data-id='<?php echo $re_nv['manv'] ?>'>Sửa</a></td>
-            <td align="center"><a href="javascript:void(0)" class="del" data-id='<?php echo $re_nv['manv'] ?>'>Vô hiệu hóa</a></td>
+            <td align="center"><a href="javascript:void(0)" class="del" data-id='<?php echo $re_nv['manv'] ?>'>Xóa</a></td>
         </tr>
     <?php
 		}

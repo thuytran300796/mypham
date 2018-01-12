@@ -10,7 +10,7 @@
 			$manv = tao_manv();
 			$ten = $_POST['ten']; $gioitinh = $_POST['gioitinh']; $ngaysinh = $_POST['ngaysinh']; $diachi = $_POST['diachi'];
 			$sdt = $_POST['sdt']; $cmnd = $_POST['cmnd'];
-			$matkhau = '123456';
+			$matkhau = md5('123456');
 			mysql_query("set names 'utf8'");
 			$kq = mysql_query("insert into nhanvien(manv, tennv, gioitinh, ngaysinh, diachi, sodienthoai, cmnd, matkhau, trangthai)
 											value('$manv', '$ten', '$gioitinh', '$ngaysinh', '$diachi', '$sdt', '$cmnd', '$matkhau', 1)");	
@@ -35,11 +35,46 @@
 			$gioitinh = ($gioitinh == 0 ? "Nữ" :"Nam");
 			echo json_encode(array("manv"=>"$id", "ten"=>"$ten", "gioitinh"=>"$gioitinh", "ngaysinh"=>"$ngaysinh",  "diachi"=>"$diachi", "sdt"=>"$sdt", "cmnd"=>"$cmnd"));
 		}
-		else
+		else if($ac == 'del')
 		{
 			$id = $_POST['id'];
 			$kq = mysql_query("update nhanvien set trangthai = 0 where manv = '$id'");
 			echo json_encode(array("id"=>"$id"));
+		}
+		else if($ac == 'xemluong')
+		{
+			$ngaybd = $_POST['ngaybd']; $ngaykt = $_POST['ngaykt']; $keyword = $_POST['keyword'];
+			mysql_query("set names 'utf8'");
+			$luong = mysql_query("	select	ngay, tennv, hesoluong, phucap, songaycong, thuong, phat, luongcoban
+							from	nhanvien nv, chucvu cv, chitietluong ctl
+							where	nv.manv = ctl.manv and ctl.macv = cv.macv and ngay>='$ngaybd' and ngay<='$ngaykt' and (tennv LIKE '%$keyword%' or nv.manv LIKE '%$keyword%')");
+							
+			echo "<tr>";
+        	echo "<th width='10%'>Ngày</th>";
+            echo "<th width='15%'>Tên NV</th>";
+            echo "<th width='10%'>HS lương</th>";
+            echo "<th width='10%'>Phụ cấp</th>";
+            echo "<th width='10%'>Lương CB</th>";
+            echo "<th width='10%'>Số ngày công</th>";
+            echo "<th width='10%'>Thưởng</th>";
+            echo "<th width='10%'>Phạt</th>";
+            echo "<th width='10%'>Tổng</th>";
+        	echo "</tr>";
+				
+			while($re_luong = mysql_fetch_assoc($luong))
+			{
+				echo "<tr>";
+				echo 	"<td>".date('d-m-Y', strtotime($re_luong['ngay']))."</td>";
+				echo	 "<td>".$re_luong['tennv']."</td>";
+				echo 	"<td>".$re_luong['hesoluong']."</td>";
+				echo 	"<td>".number_format($re_luong['phucap'])."</td>";
+				echo 	"<td>".number_format($re_luong['luongcoban'])."</td>";
+				echo 	"<td>".$re_luong['songaycong']."</td>";
+				echo 	"<td>".number_format($re_luong['thuong'])."</td>";
+				echo 	"<td>".number_format($re_luong['phat'])."</td>";
+				echo 	"<td>".number_format($tong)."</td>";
+        		echo "</tr>";
+			}
 		}
 	}
 

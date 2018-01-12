@@ -28,7 +28,7 @@
 	
 	mysql_query("set names 'utf8'");
 	$giohang = mysql_query("
-								select		gh.magh, ngaydat, ngaygiao, hotennguoinhan, sdt, diachi, gh.trangthai, tensp,  count(gh.magh) 'slsp'
+								select		gh.magh, ngaydat, ngaygiao, hotennguoinhan, sdt, diachi, gh.trangthai, tensp, count(gh.magh) 'slsp'
 								from		giohang gh, chitietgiohang ctgh, sanpham sp, chitietsanpham ctsp
 								where		gh.magh = ctgh.magh and ctgh.mactsp = ctsp.mactsp and ctsp.masp = sp.masp and gh.magh = '$id'
 								group by 	gh.magh
@@ -38,9 +38,9 @@
 	
 	
 	mysql_query("set names 'utf8'");
-	$ctgh = mysql_query("select t1.magh, t1.mactsp, t1.tensp, t1.mausac, t1.duongdan, t1.soluong, t1.giaban, t2.makm, t2.chietkhau, t2.tiengiamgia
+	$sql = "select t1.magh, t1.mactsp, t1.tensp, t1.mausac, t1.duongdan, t1.soluong, t1.giaban, t2.makm, t2.chietkhau, t2.tiengiamgia, t1.quatang
 						from
-						(	select	ctgh.magh, ctgh.mactsp, tensp, ctsp.mausac, duongdan, ctgh.soluong, ctsp.giaban, ctgh.makm
+						(	select	ctgh.magh, ctgh.mactsp, tensp, ctsp.mausac, duongdan, ctgh.soluong, ctsp.giaban, ctgh.makm, quatang
 							from	chitietgiohang ctgh, chitietsanpham ctsp,  hinhanh ha, sanpham sp
 							where	ctgh.mactsp = ctsp.mactsp  and ctgh.magh = '$id' and ha.masp = sp.masp and sp.masp = ctsp.masp
 							group by ctsp.mactsp
@@ -51,7 +51,8 @@
 							where	km.makm = ctkm.makm and km.makm <> '000' and km.masp != ''
 							group by	km.makm
 						)t2 on t1.makm = t2.makm
-						");
+						";
+	$ctgh = mysql_query($sql);
 	$list_ctgh = array();
 	$dem = 0;
 	$arr = array();
@@ -68,6 +69,7 @@
 		$list_ctgh[$dem]['makm'] = $re_ctgh['makm'];
 		$list_ctgh[$dem]['chietkhau'] = $re_ctgh['chietkhau'];
 		$list_ctgh[$dem]['tiengiamgia'] = $re_ctgh['tiengiamgia'];
+		$list_ctgh[$dem]['quatang'] = $re_ctgh['quatang'];
 		$dem++;	
 		$arr[] = "'".$re_ctgh['magh']."'";
 	}
@@ -83,6 +85,19 @@
 		$list_voucher[$dem]['maphieu'] = $re_voucher['maphieu'];
 		$list_voucher[$dem]['giatri'] = $re_voucher['giatri'];
 		$dem++;
+	}
+	
+	if(isset($_GET['huy']))
+	{
+		$kq = mysql_query("update giohang set trangthai = 2 where magh = '$id'");
+		$ctgh = mysql_query($sql);
+		while($re_ctgh = mysql_fetch_assoc($ctgh))
+		{
+			$kq = mysql_query("update chitietsanpham set soluong = soluong + ".$re_ctgh['soluong']." where mactsp = '".$re_ctgh['mactsp']."'");	
+		}
+		echo "<script>alert('Hủy giỏ hàng thành công!')</script>";
+		$user = $_SESSION['user'];
+		header('location: list_bill.php?id=$user');
 	}
 ?>
 
@@ -114,6 +129,11 @@
             <tr>
             	<td style = "font-weight: bold">Ngày giao: </td>
                 <td><?php echo date('d-m-Y', strtotime($re_giohang['ngaygiao'])) ?></td>
+            </tr>
+            
+            <tr>
+            	<td style = "font-weight: bold">Trạng thái đơn hàng: </td>
+                <td><?php echo $re_giohang['trangthai'] == 0 ? "Đặt hàng thành công" : ($re_giohang['trangthai'] == 1 ? "Đã xuất hóa đơn" : "Đã hủy") ?></td>
             </tr>
             
         </table>
@@ -159,7 +179,7 @@
                         
                         <div id = "bill-pro-info">
                             <a href='product-detail.php?id=<?php echo $list_ctgh[$i]['mactsp'] ?>'>
-                                <p ><?php echo $list_ctgh[$i]['tensp'] ?></p>
+                                <p ><?php echo $list_ctgh[$i]['tensp'].($list_ctgh[$i]['quatang'] == 1 ? " (Quà tặng)" : "") ?></p>
                                	<?php  echo $list_ctgh[$i]['mausac'] != "" ? "<p>Màu sắc: ".$list_ctgh[$i]['mausac']."</p>" :  "" ?>
                             </a>
                         </div>
@@ -173,6 +193,8 @@
                 <td >
 				<?php
 				
+				if($list_ctgh[$i]['quatang'] == 0)
+				{
 					if($list_ctgh[$i]['makm'] != "")
 					{
 						
@@ -200,6 +222,9 @@
 						$thanhtien += $giaban* $list_ctgh[$i]['soluong'];
 					}
 					$tamtinh += $thanhtien;
+				}
+				else
+					$giaban = 0;
 					echo number_format($giaban);
 				?> 
                  
@@ -277,11 +302,36 @@
                 <td style = "font-size: 22px; color: #090; font-weight: bold; text-align: right"><?php echo number_format($tamtinh - $giamgia - $tienvoucher) ?> đ</td>
             </tr>
         </table>
-    
+        <br />
+    <?php
+		if($re_giohang['trangthai'] == 0)
+		{
+	?>
+        <form method="get">
+        <div style="width: 20%; text-align: right; float: right ">
+        	<input type='submit' name='huy' value = 'HỦY' class="btn-cart" onclick="return ConfirmDel();" />
+            <input type='hidden' name='id' value = "<?php echo $id ?>"/>
+        </div>
+        </form>
+    <?php
+		}
+	?>
 </div>
 
 
-
+<script>
+	function ConfirmDel()
+			{
+				if(confirm("Bạn có chắn chắn muốn hủy không?"))
+				{
+					return true;
+				}
+				else
+				{
+					return false;	
+				}
+			}
+</script>
 
 <?php
 	ob_flush();

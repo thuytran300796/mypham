@@ -301,7 +301,7 @@
 				voucher_bd = $('#voucher-bd').val(); voucher_kt = $('#voucher-kt').val();
 				data = "ac=themkm&loaikm=" + loaikm + "&loaiad=" + loaiad + "&noidung=" +noidung+ "&doituong=" +doituong+ "&mota="+mota+"&ngaybd="+ngaybd+"&ngaykt="+ngaykt+"&voucher_bd="+voucher_bd+"&voucher_kt"+voucher_kt;
 				//data = "ac=themkm&loaikm=" + loaikm + "&loaiad=" + loaiad + "&noidung=" +noidung+ "&doituong=" +doituong+ "&mota="+mota+"&ngaybd="+ngaybd+"&ngaykt="+ngaykt;
-				alert(data);
+				//alert(data);
 				$.ajax
 				({
 					url: "module/khuyenmai/xuly/xuly.php",
@@ -324,7 +324,7 @@
 						}
 						if(kq.notify == "Thành công")
 						{
-							alert('Thêm thành công');
+							//alert('Thêm thành công');
 							//window.onunload();
 							//Load();
 							<?php //unset($_SESSION['list-qt']); //unset($_SESSION['spad']); ?>	
@@ -383,24 +383,25 @@
 	$date = date('Y-m-d');
 	$ngaybd = $ngaykt = $date;
 	//echo $date;
+	/*
 	if(isset($_SESSION['list-qt']))
 	{	
 		echo "<pre>"; print_r($_SESSION['list-qt']); echo "</pre>";
 	}
 	else
 		echo "ko";
-		
+	
 	if(isset($_SESSION['spad']))
 	{	
 		echo "<pre>"; print_r($_SESSION['spad']); echo "</pre>";
 	}
 	else
 		echo "ko";
-		
+		*/
 	if(isset($_POST['ok']))
 	{
 		//nhớ unset SESSION[list-qt] và SESSION[spad]
-		echo "hey";
+		//echo "hey";
 		
 		$loaikm = $_POST['loaikm'];
 		$loaiad = $_POST['loaiad'];
@@ -558,4 +559,4 @@
 </div>
 </form>
 
-<div id='test'>aaa</div>
+<!--<div id='test'>aaa</div>-->

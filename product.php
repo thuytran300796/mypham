@@ -15,7 +15,7 @@
 	date_default_timezone_set('Asia/Ho_Chi_Minh');
 	$date = date('Y-m-d');
 	
-	$display = 12; //số sản phẩm trên 1 trang
+	$display = 10; //số sản phẩm trên 1 trang
 	if(!isset($_GET['page']))
 	{
 		$current_page = 1;	
@@ -141,6 +141,12 @@
 					limit $position, $display";
 			$title = "CÁC SẢN PHẨM ĐANG ÁP DỤNG KHUYẾN MÃI";
 			$trang = mysql_query($sql);
+			
+			$hoadonkm = mysql_query("SELECT	km.makm, km.chietkhau, km.tiengiamgia, km.giatrivoucher, km.giatridonhang, ctkm.ngaybd, ctkm.ngaykt, km.mota
+									FROM	khuyenmai km, ctsp_km ctkm
+									where	km.makm = ctkm.MaKM and km.trangthai = 1 and ('$date' >= ctkm.NgayBD and '$date' <= ctkm.NgayKT) and km.masp = ''
+									group by km.makm");
+			
 		}
 	}
 	else if(isset($_GET['keyword']))
@@ -218,8 +224,11 @@
 		$title = "CÓ ".mysql_num_rows($sp)." KẾT QUẢ TÌM KIẾM";
 	}
 	$re_trang = mysql_fetch_assoc($trang);
-	$total_page = $type != "danhmuc" ? ceil(count($trang)/$display) : ceil($re_trang['sosp']/$display);
-	//echo "so trang:".$total_page;
+	//$total_page = $type != "danhmuc" ? ceil(count($trang)/$display) : ceil($re_trang['sosp']/$display);
+	//$total_page = $danhmuc == "" ? ceil(count($trang)/$display) : ceil($re_trang['sosp']/$display);
+	
+	$total_page = $type == "khuyenmai" ? ceil(count($trang)/$display) : ceil($re_trang['sosp']/$display);
+	
 ?>
 
 <!--
@@ -284,6 +293,94 @@
 </div>
 -->
 
+<?php
+	if(isset($hoadonkm))
+	{
+		 if(mysql_num_rows($hoadonkm)>0)
+		 {
+?>
+<div style="width: 100%; margin-bottom: 3%;">
+
+<table width="100%" class="tb-lietke" style="border-collapse: collapse">
+    	
+        <tr>
+        	<th width="55%" align="left">Hình thức khuyến mãi</th>
+            <th width="15%" align="left">Thời hạn</th>
+            <!--<th width="7%">Sửa</th>-->
+        </tr>
+        
+         <?php
+			
+			while($re_hdkm = mysql_fetch_assoc($hoadonkm))
+			{
+		?>
+        
+        <tr>
+        	<td>
+				<p><?php echo $re_hdkm['makm'] ?><p>
+                <p>
+                	<?php
+						$hinhthuc = "";
+						if($re_hdkm['chietkhau'] != "0")
+						{
+							$hinhthuc = "Giảm ".$re_hdkm['chietkhau']."% ";
+						}
+						else if($re_hdkm['tiengiamgia'] != "0")
+						{
+							$hinhthuc = "Giảm ".number_format($re_hdkm['tiengiamgia'])."đ ";	
+						}
+						else if($re_hdkm['giatrivoucher'] != "0")
+						{
+							$hinhthuc = "Tặng phiếu mua hàng trị giá ".number_format($re_hdkm['giatrivoucher'])."đ ";	
+						}
+						else if($re_hdkm['chietkhau']==0 &&  $re_hdkm['tiengiamgia']==0  && $re_hdkm['giatrivoucher']==0)
+						{
+							$hinhthuc = "Tặng quà";	
+						}
+						echo $hinhthuc;
+					?>
+                
+                	<?php
+						$doituong = "";
+						if($re_hdkm['giatridonhang'] != "0")
+						{
+							$doituong = " cho hóa đơn có trị giá từ ".number_format($re_hdkm['giatridonhang'])."đ";
+						}
+						else if($re_km['masp'] != "")
+						{
+							mysql_query("set names 'utf8'");
+							$sp = mysql_query("select masp, tensp from sanpham where masp='".$re_hdkm['masp']."'");
+							$re_sp = mysql_fetch_assoc($sp);
+							$doituong = " khi mua sản phẩm ".$re_hdkm['tensp']." ";
+						}
+						else
+						{
+							$doituong = " cho tất cả các hóa đơn";
+						}
+						echo $doituong;
+					?>
+                </p>
+                <p>Ghi chú:
+                	<?php echo $re_hdkm['mota'] ?>
+                </p>
+            </td>
+            <td>
+				<p>Bắt đầu: <?php echo date('d/m/Y', strtotime($re_hdkm['ngaybd'])) ?></p>
+	            <p>Kết thúc: <?php echo date('d/m/Y', strtotime($re_hdkm['ngaykt'])) ?></p>
+            </td>
+	</tr>
+		<?php
+			}
+		?>
+</table>
+</div>
+<?php
+		 }
+	}
+?>
+
+
+<div class="clear"></div>
 <div id="pro-right" style="width: 100%; border: solid 1px #ccc;">
 	<div class="pro-orderby">
     	<span class="title" style='float: left; line-height: 40px;'><?php echo $title ?></span>
@@ -361,7 +458,7 @@
         <div class="clear"></div>
     <!--</div>-->
     
-    <div class='phantrang' style='width: 350px; height: 30px; margin:auto;'>
+    <div class='phantrang' style='width: 350px; height: 30px; margin:auto; text-align: center'>
     	
         <?php
 			if($current_page == 1)
@@ -403,8 +500,9 @@
         
         <ul>
 
-        		
+        	
         	<?php
+			//echo $total_page;
 			if($total_page > 0)
 			{
 				if($current_page != 1)

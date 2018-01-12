@@ -1,4 +1,27 @@
 <?php
+	function Tao_PN()
+	{
+		$phieunhap = mysql_query('select MaPhieu from PhieuNhap');
+		
+		if(mysql_num_rows($phieunhap) == 0)
+			return 'PN1';
+		
+		$re_pn = mysql_fetch_assoc($phieunhap);
+		$number = substr($re_pn['MaPhieu'], 2);
+				
+		while($re_pn = mysql_fetch_assoc($phieunhap))
+		{
+			$temp = substr($re_pn['MaPhieu'], 2);
+			if($number < $temp)
+				$number = $temp;
+		}
+		
+		return 'PN'.++$number;
+					
+	}
+?>
+
+<?php
 
 	session_start();
 	require('../../../../config/config.php');
@@ -20,19 +43,24 @@
 		$hsd = $_POST['hsd'];
 		//$gianhap = $_POST['gianhap'];
 		$giaban = $_POST['giaban'];
-		
+		$gianhap = $_POST['gianhap'];
 		mysql_query("set names 'utf8'");
 		$ctsp = mysql_query("insert into chitietsanpham(masp, mactsp, mausac, ngaysx, hansudung, soluong, giaban, trangthai) values('$masp', '$mactsp', '$mausac', '$ngaysx', '$hsd', $soluong, $giaban, 1)");	
 		
+		$mapn = Tao_PN();
+		date_default_timezone_set('Asia/Ho_Chi_Minh');
+		$date = date('Y-m-d');
+		$nk = mysql_query("insert into phieunhap(maphieu, ngaynhap, manv) values('$mapn', '$date', '".$_SESSION['user']."')");
+		$nk = mysql_query("insert into chitietphieunhap values('$mapn', '$mactsp', $soluong, $gianhap)");
 		//echo $ctsp;
-		echo json_encode(array("masp"=>"$masp", "mactsp"=>"$mactsp", "mausac"=>"$mausac", "soluong"=>"$soluong", "ngaysx"=>"$ngaysx", "hsd"=>"$hsd", "giaban"=>"$giaban"));
+		echo json_encode(array("masp"=>"$masp", "mactsp"=>"$mactsp", "mausac"=>"$mausac", "soluong"=>"$soluong", "ngaysx"=>"$ngaysx", "hsd"=>"$hsd", "giaban"=>"$giaban", "gianhap"=>"$gianhap"));
 	
 	}
 	else if($_POST['ac'] == 'get')
 	{
 		$id = $_POST['id'];
 		mysql_query("set names 'utf8'");
-		$kq = mysql_query("select mactsp, mausac, soluong, ngaysx, hansudung, giaban from chitietsanpham where mactsp = '$id'");
+		$kq = mysql_query("select ctsp.mactsp, mausac, ctsp.soluong, ngaysx, hansudung, giaban, gianhap from chitietsanpham ctsp, chitietphieunhap ctpn where ctpn.mactsp = ctsp.mactsp and ctsp.mactsp = '$id' limit 0,1");
 		$re_kq = mysql_fetch_assoc($kq);
 		$mausac = $re_kq['mausac'];
 		$soluong = $re_kq['soluong'];
@@ -40,8 +68,8 @@
 		$hsd = $re_kq['hansudung'];
 		//$gianhap = $_SESSION['list-ctsp'][$id]['gianhap'];
 		$giaban = $re_kq['giaban'];
-		
-		echo json_encode(array("id"=>"$id", "mausac"=>"$mausac", "soluong"=>"$soluong", "ngaysx"=>"$ngaysx", "hsd"=>"$hsd", "giaban"=>"$giaban"));
+		$gianhap = $re_kq['gianhap'];
+		echo json_encode(array("id"=>"$id", "mausac"=>"$mausac", "soluong"=>"$soluong", "ngaysx"=>"$ngaysx", "hsd"=>"$hsd", "giaban"=>"$giaban", "gianhap"=>"$gianhap"));
 	}
 	else if($_POST['ac'] == 'sua')
 	{
@@ -52,8 +80,8 @@
 		$ngaysx = $_POST['ngaysx'];
 		$hsd = $_POST['hsd'];
 		$giaban = $_POST['giaban'];
-		
-		$kq = mysql_query("update chitietsanpham set mausac='$mausac', ngaysx = '$ngaysx', hansudung = '$hsd' where mactsp = '$id'");
+		mysql_query("set names 'utf8'");
+		$kq = mysql_query("update chitietsanpham set mausac='$mausac', ngaysx = '$ngaysx', hansudung = '$hsd', soluong = $soluong where mactsp = '$id'");
 		//echo $kq;
 	}
 	else if($_POST['ac'] == 'xoa')
@@ -69,7 +97,7 @@
 	else if($_POST['ac'] == 'themncc')
 	{
 		$mancc = "";
-		require('../../../../config/config.php');
+		//require('../../../../config/config.php');
 		$result = mysql_query("select mancc from nhacungcap");
 		if(mysql_num_rows($result) == 0)
 			$mancc = 'NCC1';
@@ -107,6 +135,36 @@
 				echo "<option value = '".$record['mancc']."'>".$record['tenncc']."</option>";
 		}
 		//mysql_close($conn);
+	}
+	else if($_POST['ac'] == 'get_pn')
+	{
+		$id = $_POST['id'];
+		$mactsp = $_POST['mactsp'];
+		mysql_query("set names 'utf8'");
+		$pn = mysql_query("select ctpn.maphieu, date(ngaynhap) as 'ngaynhap', ctpn.mactsp, ctsp.mausac, ngaysx, hansudung, ctpn.soluong from phieunhap pn, chitietsanpham ctsp, chitietphieunhap ctpn
+					where pn.maphieu = ctpn.maphieu and ctpn.mactsp = ctsp.mactsp and ctpn.maphieu = '$id' and ctpn.mactsp = '$mactsp'");
+		$re_pn = mysql_fetch_assoc($pn);
+		//echo json_encode(array("maphieu"=>"$re_pn[maphieu]", "ngaynhap" => "$re_pn[ngaynhap]", "mausac"=>"$re_pn[mausac]", "ngaysx"=>"$re_pn[ngaysx]", "hsd"=>"$re_pn[hansudung]", "soluong"=>"$re_pn[soluong]"));	
+		
+		$ngaynhap = $re_pn['ngaynhap'];
+		$mausac =  $re_pn['mausac'];
+		$ngaysx = $re_pn['ngaysx'];
+		$hsd = $re_pn['hansudung'];
+		$soluong = $re_pn['soluong'];
+		//echo $ngaynhap." - ".$mausac." - ".$ngaysx." - ".$hsd." - ".$soluong;
+		echo json_encode(array("ngaynhap" => "$ngaynhap", "mausac"=>"$mausac", "ngaysx"=>"$ngaysx", "hsd"=>"$hsd", "soluong"=>"$soluong"));	
+	}
+	else if($_POST['ac'] == 'edit_pn')
+	{
+		$id = $_POST['id'];
+		$mactsp = $_POST['mactsp'];
+		$soluongmoi = $_POST['soluongnhap'];
+		$soluongbanra = $_POST['soluongbanra'];
+		$soluonghienco = $soluongmoi - $soluongbanra; echo $soluongmoi." - ".$soluongbanra." = ".$soluonghienco;
+		mysql_query("set names 'utf8'");
+		$pn = mysql_query("update chitietphieunhap set soluong = $soluongmoi where maphieu = '$id' and mactsp = '$mactsp'");
+		$kq = mysql_query("update chitietsanpham set soluong = $soluonghienco  where mactsp = '$mactsp'");
+
 	}
 
 ?>

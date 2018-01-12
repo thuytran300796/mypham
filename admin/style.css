@@ -196,7 +196,7 @@ body
 
 .tb-lietke a
 {
-	color: #09C;	
+	color: #09C; 	
 }
 
 .tb-lietke tr
@@ -902,7 +902,17 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 #khachhang table
 {
-	width: 90%; margin: auto;	
+	margin: auto;	
+}
+
+#khachhang table , #khachhang table a
+{
+	font-size: 13px;
+}
+
+#khachhang table td
+{
+	border: solid 1px #ccc;
 }
 
 /*-------------------THÊM SẢN PHẨM------------------*/
@@ -949,13 +959,18 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 #ctsp .ctsp-item
 {
-	width: 25%;	
+	width: 20%; font-size: 13px;
+}
+
+#ctsp .ctsp-item a
+{
+	width: 20%; font-size: 13px;
 }
 
 /*---------LIỆT KÊ SẢN PHẨM-----------*/
 #sp-left, #km-left
 {
-	width: 20%; float: left;	
+	width: 17%; float: left;	
 }
 
 #sp-left div, #km-left div
@@ -971,17 +986,17 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 #sp-left .txt-sp, #km-left .txt-sp
 {
-	width: 210px;
+	width: 170px;
 }
 
 #sp-left .sub, #km-left .sub
 {
-	width: 235px; background: #F90
+	width: 195px; background: #F90
 }
 
-#sp-left .cbb-sp
+#sp-left .cbb-sp 
 {
-	width: 235px;	
+	width: 195px;	
 }
 
 #parent li
@@ -993,6 +1008,13 @@ float: right;		width: 25%;	 margin-right: 20px;
 {
 	float: left; width: 150px; height: 170px; padding: 3px; border: solid 1px #ccc; border-radius: 3px;
 }
+
+#sp-right
+{
+	width: 81%; float: right;
+}
+
+
 
 #sp-right table
 {
@@ -1016,11 +1038,18 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 #sp-right table tr:nth-child(odd) {background: #F2F2F2}
 
-
 .ctsp-item
 {
-	width: 16%; line-height: 30px; float: left; text-align: center;
+	width: 16%
+	line-height: 30px; float: left; text-align: center; 
 }
+
+
+#sp-right .ctsp-item
+{
+	width: 15%; 
+}
+
 
 .lietke-sp
 {
@@ -1049,7 +1078,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 
 .lietke-sp-td
 {
-	float: left;  padding: 4px; text-align: center;
+	float: left;  padding: 4px; text-align: center; 
 }
 .lietke-sp-td a
 {
@@ -1221,6 +1250,23 @@ float: right;		width: 25%;	 margin-right: 20px;
 #list-qt ul li
 {
 	padding-left: 10px;	
+}
+
+#lietke-km .ctsp-item
+{
+	width: 20%;	
+}
+
+#km-left{width: 20%; float: left; }
+
+#km-left .cbb-sp, #km-left .sub
+{
+	width: 235px; margin-left: 4%;	
+}
+
+#km-left .txt-sp
+{
+	width: 210px; margin-left: 4%;	
 }
 
 #tb-km tr:hover {cursor: pointer;}
@@ -1483,6 +1529,12 @@ float: right;		width: 25%;	 margin-right: 20px;
 	text-align: center;	
 }
 
+#list-pro .txt-sp
+{
+	width: 150px;
+}
+
+
 #bill-pro
 {
 	width: 100%;
@@ -1510,7 +1562,7 @@ float: right;		width: 25%;	 margin-right: 20px;
 	color: black; font-size: 13px; font-weight: none;
 }
 
-.list-bill  {background: #FFF;}
+.list-bill  {background: #FFF; border: solid 1px #ccc}
 
 .list-bill th
 {
@@ -1527,8 +1579,133 @@ float: right;		width: 25%;	 margin-right: 20px;
 	border: solid 1px #ccc;	
 }
 
+/*------------------THỐNG KÊ-----------------*/
+#loaitk
+{
+	width: 100%; margin-bottom: 20px;	
+}
+
+#loaitk .txt-sp
+{
+	width: 100px;	
+}
+
+#loaitk .cbb-sp
+{
+	width: 150px; height: 35px;	
+}
+
+#tksp-right
+{
+	width: 78%; float: right;	
+}
+
+#tksp-right .tb-lietke td
+{
+	font-size: 13px; text-align: center; border: solid 1px #ccc;
+}
+
+#tksp-right .tb-lietke th
+{	
+	height: 20px;
+}
+
+#sp-left .date
+{
+	width: 160px;	
+}
+
+/*-------------------LƯƠNG-------------------*/
+#luong .tb-lietke td
+{
+	text-align: center;
+}
+
+#luong-left .quick-result
+{
+	height: 200px;	
+}
+
+#luong-left .quick-result .txt-sp
+{
+	text-align: left;
+}
+
+#luong-left .quick-result li {height: 25px;}
+
+#luong-left
+{
+	width: 74%; border-radius: 3px; border: solid 1px #099; float: left; background: #EFFBF2;
+}
+
+#luong-left table td
+{
+	border-bottom: solid 1px #ccc;	padding: 10px; border-top: solid 1px #ccc;	font-size: 12px;
+}
+
+#luong-left table th
+{
+	border: solid 1px black;	
+}
+
+#luong-left .txt-sp
+{
+	width: 80px; height: 20px; text-align: right;
+}
+#luong-left .cbb-sp
+{
+	width: 120px; height: 32px;	
+}
+
+#tinhluong-left
+{
+	border: solid 1px #ccc; border-radius: 3px;width: 25%;  float: left	;
+}
+
+#tinhluong-left table td
+{
+	padding: 10px;	
+}
+
+#tinhluong-left .txt-sp
+{
+	width: 130px;
+}
+
+#tinhluong-left .cbb-sp
+{
+	width: 150px;
+}
+
+#tinhluong-right  td
+{
+	text-align: center
+}
+
+#tinhluong-right table td, #tinhluong-right table th
+{
+	font-size: 13px;	
+}
+
+/*---------------CHỨC VỤ----------------*/
+#pop-chucvu .txt-sp
+{
+	width: 200px;
+}
+
+/*---------------HOME THỐNG KÊ----------------*/
+#home-tk tr
+{
+	height: 35px;
+}
+
+#home-tk tr td
+{
+	height: 40px; padding: 10px;
+}
+
 /*-----------------------------------------------*/
 .bottom
 {
-	width: 100%; height: 70px; background: #088A68;  margin-top: 5%;
+	width: 100% ;background: #088A68;  margin-top: 5%; text-align: center; color: white; font-weight: bold; padding: 20px;
 }

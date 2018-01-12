@@ -18,7 +18,7 @@
 				$mahd = $_POST['keyword'];
 			else
 				$mahd = "";
-			$sql = " and hd.mahd LIKE '%$mahd%' ";
+			$sql = " and ( hd.mahd LIKE '%$mahd%' or hd.makh LIKE '%$mahd%' or hotennguoinhan LIKE '%$mahd%' ) ";
 		}
 		else
 		{
@@ -32,13 +32,14 @@
 	else
 		$sql = "";
 			
-		mysql_query("set names 'utf8'");
-		$hoadon = mysql_query("
-								select		hd.mahd, ngayxuat, hotennguoinhan, sdt, diachi, phivanchuyen, hd.chietkhau as 'ckhd', thue, hd.trangthai, km.makm, km.chietkhau, km.tiengiamgia, km.giatridonhang
-								from		hoadon hd, khuyenmai km
-								where		hd.makm = km.makm".$sql."
-								group by 	km.makm
-							");
+	mysql_query("set names 'utf8'");
+	$hoadon = mysql_query("
+							select		hd.mahd, ngayxuat, hotennguoinhan, hd.sdt, hd.diachi, phivanchuyen, hd.chietkhau as 'ckhd', thue, hd.trangthai, km.makm, km.chietkhau, km.tiengiamgia, km.giatridonhang
+							from		hoadon hd, khuyenmai km, khachhang kh
+							where		kh.makh = hd.makh and hd.makm = km.makm".$sql."
+							group by 	km.makm
+						");
+
 			
 		mysql_query("set names 'utf8'");
 		$cthd = mysql_query("select t1.mahd, t1.mactsp, t1.tensp, t1.mausac, t1.ngaysx, t1.hansudung, t1.soluong, t1.giaban, t2.makm, t2.chietkhau, t2.tiengiamgia, t1.quatang, t1.thue

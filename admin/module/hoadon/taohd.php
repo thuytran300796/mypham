@@ -24,11 +24,17 @@
 
 	if(!isset($_SESSION['cart_ad']))
 	{
-		$_SESSION['cart_ad'] = NULL; echo "null";
+		$_SESSION['cart_ad'] = NULL; //echo "null";
 	}
 	
 	if(isset($_POST['thanhtoan']))
 	{
+		if(count($_SESSION['cart_ad']) == 0)
+		{
+			echo "<script>alert('Thao tác không thành công. Phải có ít nhất một sản phẩm đươc bán ra');</script>";
+			return false;	
+		}
+		
 		//echo "chiết khấu: ".$_POST['chietkhau'];	
 		$chietkhau_bill = $_POST['chietkhau'];
 		$phivanchuyen = $_POST['pvc'];
@@ -37,15 +43,26 @@
 		$diachi = $_POST['diachi'];
 		$sdt = $_POST['sdt'];
 		$ten = $_POST['ten'];	
-		$makm = $_POST['makm'] == "" ? '000' : $_POST['makm']; echo "MaKM: ".$makm;
+		$tongcong = $_POST['tongcong'];
+		$diemsudung = $_POST['diemsudung'];
+		
+		$makm = $_POST['makm'] == "" ? '000' : $_POST['makm']; //echo "MaKM: ".$makm;
 		
 		date_default_timezone_set('Asia/Ho_Chi_Minh');
-		$ngayxuat = date('Y/m/d H:i:s');	
+		$ngayxuat = date('Y/m/d H:i:s');	$date = date('Y-m-d');
 		
 		$mahd = Tao_MaHD(); $user = isset($_SESSION['user']) ? $_SESSION['user'] : "";
 		mysql_query("set names 'utf8'");
-		$hd = mysql_query("insert into hoadon(mahd, manv, ngayxuat, makh, makm, chietkhau, phivanchuyen, thue, hotennguoinhan, sdt, diachi, trangthai) values('$mahd', '".$_SESSION['user']."', '$ngayxuat', '$makh', '$makm', $chietkhau_bill, $phivanchuyen, $thue, '$ten','$sdt', '$diachi', 1)");
+		$hd = mysql_query("insert into hoadon(mahd, manv, ngayxuat, makh, makm, chietkhau, phivanchuyen, thue, hotennguoinhan, sdt, diachi, trangthai) values('$mahd', '$user', '$ngayxuat', '$makh', '$makm', $chietkhau_bill, $phivanchuyen, $thue, '$ten','$sdt', '$diachi', 1)");
+		//echo "insert into hoadon(mahd, manv, ngayxuat, makh, makm, chietkhau, phivanchuyen, thue, hotennguoinhan, sdt, diachi, trangthai) values('$mahd', '$user', '$ngayxuat', '$makh', '$makm', $chietkhau_bill, $phivanchuyen, $thue, '$ten','$sdt', '$diachi', 1)";
 		if(!$hd) echo mysql_error()."<br/>";
+		
+		if($makh != "" && $makm != "000")
+		{
+			$diem = ((int)($tongcong / 100000))*10;
+			$hd = mysql_query("update khachhang set diemtichluy = diemtichluy + $diem where makh = '$makh'");
+		}
+		
 		foreach($_SESSION['cart_ad'] as $key=>$value)
 		{
 			mysql_query("set names 'utf8'");
@@ -56,6 +73,7 @@
 			if($_SESSION['cart_ad'][$key]['maqt'] != "" && $key != 'QT000')
 			{
 				$cthd = mysql_query("insert into chitiethoadon(mahd, mactsp, soluong, makm, quatang) values('$mahd','".$_SESSION['cart_ad'][$key]['maqt']."', ".$_SESSION['cart_ad'][$key]['soluong'].", '000', 1)");
+				$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - ".$_SESSION['cart_ad'][$key]['soluong']." WHERE MaCTSP = '".$_SESSION['cart_ad'][$key]['maqt']."'");
 			}
 			if(!$cthd)  echo mysql_error()."<br/>";
 			$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - ".$_SESSION['cart_ad'][$key]['soluong']." WHERE MaCTSP = '$key'");
@@ -65,9 +83,9 @@
 		{
 			foreach($_SESSION['voucher_ad'] as $key_vc => $value_vc)
 			{
-				if($_SESSION['voucher_ad'][$key_vc]['ngaybd'] >= $date && $_SESSION['voucher_ad'][$key_vc]['ngaykt'] <= $date)
+				if($_SESSION['voucher_ad'][$key_vc]['ngaybd'] <= $date && $_SESSION['voucher_ad'][$key_vc]['ngaykt'] >= $date)
 				{
-					$kq = mysql_query("insert into pmh_hd values('$key_vc', '$id')");
+					$kq = mysql_query("insert into pmh_hd values('$key_vc', '$mahd')");
 					//có cần set trạng thái cho pmh đó ko nhỉ
 					$kq = mysql_query("update phieumuahang set trangthai = 1 where maphieu = '$key_vc'");
 				}
@@ -76,11 +94,12 @@
 				
 		unset($_SESSION['cart_ad']);
 		unset($_SESSION['voucher_ad']);
+		$chietkhau_bill = 0; $phivanchuyen = 0; $tongtien = $diemsudung = 0;
 	}
 	else
 	{
 		$makh = $diachi = $sdt = $ten = "";	
-		$chietkhau_bill = $phivanchuyen = $thue = 0;
+		$chietkhau_bill = $phivanchuyen = $thue = $diemsudung = 0;
 	}
 	//echo "<pre>"; print_r($_SESSION['cart_ad']); echo "</pre>";
 ?>
@@ -171,6 +190,7 @@
 					$('#ten').val(kq.ten);
 					$('#diachi').val(kq.diachi);
 					$('#sdt').val(kq.sdt);
+					$('#diemtichluy').html(kq.diemtichluy);
 				}
 			});
 			return false;
@@ -339,15 +359,18 @@
 		
 		function TinhTien()
 		{
-			tiensp = parseFloat($('#tiensp').val()); 
-			giamkm = parseFloat($('#giamkm').val() == ""  ? 0 : $('#giamkm').val()); 
-			voucher = parseFloat($('#voucher').val() == ""  ? 0 : $('#voucher').val());
-			chietkhau = parseFloat($('#chietkhau').val() == "" ? 0 : $('#chietkhau').val());
-			thue = parseFloat($('#thue').val() == ""  ? 0 : $('#thue').val());
-			pvc = parseFloat($('#pvc').val() == "" ? 0 : $('#pvc').val());
+			tiensp = parseInt($('#tiensp').val()); 
+			giamkm = parseInt($('#giamkm').val() == ""  ? 0 : $('#giamkm').val()); 
+			voucher = parseInt($('#voucher').val() == ""  ? 0 : $('#voucher').val());
+			chietkhau = parseInt($('#chietkhau').val() == "" ? 0 : $('#chietkhau').val());
+			thue = parseInt($('#thue').val() == ""  ? 0 : $('#thue').val());
+			pvc = parseInt($('#pvc').val() == "" ? 0 : $('#pvc').val());
+			//alert('sp: '+tiensp+' giamkm: '+giamkm+' voucher: '+voucher+' chietkhau: '+chietkhau+' pvc: '+pvc);
 			//alert(tiensp + ' - ' + giamkm + ' - ' + voucher + ' - thue: ' + thue );
-			tongcong =  tiensp - giamkm - voucher;  //alert('tong: ' + tongcong);
-			tongcong =  tongcong - (tongcong * (chietkhau/100)) + pvc;
+			tongcong =  parseInt(tiensp - giamkm - voucher);  //alert('tong: ' + tongcong);
+			tongcong = parseInt((tongcong-chietkhau)+pvc);
+			//tongcong =  tongcong - (tongcong * (chietkhau/100)) + pvc;
+			//tongcong =  tongcong - chietkhau + pvc;
 			tongcong =  tongcong < 0 ? 0 : tongcong; 
 			$('#tongcong').val(tongcong);	
 		}
@@ -413,9 +436,14 @@
 				}
 				if(!$check_qt)
 				{
-					echo "key: ".$key;
 					$_SESSION['cart_ad'][$key]['maqt'] = "";
 				}
+			}
+			//nếu có km thì ko áp dụng voucher
+			if(isset($_SESSION['voucher']))
+			{
+				unset($_SESSION['voucher']);
+				echo "<script>alert('Voucher sẽ không được áp dụng khi cửa hàng có chương trình khuyến mãi');</script>";	
 			}
 		}
 		else
@@ -434,8 +462,14 @@
 	date_default_timezone_set('Asia/Ho_Chi_Minh');
 	$date = date('Y-m-d');
 		
-	
-	
+	if(isset($_SESSION['cart_ad']))
+	{
+		if(count($_SESSION['cart_ad']) == 0)
+		{
+			unset($_SESSION['cart_ad']);
+			unset($_SESSION['voucher']);	
+		}
+	}
 	
 ?>
 
@@ -483,7 +517,7 @@
             	<td><a href='javascript:void(0)' class='del' data-id='<?php echo $key ?>'><img src='../image/del.png' /></a></td>
             	<td><?php echo $key ?></td>
                 <td><b><?php echo  $_SESSION['cart_ad'][$key]['tensp']?></b><br />
-                
+                	<p><?php echo $_SESSION['cart_ad'][$key]['mausac'] != "" ? ("<p>Màu sắc: ".$_SESSION['cart_ad'][$key]['mausac']."</p>") : "" ?></p>
                 	<?php
 						$arr_qt = array();
 						foreach($list_qt as $key_qt => $value_qt)
@@ -498,7 +532,7 @@
 						}
 						$string_qt = count($arr_qt) > 0 ? implode(',', $arr_qt) : "''"; 
 						mysql_query("set names 'utf8'");
-						$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt)");
+						$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt)  group by ctsp.mactsp");
 					?>
                 
                 	<div class='product-km' style="width: 100%; float: left;">
@@ -605,26 +639,42 @@
 					}
 					else if($re_km['chietkhau'] != "0")
 					{
-						$chietkhau_hd = $re_km['chietkhau'];
-						$giamgia_hd = 0;
+						//$chietkhau_hd = $re_km['chietkhau'];
+						//$giamgia_hd = 0;
+						$giamgia_hd = $tiensp * ($re_km['chietkhau'] / 100);
 					}
 					else if($re_km['tiengiamgia'] != "0")
 					{
 						$giamgia_hd = $re_km['tiengiamgia'];	
-						$chietkhau_hd = 0;
+						//$chietkhau_hd = 0;
+					}
+					//nếu thỏa điều kiện km thì xóa voucher
+					if(isset($_SESSION['voucher']))
+					{
+						unset($_SESSION['voucher']);
+						//echo "vô 3";
+						echo "<script>alert('Voucher đã bị hủy vì cửa hàng đang áp dụng chương trình khuyến mãi')</script>";	
+					}
+					$makm = $re_km['makm'];
+					if(isset($_SESSION['cart_ad']['QT000']))
+					{
+						if($_SESSION['cart_ad']['QT000']['maqt'] == $re_km['maqt'])
+							$check_qt_hd = 1;
 					}
 				}
-				$makm = $re_km['makm'];
-				if(isset($_SESSION['cart_ad']['QT000']))
-				if($_SESSION['cart_ad']['QT000']['maqt'] == $re_km['maqt'])
-					$check_qt_hd = 1;
+				else
+				{
+					if(isset($_SESSION['cart_ad']['QT000']))
+						unset($_SESSION['cart_ad']['QT000']);
+				}
+			
 			}
 			
 			if($check_qt_hd == 0) unset($_SESSION['cart_ad']['QT000']); //nếu mã qt ko khớp thì xóa QT000 để xuống dưới nó gán lại mặc định
 			
 			$string_qt_hd = count($arr_qt_hd) > 0 ? implode(',', $arr_qt_hd) : "''"; 		
 			mysql_query("set names 'utf8'");
-			$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt_hd) group by sp.masp");
+			$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt_hd) group by ctsp.mactsp");
 			if(mysql_num_rows($quatang_hd) > 0)
 			{
 				echo "<p class='title left'>QUÀ TẶNG KÈM</p><br />";
@@ -689,20 +739,27 @@
     <?php
 		$tongtien = 0;
 		
+		/*
 		//nếu có chiết khấu %
 		if($chietkhau_hd > 0)
-			$tongtien = $tiensp - $tiensp * ($chietkhau_hd/100);
+			$tongtien = (int)($tiensp - $tiensp * ($chietkhau_hd/100));
 		//nếu có giảm tiền hoặc ko giảm tiền
 		else 
 			$tongtien = $tiensp - $giamgia_hd;
-			
+		*/
+		
+		if($giamgia_hd > 0)
+			$tongtien = $tiensp - $giamgia_hd;
+		else
+			$tongtien = $tiensp;
+		
 		$voucher = 0;
 		if(isset($_SESSION['voucher_ad']))
 		{
 			
 			foreach($_SESSION['voucher_ad'] as $key => $value)
 			{
-				if($_SESSION['voucher_ad'][$key]['ngaybd'] >= $date && $_SESSION['voucher_ad'][$key]['ngaykt'] <= $date)
+				if($_SESSION['voucher_ad'][$key]['ngaybd'] <= $date && $_SESSION['voucher_ad'][$key]['ngaykt'] >= $date)
 					$voucher +=$_SESSION['voucher_ad'][$key]['giatri'];
 				else
 				{
@@ -752,7 +809,10 @@
         	<td>Địa chỉ giao hàng:</td>
             <td ><textarea type='text' id='diachi' name='diachi' class="txt-sp" style='height: 70px; text-align: justify'><?php echo $diachi ?></textarea></td>
         </tr>
-    
+    	<tr>
+        	<td>Sử dụng: </td>
+            <td><input type='text' style="width: 30px" id='diemsudung' name='diemsudung' class="txt-sp" value='<?php echo $diemsudung ?>'/><b>/</b><span id="diemtichluy" style='font-size: 18px;'></span><span style="font-size: 13px">điểm tích lũy</span></td>
+        </tr>
     </table>
     
     <table cellspacing="50" width="100%" style="border-collapse:collapse">
@@ -790,7 +850,7 @@
         
         <tr>
         	<td>Tổng cộng:</td>
-            <td class="right"  ><input style="font-size: 18px; font-weight: bold" id='tongcong' type='text' class='txt-sp' readonly='readonly' value='<?php echo $tongtien ?>'/></td>
+            <td class="right"  ><input style="font-size: 18px; font-weight: bold" id='tongcong' name='tongcong' type='text' class='txt-sp' readonly='readonly' value='<?php echo $tongtien ?>'/></td>
         </tr>
         
         <tr>
@@ -957,7 +1017,8 @@
 			pvc = parseFloat($('#pvc').val() == "" ? 0 : $('#pvc').val());
 			//alert(tiensp + ' - ' + giamkm + ' - ' + voucher + ' - thue: ' + thue );
 			tongcong =  tiensp - giamkm - voucher;  //alert('tong: ' + tongcong);
-			tongcong =  tongcong - (tongcong * (chietkhau/100)) + pvc;
+			//tongcong =  tongcong - (tongcong * (chietkhau/100)) + pvc;
+			tongcong =  tongcong - chietkhau + pvc;
 			tongcong =  tongcong < 0 ? 0 : tongcong; 
 			$('#tongcong').val(tongcong);	
 		}
@@ -983,4 +1044,4 @@
 	
 </script>
 
-<?php echo "<pre>"; echo print_r($_SESSION['cart_ad']); echo "</pre>"; ?>
+<?php //echo "<pre>"; echo print_r($_SESSION['cart_ad']); echo "</pre>"; ?>

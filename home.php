@@ -260,7 +260,7 @@
                 	
                     <div class = 'list-item-title'>
                     	<div>Trang Điểm</div>
-                        <a href='#'>Xem thêm</a>
+                        <a href="product.php?dm=TD">Xem thêm</a>
                     </div>
                     
                     <div class = 'list-item-product' data-id='td'>
@@ -401,7 +401,7 @@
                 	
                     <div class = 'list-item-title'>
                     	<div>Chăm sóc da</div>
-                        <a href='#'>Xem thêm</a>
+                        <a href="product.php?dm=CSD">Xem thêm</a>
                     </div>
                     
                     <div class = 'list-item-product' data-id='csd'>

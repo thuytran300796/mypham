@@ -168,7 +168,7 @@
 			{
 				mysql_query("SET NAMES 'utf8'");
 				$pass_md5 = md5($pass_dk);
-				$kq = mysql_query("INSERT INTO KhachHang VALUES('$id_dk', N'$name', '$ngaysinh', $gioitinh,  '$sdt', '$diachi', '$pass_md5', 0, 1)");	
+				$kq = mysql_query("INSERT INTO KhachHang(makh, tenkh, ngaysinh, gioitinh, sodienthoai, diachi,  matkhau, diemtichluy, trangthai) VALUES('$id_dk', '$name', '$ngaysinh', $gioitinh,  '$sdt', '$diachi', '$pass_md5', 0, 1)");	
 				if(!$kq)
 				{
 					echo mysql_error();	

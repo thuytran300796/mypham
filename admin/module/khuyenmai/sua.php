@@ -349,7 +349,7 @@
 							//window.onunload();
 							//Load();
 							<?php unset($_SESSION['list-qt']); unset($_SESSION['spad']); ?>	
-							window.location.replace("admin.php?quanly=khuyenmai&ac=them");
+							window.location.replace("admin.php?quanly=khuyenmai&ac=lietke");
 						}
 					},
 					error: function (jqXHR, exception)

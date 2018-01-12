@@ -57,11 +57,30 @@
 		if($loai == "")
 			$sql = "";
 		else
-			$sql = $loai == 'hethang' ? " and ctsp.soluong <= 0" : ($loai == 'saphethsd' ? " and ctsp.hansudung <= '$hsd'" : " and '$date' >= ctsp.hansudung ");
+		{
+			//$sql = $loai == 'hethang' ?  : ($loai == 'saphethsd' ?  : );			
+			if($loai == 'hethang')
+				$sql = " and ctsp.soluong <= 0";
+			else if($loai == 'saphethsd')
+				$sql = " and ctsp.hansudung <= '$hsd'";
+			else if($loai == 'hethsd')
+				$sql = " and '$date' >= ctsp.hansudung ";
+			else
+				$sql = "";
+		}
 
 		$q_ctsp = "select sp.masp, ctsp.mactsp, tensp, mausac, tenncc, ctsp.ngaysx, ctsp.hansudung, ctsp.soluong, ctsp.giaban
 				from sanpham sp, chitietsanpham ctsp, nhacungcap ncc
 				where sp.masp = ctsp.masp and ctsp.trangthai = 1 and ncc.mancc = sp.mancc and sp.trangthai = 1".$sql."";
+		if($loai == 'banchay')
+		{
+			$q_ctsp = "select sp.masp, ctsp.mactsp, tensp, mausac, tenncc, ctsp.ngaysx, ctsp.hansudung, sum(cthd.soluong) 'soluong', ctsp.giaban
+					from 	sanpham sp, chitietsanpham ctsp, nhacungcap ncc, chitiethoadon cthd
+					where 	sp.masp = ctsp.masp and ncc.mancc = sp.mancc and cthd.mactsp = ctsp.mactsp and sp.trangthai = 1 and ctsp.trangthai = 1
+					group by ctsp.mactsp
+					order by sum(cthd.soluong) desc";
+		}	
+				
 		//echo $q_ctsp;
 		Load_Loc("", $q_ctsp);
 	}
@@ -95,14 +114,14 @@
 		while($re_ctsp = mysql_fetch_assoc($ctsp))
 		{
 			echo "<div class= 'lietke-sp-tr'>";
-			echo 	"<div class='lietke-sp-td' style='width: 15%; text-align: left;'>".$re_ctsp['mactsp']."</div>";
+			echo 	"<div class='lietke-sp-td' style='width: 15%; text-align: left; font-size: 11px; overflow: hidden'>".$re_ctsp['mactsp']."</div>";
 			echo 	"<div class='lietke-sp-td' style='width: 19%; text-align: left;'>".$re_ctsp['tensp']."</div>";
 			echo	"<div class='lietke-sp-td' style='width: 14%;'>".$re_ctsp['tenncc']."</div>";
 			echo	"<div class='lietke-sp-td' style='width: 8%;'>".$re_ctsp['mausac']."</div>";
 			echo	"<div class='lietke-sp-td' style='width: 7%;'>".date('d-m-Y', strtotime($re_ctsp['ngaysx']))."</div>";
 			echo	"<div class='lietke-sp-td' style='width: 7%;'>".date('d-m-Y', strtotime($re_ctsp['hansudung']))."</div>";
 			echo 	"<div class='lietke-sp-td' style='width: 4%; text-align: center'>".$re_ctsp['soluong']."</div>";
-			echo 	"<div class='lietke-sp-td' style='width: 8%;'>".$re_ctsp['giaban']."</div>";
+			echo 	"<div class='lietke-sp-td' style='width: 8%;'>".number_format($re_ctsp['giaban'])."</div>";
 			echo 	"<div class='lietke-sp-td' style='width: 4%;'><a href='admin.php?quanly=sanpham&ac=suasp&masp=".$re_ctsp['masp']."' >Sửa</a></div>";
 			echo 	"<div class='lietke-sp-td' style='width: 4%;'>Xóa</div>";
 			echo 	"<div class='clear'></div>";

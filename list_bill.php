@@ -71,7 +71,7 @@
 	}
 	//echo "<pre>";print_r($list_ctgh); echo "</pre>";
 	
-	$string = implode(',', $arr);
+	$string = count($arr) > 0 ? implode(',', $arr) : "''";
 	$voucher = mysql_query("select magh, gh.maphieu, giatri from pmh_gh gh, phieumuahang pmh where gh.maphieu = pmh.maphieu and gh.magh in ($string)");
 	$list_voucher = array();
 	$dem = 0;
@@ -158,7 +158,7 @@
 			}
 			
 			
-			$ngaydat = date('Y-m-d', strtotime($re_ctgh['ngaydat']));
+			$ngaydat = date('Y/m/d', strtotime($re_gh['ngaydat'])); 
 			mysql_query("set names 'utf8'");
 			$km_hd = mysql_query("select	km.makm, km.chietkhau, km.tiengiamgia, km.giatridonhang, ctkm.ngaybd, ctkm.ngaykt
 								from	khuyenmai km, ctsp_km ctkm
@@ -167,8 +167,12 @@
 			$re_km = mysql_fetch_assoc($km_hd);
 			if($re_km['chietkhau'] != "0")
 			{
+				
 				if($re_km['giatridonhang'] != 0)
+				{
 					$tongtien = $thanhtien >= $re_km['giatridonhang'] ? ($thanhtien - ($thanhtien * ($re_km['chietkhau']/100))) : $thanhtien;
+					
+				}
 				else
 					$tongtien = $thanhtien - ($thanhtien * ($re_km['chietkhau']/100));
 			}
@@ -195,7 +199,7 @@
             	
             </td>
             <td><?php echo date('d-m-Y', strtotime($re_gh['ngaygiao'])) ?> </td>
-            <td><?php echo $re_gh['trangthai'] == 0 ? "Đã hủy" : $re_gh['trangthai'] == 1 ? "Đặt hàng thành công" : "Đã xuất hóa đơn" ?></td>
+            <td><?php echo $re_gh['trangthai'] == 2 ? "Đã hủy" : ($re_gh['trangthai'] == 1 ? "Đã xuất hóa đơn" : "Đặt hàng thành công") ?></td>
         </tr>    	
 <?php
 	}

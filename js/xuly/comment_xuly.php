@@ -33,19 +33,19 @@
 	
 	
 	mysql_query("set names 'utf8'");
-	$insert = mysql_query("INSERT INTO BinhLuan VALUES('$mabl', '$user', '$id', '$date', '$noidung', '')");
+	$insert = mysql_query("INSERT INTO BinhLuan VALUES('$mabl', '$user', '$id', '$date', '$noidung')");
 	mysql_query("set names 'utf8'");
-	$ten = mysql_query("select tenkh from khachhang where makh = '$user'");
+	$ten = mysql_query("select tenkh, hinhdaidien from khachhang where makh = '$user'");
 	$re_ten = mysql_fetch_assoc($ten);
 	
 	mysql_close($conn);
 	
 	echo "<li>";
     	echo "<div class='com-info'>";
-        	echo "<img src='image/khachhang/16700007_736167479867040_1149049724_n.jpg'/>";
+        	echo "<img src='image/khachhang/".$re_ten['hinhdaidien']."'/>";
         	echo "<p>".$re_ten['tenkh']." &nbsp;$date &nbsp;</p>";
         	echo "<p>$noidung</p>";
-        	echo "<p><a href='javascript:void(0)' class='rep-a' data-repa='$mabl'>Gửi trả lời</a></p>";
+        	//echo "<p><a href='javascript:void(0)' class='rep-a' data-repa='$mabl'>Gửi trả lời</a></p>";
         echo "</div>";
         echo "<div class='clear'></div>";
 		

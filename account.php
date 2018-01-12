@@ -164,7 +164,7 @@
                 <tr>
                 	<td width="20%" style = "font-weight: bold">Giới tính:</td>
                 	<td>
-                        <select name = "gioitinh">
+                        <select name = "gioitinh" style="width: 280px">
                         <?php
 							if($gioitinh == 1)
 							{

@@ -12,5 +12,6 @@ CKEDITOR.editorConfig = function( config ) {
      config.filebrowserImageBrowseUrl= 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/ckfinder.html?type=Images';
      config.filebrowserUploadUrl= 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files';
      config.filebrowserImageUploadUrl= 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images'
+config.height = '500px';
 
 };

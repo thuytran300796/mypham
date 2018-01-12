@@ -11,16 +11,24 @@
 	$date = date('Y-m-d');
 	$ngaybd = $ngaykt = $voucher_bd = $voucher_kt = $date;
 	
-	$keyword = "";
+	$sql = $keyword = ""; $loaixem = "all"; $arr_loaixem = array('all'=>'Tất cả', 'sp'=>'Sản phẩm', 'hd'=>'Hóa đơn', 'voucher'=>'Voucher');
 	
 	if(isset($_POST['loc']))
 	{
-		$ngaybd = $_POST['ngaybd']; $ngaykt = $_POST['ngaykt'];
+		$ngaybd = $_POST['ngaybd']; $ngaykt = $_POST['ngaykt']; $loaikm = isset($_POST['loaikm']) ? $_POST['loaikm'] : "all";
+		if($loaikm == 'sp')
+			$sql = " and km.masp <> '' ";
+		else if($loaikm == 'hd')
+			$sql = " and km.masp = '' and giatrivoucher = 0 ";
+		else if($loaikm == 'voucher')
+			$sql = " and km.masp = '' and giatrivoucher <> 0 ";
 		$km = mysql_query("	select	km.makm, km.masp, km.chietkhau, km.tiengiamgia, km.giatrivoucher, km.giatridonhang, mota, ctkm.ngaybd, ctkm.ngaykt
 							from	khuyenmai km, ctsp_km ctkm
 							where	km.makm = ctkm.makm and km.trangthai = 1
-								and	(ctkm.ngaybd >= '$ngaybd' and ctkm.ngaykt <= '$ngaykt')
+								and	(ctkm.ngaybd >= '$ngaybd' and ctkm.ngaykt <= '$ngaykt')".$sql." 
 							group by km.makm");
+							
+		
 	}
 	
 	if(isset($_POST['search']))
@@ -164,7 +172,7 @@
 </script>
 
 <form method="post">
-<div id="km-left" style="width: 20%; float: left; font-size: 13px;">
+<div id="km-left" style="font-size: 13px;">
 
 	<div>
     	<p style="background: #088A68; border-radius: 3px; font-size: 16px; color: white; font-weight: bold; padding: 5px 5px;">Tìm kiếm</p>
@@ -178,7 +186,19 @@
     	<p style="background: #088A68; border-radius: 3px; font-size: 16px; color: white; font-weight: bold; padding: 5px 5px;">Lọc theo</p>
         <br />
         Ngày bắt đầu: <input name='ngaybd' value="<?php echo $ngaybd ?>" type='date' class="txt-sp"/><br />
-        Ngày kết thúc: <input name='ngaykt' value="<?php echo $ngaykt ?>" type='date' class="txt-sp"/>
+        Ngày kết thúc: <input name='ngaykt' value="<?php echo $ngaykt ?>" type='date' class="txt-sp"/><br />
+        Loại áp dụng: <select name='loaikm' class="cbb-sp" >
+        				<?php
+							foreach($arr_loaixem as $key => $value)
+							{
+								if($key == $loaikm)
+									echo "<option value='$key' selected='selected'>$value</option>";
+								else
+									echo "<option value='$key'>$value</option>";
+							}	
+						?>
+
+        			</select>
         <input type='submit' name="loc" value="Lọc" class="sub" />
     </div>
     <input type="hidden" name="quanly" value="khuyenmai"/>
@@ -186,14 +206,14 @@
 </div>
 </form>
 
-<div style="width: 77%; float: right; font-size: 13px;">
+<div id='lietke-km' style="width: 77%; float: right; font-size: 13px;">
 
 	<table id='tb-km' width="100%" class="tb-lietke" >
     	
         <tr>
         	<th width="65%">Hình thức khuyến mãi</th>
             <th width="15%">Thời hạn</th>
-            <th width="7%">Sửa</th>
+            <!--<th width="7%">Sửa</th>-->
             <th width="7%">Xóa</th>
         </tr>
         
@@ -256,14 +276,15 @@
 				<p>Bắt đầu: <?php echo date('d/m/Y', strtotime($re_km['ngaybd'])) ?></p>
 	            <p>Kết thúc: <?php echo date('d/m/Y', strtotime($re_km['ngaykt'])) ?></p>
             </td>
-            <td><a href='admin.php?quanly=khuyenmai&ac=sua&makm=<?php echo $re_km['makm'] ?>' class="edit-km" data-makm="<?php echo $re_km['makm'] ?>">Sửa</a></td>
+            <!--
+            <td><a href='admin.php?quanly=khuyenmai&ac=sua&makm=<?php echo $re_km['makm'] ?>' class="edit-km" data-makm="<?php echo $re_km['makm'] ?>">Sửa</a></td>-->
             <td class="center"><a href='javascript:void(0)' class="del-km" data-makm="<?php echo $re_km['makm'] ?>">Xóa</a></td>
         </tr>
         <?php
 			if($re_km['chietkhau']==0 &&  $re_km['tiengiamgia']==0 && $re_km['giatrivoucher'] == 0)
 			{
 		?>
-        	<div class='km<?php echo $re_km['makm'] ?>'  style="display: none; background: #EFFBF2; width: 142%;   padding: 10px; border: solid 1px; ">
+        	<div class='km<?php echo $re_km['makm'] ?>'  style="display: none; background: #EFFBF2; width: 131%;   padding: 10px; border: solid 1px; ">
             	<div style="width: 100%; height: 20px; line-height: 10px;">
                 	<div class='ctsp-item' style="font-weight: bold; width: 35%" >Tên SP</div>
                 	<div class='ctsp-item' style="font-weight: bold" >Màu sắc</div>
@@ -315,34 +336,37 @@
         <img style="float: right; padding-top: 5px; padding-right: 5px;" src="../image/close.PNG" id='close-submit'/>
     </div>
     
-    
+    <form action="module/khuyenmai/print.php" method="post">
     	<table>
         	<tr>
             	<td>Ngày có hiệu lực:</td>
-                <td><input value="<?php echo $voucher_bd ?>" type="date" id="voucher_bd" class="txt-sp" /></td>
+                <td><input value="<?php echo $voucher_bd ?>" type="date" id="voucher_bd" name="voucher_bd" class="txt-sp" /></td>
             </tr>
             <tr>
             	<td>Ngày hết hạn:</td> 
-                <td><input value="<?php echo $voucher_bd ?>" type="date" id="voucher_kt" class="txt-sp" /></td>
+                <td><input value="<?php echo $voucher_bd ?>" type="date" id="voucher_kt" name="voucher_kt" class="txt-sp" /></td>
             </tr>
             <tr>
             	<td>Trị giá:</td>
-                <td><input value="" type="text" id="voucher_trigia" class="txt-sp" style="width: 200px;"/>
+                <td><input value="" type="text" id="voucher_trigia" name="voucher_trigia" class="txt-sp" style="width: 200px;"/>
                 	<p class="error" style="display: none"></p>
                 </td>
             </tr>
             <tr>
             	<td>Số lượng:</td>
-                <td><input value="" type="text" id="voucher_soluong" class="txt-sp" style="width: 200px;"/>
+                <td><input value="" type="text" id="voucher_soluong" name="voucher_soluong" class="txt-sp" style="width: 200px;"/>
                 	<p class="error" style="display: none"></p>
                 </td>
             </tr>
             <tr>
             	<td></td>
-                <td><input value="In phiếu" type="button" id="in_voucher" class="sub" style="width: 220px;"/></td>
+                <!--
+                <td><input value="In phiếu" type="button" id="in_voucher" class="sub" style="width: 220px;" /></td>
+                -->
+                 <td><input value="In phiếu" type="submit" class="sub" style="width: 220px;" name="in_voucher"/></td>
             </tr>
         </table>
-    
+    </form>
 
 </div>
 

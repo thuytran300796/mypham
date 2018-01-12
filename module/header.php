@@ -24,6 +24,32 @@
 				$('.list-item-product ul li a:last .product-home').css('border-right', 'none');
 
 				
+				$('.arrow-left-img').click(function()
+				{
+		
+					
+					$(".img-sml").animate({'margin-left': '+=30%'}, 450, function(){
+									
+						//$(".list-item-product[data-id = "+id+"] ul li:first").appendTo(".list-item-product[data-id = "+id+"] ul");
+						//$(".list-item-product[data-id = "+id+"] ul").css('margin-left', 0);	
+						$(".img-sml .img-sml-index:first").appendTo(".img-sml");	
+						$(".img-sml").css('margin-left', 0);				
+					});
+				});
+				
+				$('.arrow-right-img').click(function()
+				{
+		
+					
+					$(".img-sml").animate({'margin-left': '-=30%'}, 450, function(){
+									
+						//$(".list-item-product[data-id = "+id+"] ul li:first").appendTo(".list-item-product[data-id = "+id+"] ul");
+						//$(".list-item-product[data-id = "+id+"] ul").css('margin-left', 0);	
+						$(".img-sml .img-sml-index:first").appendTo(".img-sml");	
+						$(".img-sml").css('margin-left', 0);
+					});
+				});
+				
 				$('.arrow-left').click(function()
 				{
 					id = $(this).attr('data-id');
@@ -148,7 +174,7 @@
                                     	<ul>
                                             <li><a href='product.php?madm=PhanMat'>Phấn mắt</a></li>
                                             <li><a href='product.php?madm=KMAT'>Kẻ mắt</a></li>
-                                            <li><a href='product.php?MASCARA'>Mascara</a></li>
+                                            <li><a href='product.php?madm=MASCARA'>Mascara</a></li>
                                             <li><a href='product.php?madm=KMAY'>Kẻ mày</a></li>
                                         </ul>
                                     </li>
@@ -184,6 +210,7 @@
                                         </ul>
                                     </li>
                                     <li><a href='product.php?madm=DauXa'>Dầu xả</a></li>
+                                    <li><a href='product.php?madm=DT'>Dưỡng tóc, ủ tóc</a></li>
                                 </ul>
                             </li>
                             <li><a href='product.php?dm=CSD'>Chăm sóc da</a>

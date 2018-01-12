@@ -227,11 +227,12 @@
 		{
 			//trường hợp khi hết km thì sẽ xóa quà tặng đc chọn khỏi session['cart']
 			foreach($_SESSION['cart'] as $key => $value)
+			{
 				if($key != 'QT000')
 				{
 					$_SESSION['cart'][$key]['maqt'] = "";
 				}
-			
+			}
 		}
 		
 		//unset($_SESSION['cart']);
@@ -250,8 +251,10 @@
 			if(isset($_SESSION['cart'][$id_huy]))
 				unset($_SESSION['cart'][$id_huy]);
 			if(count($_SESSION['cart'])==0)
+			{
 				unset($_SESSION['cart']);
-			
+				unset($_SESSION['voucher']);
+			}
 			foreach($list_km as $key => $value)
 			{
 				if($list_km[$key]['mactsp'] == $id_huy)
@@ -345,7 +348,7 @@
 								}
 								$string_qt = count($arr_qt) > 0 ? implode(',', $arr_qt) : "''"; 
 								mysql_query("set names 'utf8'");
-								$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt)");
+								$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt)  group by ctsp.mactsp");
 					?>
                         <div class='product-km' style=" width: 58%; float: right">
                         	<?php echo ($string_qt != "''" ?   "<p style='color: #000;'>Chọn một trong số các quà tặng sau:</p>" : "");?>
@@ -492,16 +495,19 @@
 		}
 		else
 		{
+			/*
 			if(isset($_SESSION['voucher']))
 			{
 				unset($_SESSION['voucher']);
 				echo "<script>alert('Voucher đã bị hủy vì cửa hàng đang áp dụng chương trình khuyến mãi')</script>";	
 			}
+			*/
 		}
 		
 		$arr_qt = array(); $check_qt_hd = 0; //check_qt_hd để xem mã qt của hóa đơn có nằm trong danh sách quà tặng ko
 		while($re_km = mysql_fetch_assoc($khuyenmai))
 		{
+			//nếu tổng bill mà lớn hơn hoặc bằng giá trị đơn hàng thì mới áp dụng
 			if($tongtien >= $re_km['giatridonhang'])
 			{
 				if($re_km['maqt'] != "")
@@ -518,10 +524,26 @@
 					$giamgia_hd = $re_km['tiengiamgia'];	
 					$chietkhau_hd = 0;
 				}
+				//nếu thỏa điều kiện km thì xóa voucher
+				if(isset($_SESSION['voucher']))
+				{
+					unset($_SESSION['voucher']);
+					echo "vô 3";
+					echo "<script>alert('Voucher đã bị hủy vì cửa hàng đang áp dụng chương trình khuyến mãi')</script>";	
+				}
+				if(isset($_SESSION['cart']['QT000']))
+				{
+					if($_SESSION['cart']['QT000']['maqt'] == $re_km['maqt'])
+						$check_qt_hd = 1;
+				}
 			}
-			if(isset($_SESSION['cart']['QT000']))
-				if($_SESSION['cart']['QT000']['maqt'] == $re_km['maqt'])
-					$check_qt_hd = 1;
+			//nếu ko thỏa thì sẽ ko đc tặng quà
+			else
+			{
+				if(isset($_SESSION['cart']['QT000']))
+					unset($_SESSION['cart']['QT000']);
+			}
+			
 		}
 		if($check_qt_hd == 0) unset($_SESSION['cart']['QT000']); //nếu mã qt ko khớp thì xóa QT000 để xuống dưới nó gán lại mặc định
 		$string_qt = count($arr_qt) > 0 ? implode(',', $arr_qt) : "''"; 
@@ -534,7 +556,7 @@
 		//quà tặng kèm cho hóa đơn
 			
 			mysql_query("set names 'utf8'");
-			$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt) group by sp.masp");
+			$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt) group by ctsp.mactsp");
 			if(mysql_num_rows($quatang_hd) > 0)
 			{
 				echo "<p class='title'>QUÀ TẶNG KÈM</p><br />";
@@ -561,6 +583,7 @@
 					//gán mặc định
 					else
 					{
+						$_SESSION['cart']['QT000']['masp'] = "NULL";
 						$_SESSION['cart']['QT000']['soluong'] = 1;
 						$_SESSION['cart']['QT000']['giaban'] = 0;
 						$_SESSION['cart']['QT000']['makm'] = '000';
@@ -590,8 +613,8 @@
     </div>
     <div class="clear"></div>
 <?php
-	echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
-	echo "<pre>"; print_r($list_km); echo "</pre>";	
+	//echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
+	//echo "<pre>"; print_r($list_km); echo "</pre>";	
 ?>
 </div>
 
@@ -616,19 +639,28 @@
 		$chietkhau_hd = $giamgia_hd = 0;
 		foreach($_SESSION['voucher'] as $key => $value)
 		{
-			if($_SESSION['voucher'][$key]['ngaybd'] >= $date && $_SESSION['voucher'][$key]['ngaykt'] <= $date)
+			
+			if($_SESSION['voucher'][$key]['ngaybd'] <= $date && $_SESSION['voucher'][$key]['ngaykt'] >= $date)
+			{
+				
+				//echo $_SESSION['voucher'][$key]['giatri']."<br/>";
 				$giamgia_hd +=$_SESSION['voucher'][$key]['giatri'];
+			}
+			/*
 			else
 			{
 				unset($_SESSION['voucher'][$key]);
 				if(count($_SESSION['voucher']) == 0)
 					unset($_SESSION['voucher']);	
 			}
+			*/
+			
 		}
-		
+		//echo "số vc: ".count($_SESSION['voucher'])."<br/>";
+		//echo $tongtien." - ".$giamgia_hd;
 		$price = $tongtien - $giamgia_hd;
 	}
-	echo "tổng: ".$price;
+	//echo "tổng: ".$price;
 	?>
 	<input type='hidden' id='price' value="<?php echo $price ?>"/> <!--tiền hóa đơn-->
     <input type='hidden' id='tiensp' value="<?php echo $tongtien ?>"/> <!--tiền sp-->
@@ -650,7 +682,7 @@
         </tr>
         
         <tr>
-        	<td colspan="2" style="font-size: 13px; font-style: italic">(Phí trên chưa bao gồm thuế VAT và phí vận chuyển)</td>
+        	<td colspan="2" style="font-size: 13px; font-style: italic">(Phí trên chưa bao gồm phí vận chuyển)</td>
         </tr>
     </table>
     
@@ -674,7 +706,18 @@
 				}
 			}
 		?>
-        </ul>
+        </ul><br />
+        <!--
+        <table width="100%" >
+        	<tr>
+            	<td colspan="3">Điểm tích lũy:</td>
+            </tr>
+        	<tr>
+            	<td>Sử dụng: </td>
+                <td><input name="diem" type='text' style="width: 100px; height: 30px; padding: 3px; border: solid 1px #ccc; border-radius: 3px; " value=""/> / 50</td>
+            </tr>
+        </table>
+       -->
     	<br /><input type="submit" value="Tiến hành đặt hàng" class="btn-cart"/></br></br>
     </form>
     
@@ -689,8 +732,9 @@
 </div>
 <?php
 	}
-	if(isset($_SESSION['voucher']))
-		echo count($_SESSION['voucher']);
+	//if(isset($_SESSION['voucher']))
+		//echo count($_SESSION['voucher']);
+	
 ?>
 
 <script>
@@ -726,7 +770,10 @@
 						$('#price').val(kq.tamtinh); //alert($('#price').val());
 					}
 					else
+					{
 						alert(kq.error);
+					}
+	
 					$('#magiamgia').val('');
 				},
 				error: function (jqXHR, exception)

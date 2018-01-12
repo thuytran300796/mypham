@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
    	<head>
@@ -154,9 +152,14 @@
 			include_once('module/nhanvien/main.php');
 		else if($temp == 'hoadon')
 			include_once('module/hoadon/main.php');
+		else if($temp == 'thongke')
+			include_once('module/thongke/main.php');
+		else if($temp == 'doimk')
+			include_once('module/account.php');
 	}
 	else
 	{
+		/*
 	
 		mysql_query("SET NAMES 'utf8'");
 		$donhang = mysql_query("SELECT MaGH FROM GioHang WHERE TrangThai = 0");
@@ -166,7 +169,8 @@
 		{
 			echo "<br/><br/><p style = 'font-weight: bold; margin-left: 43%'>CHƯA CÓ ĐƠN HÀNG NÀO</p>";	
 		}
-		
+		*/
+		include_once('module/home.php');
 	}
 
 ?>

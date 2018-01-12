@@ -386,10 +386,50 @@
 ?>
 
 <?php
+	function Convert($arr)
+	{	
+		$str = "";
+		foreach($arr as $key => $value)
+		{
+			$temp = unicode_convert($value);
+			$temp = preg_replace('/\s+/', '', $temp);
+			if($value == "")
+				$str = $str."_NULL";
+			else
+				$str = $str."_".$temp;
+		}
+		
+		return trim($str, '_');
+	}
+	
+	function Tao_MaSP($arr)
+	{
+		$str = "";
+		$str = Convert($arr);
+		mysql_query("set names 'utf8'");
+		$kq = mysql_query("select count(*) 'sl' from sanpham where masp LIKE '$str%'");
+		$re_kq = mysql_fetch_assoc($kq);
+		$number = (int)$re_kq['sl'] + 1;
+		return $str."_".$number;
+	}
+	
+	function Tao_MaCTSP($arr)
+	{
+		$str = "";
+		$str = Convert($arr);
+		mysql_query("set names 'utf8'");
+		$kq = mysql_query("select count(*) 'sl' from chitietsanpham where mactsp LIKE '$str%'");
+		$re_kq = mysql_fetch_assoc($kq);
+		$number = (int)$re_kq['sl'] + 1;
+		return $str."_".$number;
+	}
+?>
+
+<?php
 	//unset($_SESSION['list-ctsp']);
 	//unset($_FILES['file']);
 	$loi = array();
-	$loi['masp'] = $loi['tensp'] = $loi['dvt'] = $loi['trongluong'] = $loi['thuonghieu'] = $loi['quycach'] = $loi['thue'] = $loi['mausac'] = $loi['soluong'] = $loi['gianhap'] = $loi['giaban'] = $loi['ngaysx'] = $loi['hsd'] = $loi['file'] = NULL;
+	$loi['masp'] = $loi['tensp'] = $loi['dvt'] = $loi['trongluong'] = $loi['thuonghieu'] = $loi['quycach'] = $loi['thue'] = $loi['mausac'] = $loi['soluong'] = $loi['gianhap'] = $loi['giaban'] = $loi['ngaysx'] = $loi['hsd'] = $loi['file'] = $loi['ctsp'] = NULL;
 	
 	$masp = $tensp = $dvt = $trongluong = $thuonghieu = $quycach = $thue = $mausac = $soluong = $gianhap = $giaban = $ngaysx = $hsd = NULL;
 	$check_sp = $check_ctsp = 1; $mota = $mancc = $madm = NULL;
@@ -398,6 +438,7 @@
 		$mota = $_POST['mota'];
 		
 		//echo "<pre>"; echo $_SESSION['list-ctsp']; echo "</pre>";
+		/*
 		if(empty($_POST['masp']))
 		{
 			$loi['masp'] = "Vui lòng nhập mã sản phẩm";
@@ -405,7 +446,8 @@
 		}
 		else
 			$masp = $_POST['masp'];
-			
+		*/
+		
 		if(empty($_POST['tensp']))
 		{
 			$loi['tensp'] = "Vui lòng nhập tên sản phẩm";
@@ -488,13 +530,23 @@
 		
 			//echo count($_FILES['file']);
 			
-		
+		if(!isset($_SESSION['list-ctsp']))
+		{
+			$check_sp = 0;
+			$loi['ctsp'] = "Vui lòng nhập giá nhập và giá bán của sản phẩm";
+			
+		}
 			
 		$mancc = $_POST['mancc']; $madm = $_POST['madm'];
 		
 		if($check_sp)
 		{
 			
+			require('library/convert_utf8.php');
+			
+			$arr = array($madm, $thuonghieu, $quycach);
+			$masp = Tao_MaSP($arr);
+
 			date_default_timezone_set('Asia/Ho_Chi_Minh');
 			$date = date('Y/m/d H:i:s');
 			
@@ -510,9 +562,12 @@
 				
 			foreach($_SESSION['list-ctsp'] as $key => $value)
 			{
-				$mactsp = mysql_query("select count(mactsp) as 'number' from chitietsanpham");
-				$mactsp = mysql_fetch_assoc($mactsp);
-				$mactsp =(int)$mactsp['number'] + 1;
+				//$mactsp = mysql_query("select count(mactsp) as 'number' from chitietsanpham");
+				//$mactsp = mysql_fetch_assoc($mactsp);
+				//$mactsp =(int)$mactsp['number'] + 1;
+				$arr = array($madm, $thuonghieu, $quycach, $_SESSION['list-ctsp'][$key]['mausac']);
+				$mactsp = Tao_MaCTSP($arr);
+				
 				mysql_query("set names 'utf8'");
 				$ctsp = mysql_query("insert into chitietsanpham(masp, mactsp, mausac, ngaysx, hansudung, soluong, giaban, trangthai) values('$masp', '$mactsp', '".$_SESSION['list-ctsp'][$key]['mausac']."', '".$_SESSION['list-ctsp'][$key]['ngaysx']."', '".$_SESSION['list-ctsp'][$key]['hsd']."', ".$_SESSION['list-ctsp'][$key]['soluong'].", ".$_SESSION['list-ctsp'][$key]['giaban'].", 1)");	
 				
@@ -597,12 +652,12 @@
 	*/
 ?>
 
-<p class="title">THÊM MỚI SẢN PHẨM</p> <br />
+<p class="title">NHẬP HÀNG MỚI</p> <br />
 
 <form method="post"  enctype="multipart/form-data">
 <div id='parent' style="width: 52%; height: 100%; border-right: solid 2px #ccc; float: left; position: relative;">
     <table>
-    
+    	<!--
         <tr>
             <td>Mã sản phẩm: </td>
             <td><input type='text' class='txt-sp' name="masp" value="<?php echo $masp ?>"/></td>
@@ -612,7 +667,7 @@
 			?>
             
         </tr>
-    
+    	-->
         <tr>
             <td>Tên sản phẩm: </td>
             <td><input type='text' class='txt-sp' name="tensp" value="<?php echo $tensp ?>"/></td>
@@ -658,20 +713,6 @@
 			?>
         </tr>
         
-        <tr>
-            <td>Mô tả: </td>
-            <td><textarea name="mota" class="txt-sp"><?php echo $mota ?></textarea></td>
-           	<script type="text/javascript">
-            	CKEDITOR.replace('mota',
-				{
-					filebrowserBrowseUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/ckfinder.html',
-    				filebrowserImageBrowseUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/ckfinder.html?type=Images',
-    				filebrowserUploadUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
-					filebrowserImageUploadUrl:'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images'
-				});
-            </script>
-        </tr>
-        
         <!--
         <tr>
             <td>Phân loại theo màu sắc: </td>
@@ -699,7 +740,7 @@
                 </select>
                 
             </td>
-            <td><input value='+' id='themncc' type="button" class="sub" style="width: 90%; height: 38px; margin-left: -100%; text-align: center; font-size: 36px; line-height: 30px; font-weight: bold"/></td>
+            <td><input value='+' id='themncc' type="button" class="sub" style="width: 40px; height: 38px; text-align: center; font-size: 36px; line-height: 30px; font-weight: bold"/></td>
         </tr>
         
         <tr>
@@ -753,6 +794,8 @@
 
 
 <div id='ctsp' style="width: 46%; height: 100%; float: right;">
+
+	
 	
     <table>
     
@@ -795,7 +838,7 @@
         
         <tr>
         	<td></td>
-            <td><input type='button' value='Thêm ' name='themctsp' class="sub btn-ctsp" id='themctsp' style="width: 45%"/>
+            <td><input type='button' value='Thêm ' name='themctsp' class="sub btn-ctsp" id='themctsp' style="width: 220px"/>
             	<input type='button' value='Hủy bỏ' class="sub cancle" style="width: 45%; display: none"/>
             </td>
             <td></td>
@@ -847,10 +890,32 @@
         
     </table>
     
+		
+			<span class='error'><?php echo $loi['ctsp'] ?></span>
+
 </div>
 <div class="clear"></div>
+<br />
+<div style="width: 52%" >
+	<table>
+    	<tr>
+            <td width="10%">Mô tả: </td>
+            <td><textarea name="mota" class="txt-sp"><?php echo $mota ?></textarea></td>
+           	<script type="text/javascript">
+            	CKEDITOR.replace('mota',
+				{
+					filebrowserBrowseUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/ckfinder.html',
+    				filebrowserImageBrowseUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/ckfinder.html?type=Images',
+    				filebrowserUploadUrl: 'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+					filebrowserImageUploadUrl:'http://localhost:8080/mypham/admin/library/ckeditor/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images'
+				});
+            </script>
+        </tr>
+    </table>
+</div>
+
 <div style='width: 100%; margin: auto; text-align: center; margin-top: 3%;'>
-	<input type='submit' class='sub' name='ok' value='NHẬP HÀNG'/>
+	<input type='submit' class='sub' name='ok' style="height: 50px; width: 150px" value='NHẬP HÀNG'/>
 </div>
 
 </form>

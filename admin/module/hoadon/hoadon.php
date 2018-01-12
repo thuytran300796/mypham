@@ -50,10 +50,12 @@
 			if(confirm("Bạn có chắc chắn muốn hủy?"))
 			{
 				id = $(this).attr('data-id'); $('.ctsp'+id).hide(); 
+				price = $(this).attr('data-price');
+				makh = $(this).attr('data-makh');
 				$.ajax
 				({
 					url: "module/hoadon/xuly/giohang_xuly.php",
-					data: "ac=huyhd&id="+id,
+					data:"ac=huyhd&id="+id+"&price="+price+"&makh="+makh,
 					type: "post",
 					async: true,
 					success:function(kq)
@@ -76,10 +78,9 @@
 
 	mysql_query("set names 'utf8'");
 	$hoadon = mysql_query("
-								select		hd.mahd, ngayxuat, hotennguoinhan, sdt, diachi, phivanchuyen, hd.chietkhau as 'ckhd', thue, hd.trangthai, km.makm, km.chietkhau, km.tiengiamgia, km.giatridonhang
+								select		hd.mahd, hd.makh, ngayxuat, hotennguoinhan, sdt, diachi, phivanchuyen, hd.chietkhau as 'ckhd', thue, hd.trangthai, km.makm, km.chietkhau, km.tiengiamgia, km.giatridonhang
 								from		hoadon hd, khuyenmai km
-								where		hd.makm = km.makm and hd.trangthai = 1
-								/*group by 	km.makm*/
+								where		hd.makm = km.makm and hd.trangthai = 1 group by hd.mahd order by ngayxuat desc
 							");
 	
 	mysql_query("set names 'utf8'");
@@ -141,13 +142,16 @@
 </div>
 <div class="clear"></div>
 
+<div style='width: 78%; float: right;'><p class='title'>DANH SÁCH CÁC HÓA ĐƠN ĐÃ XUẤT</p></div>
+<div class="clear"></div>
+
 <div id='km-left'>
 
 	<form>
 	<div>
     	<p style="background: #088A68; border-radius: 3px; font-size: 16px; color: white; font-weight: bold; padding: 5px 5px;">Tìm kiếm</p>
         <br />
-        <input type='text' id='keyword' value='<?php echo $keyword ?>' class="txt-sp"  placeholder='Nhập mã hóa đơn...'/>
+        <input type='text' id='keyword' value='<?php echo $keyword ?>' class="txt-sp"  placeholder='Nhập mã hóa đơn hoặc tên khách hàng...'/>
         <input type='button' id='search-sub' class="sub" value="Tìm"/>
     </div>
 	</form>
@@ -167,8 +171,6 @@
 <div id = 'hoadon'>
 
 
-	<p class='title'>DANH SÁCH HÓA ĐƠN ĐÃ XUẤT</p><br />
-    
     <div class='lietke-sp'>
     
     	<div class = 'lietke-sp-th'>
@@ -304,14 +306,15 @@
 			//$thue = ( $re_hd['thue'] / 100) * $tongtien;
 			//$chietkhau = ($re_hd['chietkhau']/100) * $tongtien;
 			//$tongtien -=   $chietkhau; //chietkhau là tiền giảm giá hóa đơn của km
-			$ckhd = $tongtien*($re_hd['ckhd']/100);  
+			//$ckhd = $tongtien*($re_hd['ckhd']/100);
+			$ckhd = $re_hd['ckhd'];  
 			$tongtien = $tongtien - $ckhd + $re_hd['phivanchuyen']; 
 			//echo number_format($tongtien)." đ";
 		?>        
             	
             <div class='lietke-sp-td' style='width: 11%; text-align: right;'><?php echo number_format($tongtien) ?> đ</div>
-            <div class='lietke-sp-td' style='width: 8%; text-align: center;'><?php echo $re_hd['trangthai'] == 1 ? "Đã xuất" : "Hủy"?></div>
-            <div class='lietke-sp-td' style='width: 4%; text-align: left;'><a  href='javascript:void(0)' class='huy' data-id='<?php echo $re_hd['mahd'] ?>'>Hủy</a></div>
+            <div class='lietke-sp-td' style='width: 8%; text-align: center;'><?php echo $re_hd['trangthai'] == 1 ? "Đã xuất" : "Đã hủy"?></div>
+            <div class='lietke-sp-td' style='width: 4%; text-align: left;'><a  href='javascript:void(0)' class='huy' data-makh='<?php echo $re_hd['makh']  ?>' data-price='<?php echo $tongtien ?>' data-id='<?php echo $re_hd['mahd'] ?>'>Hủy</a></div>
             <div class="clear"></div>
         </div>
         
@@ -354,7 +357,8 @@
 						echo "0";
 				 	else
 					{
-						echo $re_hd['ckhd']."% (-".number_format( $tongtien*($re_hd['ckhd']/100))." đ)";
+						//echo $re_hd['ckhd']."% (-".number_format( $tongtien*($re_hd['ckhd']/100))." đ)";
+						echo number_format($re_hd['ckhd'])." đ";
 					}
 				?>
                 </div>

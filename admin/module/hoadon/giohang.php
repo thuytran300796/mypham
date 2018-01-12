@@ -21,10 +21,12 @@
 			if(confirm("Bạn có chắc chắn muốn hủy?"))
 			{
 				id = $(this).attr('data-id'); $('.ctsp'+id).hide();
+				price = $(this).attr('data-price');
+				makh = $(this).attr('data-makh');
 				$.ajax
 				({
 					url: "module/hoadon/xuly/giohang_xuly.php",
-					data: "ac=huy&id="+id,
+					data: "ac=huy&id="+id+"&price="+price+"&makh="+makh,
 					type: "post",
 					async: true,
 					success:function(kq)
@@ -45,7 +47,7 @@
 
 	mysql_query("set names 'utf8'");
 	$giohang = mysql_query("
-								select		gh.magh, ngaydat, ngaygiao, hotennguoinhan, sdt, diachi, gh.trangthai, tensp, count(gh.magh) 'slsp'
+								select		gh.magh, ngaydat, ngaygiao, gh.makh, hotennguoinhan, sdt, diachi, gh.trangthai, tensp, count(gh.magh) 'slsp'
 								from		giohang gh, chitietgiohang ctgh, sanpham sp, chitietsanpham ctsp
 								where		gh.magh = ctgh.magh and ctgh.mactsp = ctsp.mactsp and ctsp.masp = sp.masp and gh.trangthai = 0
 								group by 	gh.magh
@@ -249,7 +251,7 @@
             <div class='lietke-sp-td' style='width: 9%; text-align: center;'>Chưa xuất</div>
             <div class='lietke-sp-td' style='width: 8%; text-align: center;'><a href='#'>Xem</a></div>
             <div class='lietke-sp-td' style='width: 4%; text-align: center;'><a href='admin.php?quanly=hoadon&ac=xuat&id=<?php echo $re_gh['magh'] ?>'>Xuất</a></div>
-            <div class='lietke-sp-td' style='width: 4%; text-align: center;'><a href='javascript:void(0)' class='huy' data-id='<?php echo $re_gh['magh'] ?>'>Hủy</a></div>
+            <div class='lietke-sp-td' style='width: 4%; text-align: center;'><a href='javascript:void(0)' class='huy' data-makh='<?php echo $re_gh['makh']  ?>' data-price='<?php echo $tongtien ?>' data-id='<?php echo $re_gh['magh'] ?>'>Hủy</a></div>
             <div class="clear"></div>
         </div>
         
@@ -291,7 +293,7 @@
                 <?php
 					}
 					if($giam_hd > 0)
-						echo $check_km==1 ? "<div style='border-top: solid 1px #ccc; width: 100%; text-align: right'>Giảm KM: ".number_format($giam_hd)." ( -".$item[$key]['giamgia'].")</div>" : "<div style='border-top: solid 1px #ccc; width: 100%; text-align: right'>Giảm KM: ".number_format($giam_hd)." đ</div>";
+						echo $check_km==1 ? "<div style='border-top: solid 1px #ccc; width: 100%; text-align: right'>Giảm KM: ".number_format($giam_hd)." </div>" : "<div style='border-top: solid 1px #ccc; width: 100%; text-align: right'>Giảm KM: ".number_format($giam_hd)." đ</div>";
 	
 					echo number_format($tien_voucher) > 0 ? "<div style='border-top: solid 1px #ccc; width: 100%; text-align: right'>Phiếu mua hàng: ".number_format($tien_voucher)." đ</div>" : "";
 				?>

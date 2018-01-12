@@ -39,11 +39,11 @@
 			else
 				$makh = "";
 			mysql_query("set names 'utf8'");
-			$kq = mysql_query("	select makh, tenkh, diachi, sodienthoai
+			$kq = mysql_query("	select makh, tenkh, diachi, sodienthoai, diemtichluy
 								from khachhang
 								where makh = '$makh'");	
 			$re_kh = mysql_fetch_assoc($kq);
-			echo json_encode(array("makh"=>"$re_kh[makh]", "ten"=>"$re_kh[tenkh]", "sdt"=>"$re_kh[sodienthoai]", "diachi"=>"$re_kh[diachi]"));
+			echo json_encode(array("makh"=>"$re_kh[makh]", "ten"=>"$re_kh[tenkh]", "sdt"=>"$re_kh[sodienthoai]", "diachi"=>"$re_kh[diachi]", "diemtichluy"=>"$re_kh[diemtichluy]"));
 		}
 	}
 	

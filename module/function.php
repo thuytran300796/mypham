@@ -42,27 +42,7 @@
 		return 'NCC'.++$number;
 	}
 	
-	function Tao_MaLuong()
-	{
-		require('../config/config.php');
-		
-		$result = mysql_query("select MaLuong from Luong ");
-		
-		if(mysql_num_rows($result) == 0)
-			return 'MaL1';
-			
-		$dong = mysql_fetch_assoc($result);
-		
-		$number = substr($dong['MaLuong'], 3);
-		
-		while($dong = mysql_fetch_assoc($result))
-		{
-			$temp = substr($dong['MaLuong'], 3);
-			if($number < $temp)
-				$number = $temp;
-		}
-		return 'MaL'.++$number;
-	}
+	
 	
 	function Tao_MaNV()
 	{
@@ -85,51 +65,7 @@
 		}
 		return 'MaNV'.++$number;
 	}
-	
-	function Tao_MaSP()
-	{
-		require('../config/config.php');
-		
-		$result = mysql_query('select MaSP from SanPham');
-		
-		if(mysql_num_rows($result) == 0)
-			return 'SP1';
-			
-		$dong = mysql_fetch_assoc($result);
-		
-		$number = substr($dong['MaSP'], 2);
-		
-		while($dong = mysql_fetch_assoc($result))
-		{
-			$temp = substr($dong['MaSP'], 2);
-			if($number < $temp)
-				$number = $temp;
-		}
-		return 'SP'.++$number;
-	}
-	
-	function Tao_MaCTSP()
-	{
-		require('../config/config.php');
-		
-		$result = mysql_query('select MaCTSP from ChiTietSanPham');
-		
-		if(mysql_num_rows($result) == 0)
-			return 'CT1';
-			
-		$dong = mysql_fetch_assoc($result);
-		
-		$number = substr($dong['MaCTSP'], 2);
-		
-		while($dong = mysql_fetch_assoc($result))
-		{
-			$temp = substr($dong['MaCTSP'], 2);
-			if($number < $temp)
-				$number = $temp;
-		}
-		return 'CT'.++$number;
-	}
-	
+
 
 	
 	function Tao_MaKM()

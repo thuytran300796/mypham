@@ -39,6 +39,7 @@
 					$_SESSION['cart']['QT000']['soluong'] = 1;
 					$_SESSION['cart']['QT000']['giaban'] = 0;
 					$_SESSION['cart']['QT000']['makm'] = '000';
+					$_SESSION['cart']['QT000']['masp'] = "NULL";
 					$_SESSION['cart']['QT000']['maqt'] = $maqt;
 					$_SESSION['cart']['QT000']['chietkhau'] = 0;
 					$_SESSION['cart']['QT000']['tiengiamgia'] = 0;

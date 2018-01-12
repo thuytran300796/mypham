@@ -43,7 +43,7 @@
 if(isset($_SESSION['cart']))
 {	
 	
-	echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
+	//echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
 	
 	if(!isset($_SESSION['user']))
 	{
@@ -69,7 +69,7 @@ if(isset($_SESSION['cart']))
 	$string_qt = count($arr_qt) > 0 ? implode(',', $arr_qt) : "''"; 
 	mysql_query("set names 'utf8'");
 
-	$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt)");
+	$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt) group by ctsp.mactsp");
 	$list_qt = array();
 	while($re_qt = mysql_fetch_assoc($quatang))
 	{
@@ -239,7 +239,7 @@ if(isset($_SESSION['cart']))
 					}
 					$kq = mysql_query("insert into chitietgiohang(magh, mactsp, soluong, makm, quatang) values('$id', '$mactsp', ".$_SESSION['cart'][$key]['soluong'].", '$makm', $status)");
 					
-					$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - ".$_SESSION['cart'][$key]['soluong']." WHERE MaCTSP = '$key'");
+					$kq = mysql_query("UPDATE ChiTietSanPham SET SoLuong = SoLuong - ".$_SESSION['cart'][$key]['soluong']." WHERE MaCTSP = '$mactsp'");
 					
 					//$kq = mysql_query("UPDATE SanPham SET LuotMua = LuotMua + ".$_SESSION['cart'][$key]['soluong']." WHERE MaSP = '".$_SESSION['cart'][$key]['masp']."'");
 					
@@ -250,7 +250,7 @@ if(isset($_SESSION['cart']))
 				{
 					foreach($_SESSION['voucher'] as $key_vc => $value_vc)
 					{
-						if($_SESSION['voucher'][$key_vc]['ngaybd'] >= $date && $_SESSION['voucher'][$key_vc]['ngaykt'] <= $date)
+						if($_SESSION['voucher'][$key_vc]['ngaybd'] <= $date && $_SESSION['voucher'][$key_vc]['ngaykt'] >= $date)
 						{
 							$kq = mysql_query("insert into pmh_gh values('$key_vc', '$id')");
 							//có cần set trạng thái cho pmh đó ko nhỉ
@@ -262,7 +262,7 @@ if(isset($_SESSION['cart']))
 				unset($_SESSION['cart']);
 				unset($_SESSION['voucher']);
 						//header('location: index.php');
-				echo "<br/><br/><p class='title'>ĐẶT HÀNG THÀNH CÔNG</p>";
+				echo "<br/><br/><p class='title'>ĐẶT HÀNG THÀNH CÔNG. QUAY VỀ <a href='home.php' style='font-weight: bold; color: #F90'>TRANG CHỦ</a> ĐỂ TIẾP TỤC MUA SẮM</p>";
 				$check_dn = 0;
 			}
 		}
@@ -437,21 +437,24 @@ if($check_dn == 1)
 		}
 		else
 		{
+			/*
 			if(isset($_SESSION['voucher']))
 			{
 				unset($_SESSION['voucher']);
 				echo "<script>alert('Voucher đã bị hủy vì cửa hàng đang áp dụng chương trình khuyến mãi')</script>";	
 			}
+			*/
 		}
 			
 		$arr_qt = array();  $check_qt_hd = 0;
 		while($re_km = mysql_fetch_assoc($khuyenmai))
 		{
+			//nếu tổng bill mà lớn hơn hoặc bằng giá trị đơn hàng thì mới áp dụng
 			if($tongtien >= $re_km['giatridonhang'])
 			{
 				if($re_km['maqt'] != "")
 				{
-					$arr_qt[] = "'".$re_km['maqt']."'"; 
+					$arr_qt[] = $re_km['maqt']; 
 				}
 				else if($re_km['chietkhau'] != "0")
 				{
@@ -463,30 +466,56 @@ if($check_dn == 1)
 					$giamgia_hd = $re_km['tiengiamgia'];	
 					$chietkhau_hd = 0;
 				}
+				//nếu thỏa điều kiện km thì xóa voucher
+				if(isset($_SESSION['voucher']))
+				{
+					unset($_SESSION['voucher']);
+					echo "vô 3";
+					echo "<script>alert('Voucher đã bị hủy vì cửa hàng đang áp dụng chương trình khuyến mãi')</script>";	
+				}
+				if(isset($_SESSION['cart']['QT000']))
+				{
+					if($_SESSION['cart']['QT000']['maqt'] == $re_km['maqt'])
+						$check_qt_hd = 1;
+				}
 			}
-			if(isset($_SESSION['cart']['QT000']))
-				if($_SESSION['cart']['QT000']['maqt'] == $re_km['maqt'])
-					$check_qt_hd = 1;
+			//nếu ko thỏa thì sẽ ko đc tặng quà
+			else
+			{
+				if(isset($_SESSION['cart']['QT000']))
+					unset($_SESSION['cart']['QT000']);
+			}
 		}
 		if($check_qt_hd == 0) unset($_SESSION['cart']['QT000']); //nếu mã qt ko khớp thì xóa QT000 để xuống dưới nó gán lại mặc định
 		//$string_qt = count($arr_qt) > 0 ? implode(',', $arr_qt) : "''"; 
-		$string_qt = isset($_SESSION['cart']['QT000']) ? $_SESSION['cart']['QT000']['maqt'] : ""; 
-		echo "string qt: ".$string_qt;
+		$string_qt = isset($_SESSION['cart']['QT000']) ? $_SESSION['cart']['QT000']['maqt'] : (count($arr_qt) > 0 ? $arr_qt[0] : ""); 
+		//echo "string qt: ".$string_qt;
 	?>
      
     <p class="title" style="text-align: left;">
         
         <?php
 		//quà tặng kèm cho hóa đơn
-			
+			echo $string_qt;
 			mysql_query("set names 'utf8'");
 			//$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string_qt) group by sp.masp");
-			$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp = '$string_qt' group by sp.masp");
+			$quatang_hd = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp = '$string_qt' group by ctsp.mactsp limit 0,1");
 			$re_qt_hd = mysql_fetch_assoc($quatang_hd);
 			if(mysql_num_rows($quatang_hd) > 0)
 			{
 				echo "<p class='title'>QUÀ TẶNG KÈM</p><br />";
         		echo "<ul>";	
+				//nếu có km quà tặng cho hóa đơn mà session chưa có thì mình add zô
+				if(!isset($_SESSION['cart']['QT000']))
+				{
+					$_SESSION['cart']['QT000']['masp'] = "NULL";
+					$_SESSION['cart']['QT000']['soluong'] = 1;
+					$_SESSION['cart']['QT000']['giaban'] = 0;
+					$_SESSION['cart']['QT000']['makm'] = '000';
+					$_SESSION['cart']['QT000']['maqt'] = $re_qt_hd['mactsp'];
+					$_SESSION['cart']['QT000']['chietkhau'] = 0;
+					$_SESSION['cart']['QT000']['tiengiamgia'] = 0;
+				}
 			}
 			if(isset($_SESSION['cart']['QT000']))
 			{
@@ -507,8 +536,8 @@ if($check_dn == 1)
         	<div class="clear"></div>
         </ul>
     <?php
-	echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
-	echo "<pre>"; print_r($list_km); echo "</pre>";	
+	//echo "<pre>"; print_r($_SESSION['cart']); echo "</pre>";
+	//echo "<pre>"; print_r($list_km); echo "</pre>";	
 ?>
 </div>
 
@@ -531,14 +560,14 @@ if($check_dn == 1)
 		$chietkhau_hd = $giamgia_hd = 0;
 		foreach($_SESSION['voucher'] as $key => $value)
 		{
-			if($_SESSION['voucher'][$key]['ngaybd'] >= $date && $_SESSION['voucher'][$key]['ngaykt'] <= $date)
+			if($_SESSION['voucher'][$key]['ngaybd'] <= $date && $_SESSION['voucher'][$key]['ngaykt'] >= $date)
 				$giamgia_hd +=$_SESSION['voucher'][$key]['giatri'];
-			else
+			/*else
 			{
 				unset($_SESSION['voucher'][$key]);
 				if(count($_SESSION['voucher']) == 0)
 					unset($_SESSION['voucher']);	
-			}
+			}*/
 		}
 		
 		$price = $tongtien - $giamgia_hd;

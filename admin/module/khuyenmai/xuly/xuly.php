@@ -6,6 +6,8 @@
 
 	if($_POST['ac'] == 'get_qt')
 	{
+		
+		
 		$keyword = mysql_escape_string($_POST['keyword']);
 		
 		mysql_query("set names 'utf8'");
@@ -73,13 +75,24 @@
 	//sản phẩm ad
 	else if($_POST['ac'] == 'get_sp')
 	{
+		date_default_timezone_set('Asia/Ho_Chi_Minh'); $date = date('Y-m-d');
+		
+		//loại bỏ những sp đang có km 
+		$kq = mysql_query("select masp from khuyenmai km, ctsp_km ctkm where km.makm = ctkm.makm and (ctkm.ngaybd <= '$date' and ctkm.ngaykt >= '$date')");
+		$arr = array(); $string = "";
+		while($re_kq = mysql_fetch_assoc($kq))
+		{
+			$arr[] = "'".$re_kq['masp']."'";
+		}
+		$string = count($arr) > 0 ? implode(',', $arr) : "''";
+		
 		$keyword = mysql_escape_string($_POST['keyword']);
 		
 		mysql_query("set names 'utf8'");
 		$kq = mysql_query("	select sp.masp, sp.tensp, thuonghieu, tenncc
 							from sanpham sp, nhacungcap ncc
 							where ncc.mancc = sp.mancc and sp.trangthai = 1
-							and ( tensp LIKE '%$keyword%' OR masp LIKE '%$keyword%')");
+							and ( tensp LIKE '%$keyword%' OR masp LIKE '%$keyword%') and masp not in ($string)") ;
 							
 		while($re_kq = mysql_fetch_assoc($kq))
 		{

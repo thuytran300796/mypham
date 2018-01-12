@@ -1,4 +1,24 @@
 <?php
+	function Convert($arr)
+	{	
+		$str = "";
+		foreach($arr as $key => $value)
+		{
+			$temp = unicode_convert($value);
+			$temp = preg_replace('/\s+/', '', $temp);
+			if($value == "")
+				$str = $str."_NULL";
+			else
+				$str = $str."_".$temp;
+		}
+		
+		return trim($str, '_');
+	}
+
+	
+?>
+
+<?php
 	
 	$list = array();
 	
@@ -10,4 +30,19 @@
 	$list[1]['tensp'] = 'abc';
 	echo "<pre>"; print_r($temp[0]);echo"</pre>";
 	
+	
+	
 ?>
+
+<html>
+
+	<head></head>
+    
+    
+    <body>
+    
+    	<div style="width
+    
+    </body>
+
+</html>

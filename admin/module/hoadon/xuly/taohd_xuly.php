@@ -307,26 +307,28 @@ if(isset($_POST['ac']))
 			
 			foreach($_SESSION['cart_ad'] as $key => $value)
 			{
-				$giamgia = 0;
-				if($_SESSION['cart_ad'][$key]['chietkhau'] != 0)
+				if($key != 'QT000')
 				{
-					$giamgia = ($_SESSION['cart_ad'][$key]['chietkhau']/100) * $_SESSION['cart_ad'][$key]['giaban'];
+					$giamgia = 0;
+					if($_SESSION['cart_ad'][$key]['chietkhau'] != 0)
+					{
+						$giamgia = ($_SESSION['cart_ad'][$key]['chietkhau']/100) * $_SESSION['cart_ad'][$key]['giaban'];
+					}
+					else if($_SESSION['cart_ad'][$key]['tiengiamgia'] != 0)
+					{
+						$giamgia = $_SESSION['cart_ad'][$key]['tiengiamgia'] 	;
+					}
+					if($giamgia > 0)
+					{
+						$tiensp += ($_SESSION['cart_ad'][$key]['giaban'] - $giamgia) * $_SESSION['cart_ad'][$key]['soluong'];
+						$thue += (int)(($_SESSION['cart_ad'][$key]['giaban'] - $giamgia)/(100+$_SESSION['cart_ad'][$key]['thue'] /$_SESSION['cart_ad'][$key]['thue'])) * $_SESSION['cart_ad'][$key]['soluong'];
+					}
+					else
+					{
+						$tiensp += ($_SESSION['cart_ad'][$key]['giaban'] * $_SESSION['cart_ad'][$key]['soluong']);
+						$thue += (int)($_SESSION['cart_ad'][$key]['giaban']/(100+$_SESSION['cart_ad'][$key]['thue'] /$_SESSION['cart_ad'][$key]['thue'])) * $_SESSION['cart_ad'][$key]['soluong'];
+					}
 				}
-				else if($_SESSION['cart_ad'][$key]['tiengiamgia'] != 0)
-				{
-					$giamgia = $_SESSION['cart_ad'][$key]['tiengiamgia'] 	;
-				}
-				if($giamgia > 0)
-				{
-					$tiensp += ($_SESSION['cart_ad'][$key]['giaban'] - $giamgia) * $_SESSION['cart_ad'][$key]['soluong'];
-					$thue += (int)(($_SESSION['cart_ad'][$key]['giaban'] - $giamgia)/(100+$_SESSION['cart_ad'][$key]['thue'] /$_SESSION['cart_ad'][$key]['thue'])) * $_SESSION['cart_ad'][$key]['soluong'];
-				}
-				else
-				{
-					$tiensp += ($_SESSION['cart_ad'][$key]['giaban'] * $_SESSION['cart_ad'][$key]['soluong']);
-					$thue += (int)($_SESSION['cart_ad'][$key]['giaban']/(100+$_SESSION['cart_ad'][$key]['thue'] /$_SESSION['cart_ad'][$key]['thue'])) * $_SESSION['cart_ad'][$key]['soluong'];
-				}
-				
 			}
 		}
 		echo  json_encode(array("tiensp"=>"$tiensp", "thue"=>"$thue"));

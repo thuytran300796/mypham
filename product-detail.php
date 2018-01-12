@@ -81,7 +81,7 @@
 	}
 	//echo "km: ".count($list_km);
 	mysql_query("set names 'utf8'");
-	$binhluan = mysql_query("select mabl, bl.makh,tenkh, hinhdaidien, noidung, ngay, mablcha from binhluan bl, khachhang kh where masp = '$id' and bl.makh = kh.makh order by ngay desc" );
+	$binhluan = mysql_query("select mabl, bl.makh,tenkh, hinhdaidien, noidung, ngay from binhluan bl, khachhang kh where mactsp = '$id' and bl.makh = kh.makh order by ngay desc" );
 	//echo mysql_num_rows($binhluan);
 	
 	
@@ -142,7 +142,7 @@
 				<div class = 'img-big'>
 					<img id = 'img-large' src="image/mypham/<?php echo $list_ha[0]  ?>"/>
 				</div>
-                <button class = 'arrow-left'  data-id = 'km'></button>
+                <!--<button class = 'arrow-left-img'></button>-->
                 <div class = 'img-sml'>
 					<?php
 						$dem = 1;
@@ -157,7 +157,7 @@
 						}
 					?>
 				</div>
-                <button class = 'arrow-right'  data-id = 'km'></button>
+               	<button class = 'arrow-right-img'  data-id = 'km'></button>
                 
 
 			</div>
@@ -165,7 +165,9 @@
 			<div class = 'product-normal'>
 				<p class="product-name-detail"><?php echo $re_sp['tensp'] ?></p>
                 <?php echo ($re_sp['mausac'] != "" ? "<p>Màu sắc: ".$re_sp['mausac']."</p>" : "" ) ?>
-            	<p>Thương hiệu: <span class="text-highlight"><?php echo $re_sp['thuonghieu'] ?></span></p>
+            	<p>Thương hiệu: <span class="text-highlight"> <?php echo $re_sp['thuonghieu'] ?></span></p>
+                <p>Trọng lượng/Thể tích: <?php echo $re_sp['trongluong'] ?></p>
+                <p>Đơn vị tính: <?php echo $re_sp['donvitinh'] ?></p>
                 <!--<p><span class = 'product-price-detail'><?php echo number_format($re_sp['giaban']) ?> đ</span> Đã bao gồm thuế VAT</p>-->
    
    				<?php
@@ -276,7 +278,7 @@
 							$string = implode(',', $arr_maqt);
 							
 							mysql_query("set names 'utf8'");
-							$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string)");
+							$quatang = mysql_query("select ctsp.mactsp, tensp, ctsp.mausac, duongdan from sanpham sp, chitietsanpham ctsp, hinhanh ha where sp.masp = ctsp.masp and sp.masp = ha.masp and ctsp.mactsp in ($string) group by ctsp.mactsp");
 							
 							echo "<p class='title-general'>KHUYẾN MÃI ĐANG ÁP DỤNG CHO SẢN PHẨM NÀY</p>";
 							echo "<p>".$list_km[0]['mota']."</p>";
@@ -317,6 +319,7 @@
 		</div>
 		
 		<div class = 'product-info'>
+        	<p><b>Mô tả sản phẩm</b></p>
 			<?php
 				echo $re_sp['mota'];
 			?>
@@ -344,9 +347,9 @@
                 <li>
                 	<div class='com-info'>
                     	<img src="image/khachhang/<?php echo $re_bl['hinhdaidien'] ?>"/>
-                        <p><?php echo $re_bl['tenkh']." &nbsp;".$re_bl['ngay']." &nbsp;"; ?> </p>
+                        <p><?php echo $re_bl['tenkh']." &nbsp;".date('H:i:s d/m/Y', strtotime($re_bl['ngay']))." &nbsp;"; ?> </p>
                         <p><?php echo $re_bl['noidung']?></p>
-                        <p><a href="javascript:void(0)" class="rep-a" data-repa='<?php echo $re_bl['mabl'] ?>'>Gửi trả lời</a></p>
+                        <!--<p><a href="javascript:void(0)" class="rep-a" data-repa='<?php echo $re_bl['mabl'] ?>'>Gửi trả lời</a></p>-->
                     </div>
                     <div class="clear"></div>
              		<!--các bình luận conn-->
@@ -492,9 +495,11 @@
             <?php
 				}
 			?>
+            <!--
             <div class='pro-xemthem'>
             	<a href='#'>Xem thêm</a>
             </div>
+            -->
         </div>
 		<?php
 			}
@@ -574,10 +579,11 @@
 				}
 			?>	
             
-			
+			<!--
             <div class='pro-xemthem'>
             	<a href='#'>Xem thêm</a>
             </div>
+            -->
         </div>
         <?php
 				}
@@ -658,10 +664,11 @@
 				}
 			?>	
             
-			
+			<!--
             <div class='pro-xemthem'>
             	<a href='#'>Xem thêm</a>
             </div>
+            -->
         </div>
 	
 	</div>
